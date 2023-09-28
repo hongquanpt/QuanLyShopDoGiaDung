@@ -1,0 +1,192 @@
+﻿@{
+    ViewBag.Title = "TKDoanhThu";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    //var sp = (List<Shopdogiadung.Models.ThongKeDoanhThu>)ViewBag.ds;
+
+}
+
+<div id="content">
+    <script src="~/Admin/vendor/chart.js/Chart.min.js"></script>
+    <!-- Topbar -->
+    <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+        <!-- Sidebar Toggle (Topbar) -->
+        <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+            <i class="fa fa-bars"></i>
+        </button>
+
+
+        <!-- Topbar Navbar -->
+        <ul class="navbar-nav ml-auto">
+
+            <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+            <li class="nav-item dropdown no-arrow d-sm-none">
+                <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
+                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-search fa-fw"></i>
+                </a>
+                <!-- Dropdown - Messages -->
+                <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
+                     aria-labelledby="searchDropdown">
+                    <form class="form-inline mr-auto w-100 navbar-search">
+                        <div class="input-group">
+                            <input type="text" class="form-control bg-light border-0 small"
+                                   placeholder="Search for..." aria-label="Search"
+                                   aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="button">
+                                    <i class="fas fa-search fa-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </li>
+
+            <!-- Nav Item - Alerts -->
+            <li class="nav-item dropdown no-arrow mx-1">
+                <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-bell fa-fw"></i>
+                    <!-- Counter - Alerts -->
+                    <span class="badge badge-danger badge-counter">3+</span>
+                </a>
+               
+            </li>
+
+
+
+            <!-- Nav Item - User Information -->
+            <li class="nav-item dropdown no-arrow">
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">Xin chào, Admin</span>
+                    <img class="img-profile rounded-circle"
+                         src="~/Admin/img/undraw_profile.svg">
+                </a>
+                <!-- Dropdown - User Information -->
+                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                     aria-labelledby="userDropdown">
+
+                    <a class="dropdown-item" href="#" onclick="handleLogout()" @*data-toggle="modal" data-target="#logoutModal*@>
+                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                        Logout
+                    </a>
+                    <script>
+                        const handleLogout = () => {
+                            Swal.fire({
+                                title: 'Bạn có chắc chắn muốn đăng xuất?',
+                                showCancelButton: true,
+                                confirmButtonText: 'Đăng xuất',
+                                denyButtonText: `Hủy`,
+                            }).then((result) => {
+                                /* Read more about isConfirmed, isDenied below */
+                                if (result.isConfirmed) {
+                                    window.location = '@Url.Action("Logout","Home")'
+                                }
+                            })
+                        }
+                    </script>
+                </div>
+            </li>
+
+        </ul>
+
+    </nav>
+    <!-- End of Topbar -->
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+        <h1 class="h3 mb-2 text-gray-800">Thống kê doanh thu</h1>
+
+
+        <!-- Content Row -->
+        <div class="row">
+
+            <div class="col-xl-12 col-lg-7">
+                <label>Chọn năm</label>
+                <select id="select" class="form-control" style="width:150px">
+                    <option>Chọn năm</option>
+                    @for (int i = 2022; i < 2030; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="myAreaChart"></canvas>
+                    </div>
+                    @*<hr>
+                    Styling for the area chart can be found in the
+                    <code>/js/demo/chart-area-demo.js</code> file.*@
+                </div>
+                <script>
+                    $('#select').on('change', function () {
+                        var year = parseInt($(this).val());
+                        $.ajax({
+                            url: '/Admin/TKDoanhthu',
+                            data: {
+                                year: year
+                            },
+                            type: 'POST',
+                            dataType: 'json',
+                            success: function (res) {
+                                if (res.status == true) {
+                                    /* console.log(res.data);*/
+                                    tkbyyear(res.data);
+                                }
+                            }
+
+                        });
+
+                    });
+                    function tkbyyear(lsdata1) {
+                        var lslabel = [];
+                        var lsdata = [];
+                        $.each(lsdata1, function (index, item) {
+                            lslabel.push(item.Thang);
+                            lsdata.push(item.DoanhThu);
+
+                        });
+                        console.log(lslabel);
+                        console.log(lsdata);
+
+                        var ctx = document.getElementById('myAreaChart');
+                        var datachart = {
+                            labels: lslabel/*["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]*/,
+                            datasets: [{
+                                label: "Doanh thu",
+                                lineTension: 0.3,
+                                backgroundColor: "rgba(78, 115, 223, 0.05)",
+                                borderColor: "rgba(78, 115, 223, 1)",
+                                pointRadius: 3,
+                                pointBackgroundColor: "rgba(78, 115, 223, 1)",
+                                pointBorderColor: "rgba(78, 115, 223, 1)",
+                                pointHoverRadius: 3,
+                                pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
+                                pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+                                pointHitRadius: 10,
+                                pointBorderWidth: 2,
+                                data: lsdata /* [0, 10000, 5000, 15000, 10000, 20000, 15000, 25000, 20000, 30000, 25000, 40000]*/,
+                            }],
+                        };
+                        var mychart = new Chart(ctx, {
+                            type: 'line',
+                            data: datachart,
+
+                        });
+                    }
+
+                </script>
+
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>

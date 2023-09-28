@@ -1,0 +1,228 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Online Shop</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link href="~/Assets/BigShopee/css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Assets/BigShopee/js/jquery.min.js" rel="stylesheet" type="text/css" media="all" />
+    <!--theme-style-->
+
+    <link rel="stylesheet" href="~/Assets/BigShopee/css/etalage.css" type="text/css" media="all" />
+    <link href="~/Assets/BigShopee/css/style.css" rel="stylesheet" type="text/css" media="all" />
+    <!--//theme-style-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+    <!--fonts-->
+    @*<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>*@
+    @*<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>*@
+    <!--//fonts-->
+    <script defer src="https://use.fontawesome.com/releases/v5.15.4/js/all.js" integrity="sha384-rOA1PnstxnOBLzCLMcre8ybwbTmemjzdNlILg8O7z1lUkLXozs4DHonlDtnE7fpc" crossorigin="anonymous"></script>
+    <script src="~/Assets/BigShopee/js/jquery.min.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
+
+</head>
+<body>
+    <!--header-->
+    <div class="header">
+        <div class="top-header">
+            <div class="container">
+                <div class="top-header-left">
+                    <ul class="support">
+                        <li><a href="#"><label> </label></a></li>
+                        <li><a href="#">Hỗ trợ<span class="live"> 24/24</span></a></li>
+                    </ul>
+                    <ul class="support">
+                        <li class="van"><a href="#"><label> </label></a></li>
+                        <li><a href="#">Miễn phí vận chuyển<span class="live"> trong vòng 5 km</span></a></li>
+                    </ul>
+                    <div class="clearfix"> </div>
+                </div>
+                @*<div class="top-header-right">
+                <div class="down-top">
+                <select class="in-drop">
+                <option value="English" class="in-of">English</option>
+                <option value="Japanese" class="in-of">Japanese</option>
+                <option value="French" class="in-of">French</option>
+                <option value="German" class="in-of">German</option>
+                </select>
+                </div>
+                <div class="down-top top-down">
+                <select class="in-drop">
+
+                <option value="Dollar" class="in-of">Dollar</option>
+                <option value="Yen" class="in-of">Yen</option>
+                <option value="Euro" class="in-of">Euro</option>
+                </select>
+                </div>
+                <div class="clearfix"> </div>
+                </div>*@
+                <div class="clearfix"> </div>
+            </div>
+        </div>
+        <div class="bottom-header">
+            <div class="container">
+                <div class="header-bottom-left">
+                    <div class="logo">
+                        <a href="@Url.Action("Index", "Home")"><img src="~/Assets/BigShopee/images/logo.png" alt=" " /></a>
+                    </div>
+                    <form method="post" action="/Home/search">
+                        <div class="search">
+                            <input type="text" name="search" value="" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = '';}">
+                            <input type="submit" value="TÌM KIẾM">
+                        </div>
+                    </form>
+                    <div class="clearfix"> </div>
+                </div>
+                <div class="header-bottom-right">
+                   
+
+                    }
+
+                    <div class="clearfix"> </div>
+                </div>
+                <div class="clearfix"> </div>
+            </div>
+        </div>
+    </div>
+    <!---->
+    <div class="container">
+        @RenderBody()
+        <div class="sub-cate">
+            @{
+               /* Html.RenderAction("ProductCategory", "Home");
+            }
+            <!--initiate accordion-->
+            @{
+               /* Html.RenderAction("Hang", "Home");*/
+            }
+            <script type="text/javascript">
+                $(function () {
+                    var menu_ul = $('.menu > li > ul'),
+                        menu_a = $('.menu > li > a');
+                    menu_ul.hide();
+                    menu_a.click(function (e) {
+                        e.preventDefault();
+                        if (!$(this).hasClass('active')) {
+                            menu_a.removeClass('active');
+                            menu_ul.filter(':visible').slideUp('normal');
+                            $(this).addClass('active').next().stop(true, true).slideDown('normal');
+                        } else {
+                            $(this).removeClass('active');
+                            $(this).next().stop(true, true).slideUp('normal');
+                        }
+                    });
+
+                });
+            </script>
+            @*<div class=" chain-grid menu-chain">
+            <a href="single.html"><img class="img-responsive chain" src="~/Assets/BigShopee/images/wat.jpg" alt=" " /></a>
+            <div class="grid-chain-bottom chain-watch">
+            <span class="actual dolor-left-grid">300$</span>
+            <span class="reducedfrom">500$</span>
+            <h6>Lorem ipsum dolor</h6>
+            </div>
+            </div>
+            <a class="view-all all-product" href="product.html">VIEW ALL PRODUCTS<span> </span></a>*@
+        </div>
+        <div class="clearfix"> </div>
+    </div>
+    <!---->
+    <div class="footer">
+        <div class="footer-top">
+            <div class="container">
+                <div class="latter">
+                    <h6>NEWS-LETTER</h6>
+                    <div class="sub-left-right">
+                        <form>
+                            <input type="text" value="Enter email here" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Enter email here';}" />
+                            <input type="submit" value="SUBSCRIBE" />
+                        </form>
+                    </div>
+                    <div class="clearfix"> </div>
+                </div>
+                <div class="latter-right">
+                    <p>FOLLOW US</p>
+                    <ul class="face-in-to">
+                        <li><a href="#"><span> </span></a></li>
+                        <li><a href="#"><span class="facebook-in"> </span></a></li>
+                    </ul>
+                  
+                    <div class="clearfix"> </div>
+                </div>
+                <div class="clearfix"> </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container d-flex">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3723.649793342786!2d105.78431471488373!3d21.04669418598872!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab2d88bb4195%3A0x3006e474cce20274!2zSOG7jWMgdmnhu4duIEvhu7kgdGh14bqtdCBRdcOibiBz4bux!5e0!3m2!1svi!2s!4v1670420855037!5m2!1svi!2s"
+                        width="945" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                @*<div class="footer-bottom-cate">
+                <h6>CATEGORIES</h6>
+                <ul>
+                <li><a href="#">Curabitur sapien</a></li>
+                <li><a href="#">Dignissim purus</a></li>
+                <li><a href="#">Tempus pretium</a></li>
+                <li><a href="#">Dignissim neque</a></li>
+                <li><a href="#">Ornared id aliquet</a></li>
+                <li><a href="#">Ultrices id du</a></li>
+                <li><a href="#">Commodo sit</a></li>
+                <li><a href="#">Urna ac tortor sc</a></li>
+                <li><a href="#">Ornared id aliquet</a></li>
+                <li><a href="#">Urna ac tortor sc</a></li>
+                <li><a href="#">Eget nisi laoreet</a></li>
+                <li><a href="#">Faciisis ornare</a></li>
+                </ul>
+                </div>
+                <div class="footer-bottom-cate bottom-grid-cat">
+                <h6>FEATURE PROJECTS</h6>
+                <ul>
+                <li><a href="#">Curabitur sapien</a></li>
+                <li><a href="#">Dignissim purus</a></li>
+                <li><a href="#">Tempus pretium</a></li>
+                <li><a href="#">Dignissim neque</a></li>
+                <li><a href="#">Ornared id aliquet</a></li>
+                <li><a href="#">Ultrices id du</a></li>
+                <li><a href="#">Commodo sit</a></li>
+                </ul>
+                </div>
+                <div class="footer-bottom-cate">
+                <h6>TOP BRANDS</h6>
+                <ul>
+                <li><a href="#">Curabitur sapien</a></li>
+                <li><a href="#">Dignissim purus</a></li>
+                <li><a href="#">Tempus pretium</a></li>
+                <li><a href="#">Dignissim neque</a></li>
+                <li><a href="#">Ornared id aliquet</a></li>
+                <li><a href="#">Ultrices id du</a></li>
+                <li><a href="#">Commodo sit</a></li>
+                <li><a href="#">Urna ac tortor sc</a></li>
+                <li><a href="#">Ornared id aliquet</a></li>
+                <li><a href="#">Urna ac tortor sc</a></li>
+                <li><a href="#">Eget nisi laoreet</a></li>
+                <li><a href="#">Faciisis ornare</a></li>
+                </ul>
+                </div>*@
+                <div class="footer-bottom-cate cate-bottom">
+                    <h3>SHOP TUẤN TRẦN</h3>
+                    <ul>
+                        <li>Địa chỉ </li>
+                        <li>236 Hoàng Quốc Việt, Cổ Nhuế 1,</li>
+                        <li> Bắc Từ Liêm, Hà Nội</li>
+                        <li>Facebook <a href="https://www.facebook.com/tuan.teotop.376">Tuấn Trần</a></li>
+                        <li>Email:tt09112k@gmail.com</li>
+                        <li class="phone">SĐT: 0866020523</li>
+                        @*<li class="temp"> <p class="footer-class">Design by <a href="http://w3layouts.com/" target="_blank">W3layouts</a> </p></li>*@
+                    </ul>
+                </div>
+                <div class="clearfix"> </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="~/Scripts/Cart.js"></script>
+
+</html>
