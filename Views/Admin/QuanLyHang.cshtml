@@ -4,259 +4,175 @@
     var dstk = (List<ShopBanDoGiaDung.Models.Hangsanxuat>)ViewBag.ds;
 }
 
+<div class="wrapper">
 
-    <!-- Topbar -->
-    <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
 
-        <!-- Sidebar Toggle (Topbar) -->
-        <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-            <i class="fa fa-bars"></i>
-        </button>
-        <!-- Topbar Navbar -->
-        <ul class="navbar-nav ml-auto">
 
-            <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-            <li class="nav-item dropdown no-arrow d-sm-none">
-                <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-search fa-fw"></i>
-                </a>
-                <!-- Dropdown - Messages -->
-                <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                     aria-labelledby="searchDropdown">
-                    <form class="form-inline mr-auto w-100 navbar-search">
-                        <div class="input-group">
-                            <input type="text" class="form-control bg-light border-0 small"
-                                   placeholder="Search for..." aria-label="Search"
-                                   aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
-                                    <i class="fas fa-search fa-sm"></i>
-                                </button>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Quản lý tài hãng</h3>
                             </div>
-                        </div>
-                    </form>
-                </div>
-            </li>
+                         
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <table id="example1" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Mã hãng</th>
+                                            <th>Tên hãng</th>
+                                            <th>Hành động</th>
 
-            <!-- Nav Item - User Information -->
-            <li class="nav-item dropdown no-arrow">
-                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">Xin chào, Admin</span>
-                    <img class="img-profile rounded-circle"
-                         src="~/Admin/img/undraw_profile.svg">
-                </a>
-                <!-- Dropdown - User Information -->
-                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                     aria-labelledby="userDropdown">
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#" onclick="handleLogout()" @*data-toggle="modal" data-target="#logoutModal*@>
-                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                        Logout
-                    </a>
-                    <script>
-                        const handleLogout = () => {
-                            Swal.fire({
-                                title: 'Bạn có chắc chắn muốn đăng xuất?',
-                                showCancelButton: true,
-                                confirmButtonText: 'Đăng xuất',
-                                denyButtonText: `Hủy`,
-                            }).then((result) => {
-                                /* Read more about isConfirmed, isDenied below */
-                                if (result.isConfirmed) {
-                                    window.location = '@Url.Action("Logout","Home")'
-                                }
-                            })
-                        }
-                    </script>
-                </div>
-            </li>
-
-        </ul>
-
-    </nav>
-    <!-- End of Topbar -->
-    <!-- Begin Page Content -->
-    <div class="container-fluid">
-        <div class="table-responsive">
-            <div class="table-wrapper">
-                <div class="table-title">
-                    <div class="row">
-                        <div class="col-sm-5">
-                            <h2 style="font-weight: bold">Quản lý hãng</h2>
-                        </div>
-                        <div class="col-sm-7">
-                            <a href="#" class="btn btn-primary" style="background-color: #ffb836;"><i class="material-icons" style="color: white;">&#xE147;</i> <span style="color: white;" data-toggle="modal" data-target="#them">Thêm mới</span></a>
-                            @*<a href="#" class="btn btn-secondary" style="display: none;"><i class="material-icons">&#xE24D;</i> <span>Xuất Excel</span></a>*@
-                        </div>
-                    </div>
-                </div>
-                <table class="table table-striped table-hover" style="text-align:center" id="showtable">
-                    <!-- <h3>Không tìm thấy kết quả</h3> -->
-                    <thead>
-                        <tr>
-                            <th>Mã hãng</th>
-                            <th>Tên hãng</th>
-                            <th>Hành động</th>
-
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in dstk)
-                        {
-                            <tr>
-                                <td>@item.MaHang</td>
-                                <td>@item.TenHang</td>
-
-                                <td>
-                                    <a href="#" class="settings" title="Settings" data-toggle="modal" id="viewbtn" data-target="#sua"><i class="material-icons">&#xE8B8;</i></a>
-                                    <a href="#" class="delete" title="Delete" data-toggle="modal" onclick="XoaHang(@item.MaHang)"><i class="material-icons">&#xE5C9;</i></a>
-                                </td>
-                            </tr>
-                            <script>
-                                function XoaHang(ma) {
-                                    var mahang = parseInt(ma);
-                                    Swal.fire({
-                                        title: 'Bạn có chắc chắn muốn xóa?',
-                                        showCancelButton: true,
-                                        confirmButtonText: 'Xóa',
-                                        denyButtonText: `Hủy`,
-                                    }).then((result) => {
-                                        /* Read more about isConfirmed, isDenied below */
-                                        if (result.isConfirmed) {
-                                            $.ajax({
-                                                url: '/Admin/XoaHang',
-                                                data: {
-                                                    mahang: mahang
-                                                },
-                                                type: 'POST',
-                                                dataType: 'json',
-                                                success: function (res) {
-                                                    if (res.status == true) {
-                                                        window.location = '@Url.Action("QuanLyHang","Admin")'
-                                                        Swal.fire({
-                                                            position: 'center',
-                                                            icon: 'success',
-                                                            title: 'Đã xóa',
-                                                            showConfirmButton: false,
-                                                            timer: 100
-                                                        })
-
-                                                    }
-                                                }
-
-                                            });
-
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in dstk)
+                                        {
+                                            <tr>
+                                                <td>@item.MaHang</td>
+                                                <td>@item.TenHang</td>
+                                                <td>
+                                                    <a href="#" class="settings" title="Settings" data-toggle="modal" id="viewbtn" data-target="#sua"><i class="material-icons">&#xE8B8;</i></a>
+                                                    <a href="#" class="delete" title="Delete" data-toggle="modal" onclick="XoaHang(@item.MaHang)"><i class="material-icons">&#xE5C9;</i></a>
+                                                </td>
+                                            </tr>
                                         }
-                                    })
-                                }
-                            </script>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>Mã hãng</th>
+                                            <th>Tên hãng</th>
+                                            <th>Hành động</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
 
-
-                        }
-                </table>
-                <div class="modal fade" id="them" role="dialog">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <!-- Modal content-->
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">Thêm hãng sản xuất</h4>
-                                <button type="button" class="close" data-dismiss="modal">&times;</button>
                             </div>
-                            <form id="frmThemHang">
-                                <div class="modal-body">
-                                    <div class="form-group">
-                                        <label for="usr">Tên hãng</label>
-                                        <input type="text" placeholder="Nhập tên hãng tại đây" class="form-control" id="tenhang" name="TenHang">
-                                    </div>
-                                </div>
-                            </form>
-
-                            <div class="modal-footer">
-                                <a type="button" class="btn btn-primary" href="#" data-dismiss="modal" onclick="ThemHang()">Thêm hãng</a>
-                                <button type="button" class="btn btn-default" data-dismiss="modal" @*data-toggle="modal" data-target="#error"*@>Hủy bỏ</button>
-                                <script>
-                                    function ThemHang() {
-                                        $('#frmThemHang').validate({
-                                            rules: {
-                                                TenHang: "required"
-                                            },
-                                            messages: {
-
-                                                TenHang: {
-                                                    required: "Bạn chưa nhập tên hãng",
-                                                },
-                                            }
-                                        });
-                                        var valid = $('#frmThemHang').valid();
-                                        if (valid) {
-                                            var tenhang = $('#tenhang').val().toString();
-                                            $.ajax({
-                                                url: '/Admin/ThemHang',
-                                                data: {
-                                                    tenhang: tenhang
-                                                },
-                                                type: 'POST',
-                                                dataType: 'json',
-                                                success: function (res) {
-                                                    if (res.status == true) {
-                                                        window.location = '@Url.Action("QuanLyHang","Admin")'
-                                                        Swal.fire({
-                                                            position: 'center',
-                                                            icon: 'success',
-                                                            title: 'Thêm thành công',
-                                                            showConfirmButton: false,
-                                                            timer: 100
-                                                        })
-                                                    }
-                                                }
-                                            });
-
-                                        }
-                                    }
-                                </script>
+                            <!-- /.card-body -->
+                            <div class="card-footer">
+                                <a type="button" class="btn btn-primary" href="#" data-dismiss="modal" id="confirmThem">Thêm hãng mới</a>
+                                @*<a href="#" class="btn btn-secondary" style="display: none;"><i class="material-icons">&#xE24D;</i> <span>Xuất Excel</span></a>*@
                             </div>
                         </div>
-
+                        <!-- /.card -->
                     </div>
+                    <!-- /.col -->
                 </div>
-                <div class="modal fade" id="sua" role="dialog">
-                    <div class="modal-dialog modal-dialog-centered">
-                    </div>
-                    <script>
-                        $("#showtable").on("click", "#viewbtn", function () {
-                            var id = $(this).closest("tr").find("td").eq(0).html();
-                            $.ajax({
-                                url: "@Url.Action("SuaTTHang", "Admin")",
-                                data: { id: id },
-                                success: function (data) {
-                                    $("#sua .modal-dialog").html(data);
-                                    /* $("#showmodal").modal('show')*/
-                                }
-                            });
-                        });
-                    </script>
-                    <div class="modal fade" id="xoa" role="dialog">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <!-- Modal content-->
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title">Thông báo</h4>
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                </div>
-                                <div class="modal-body">
-                                    <h5>Bạn có chắc chắn muốn xóa không?</h5>
-                                </div>
-                                <div class="modal-footer">
-                                    <a type="button" class="btn btn-primary" href="#" data-dismiss="modal" onclick="alert('Xóa khách hàng thành công!')">Đồng ý</a>
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Hủy bỏ</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->    
+        <div id="frmThemHang" aria-hidden="true" tabindex="-1" role="dialog">
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Nhập tên hãng</label>
+                    <input type="text" class="form-control" id="tenhang" placeholder="Nhập tên hãng mới tại đây">
+                </div>
+                <div class="card-footer">
+                    <a type="button" class="btn btn-primary" href="#" data-dismiss="modal" id="confirm">Thêm hãng</a>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" @*data-toggle="modal" data-target="#error"*@>Hủy bỏ</button>
+                </div>
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <script>
+            $('#confirmThem').on('click', function () {
+                $('#frmThemHang').modal('show');
+            }
+        </script>
+    </div>
+    </div>
+
+
+    <!-- Đoạn mã HTML cho modal xác nhận xóa -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">Bạn có chắc chắn muốn xóa hãng?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="confirmDeleteButton">Xóa</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Đoạn mã JavaScript để xử lý sự kiện xóa -->
+    <script>
+        function XoaHang(ma) {
+            var matk = parseInt(ma);
+
+            // Hiển thị modal xác nhận xóa
+            $('#confirmDeleteModal').modal('show');
+
+            // Xử lý sự kiện khi người dùng xác nhận xóa
+            $('#confirmDeleteButton').on('click', function () {
+                $.ajax({
+                    url: '/Admin/XoaHang',
+                    data: {
+                        matk: matk
+                    },
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function (res) {
+                        if (res.status == true) {
+                            // Đóng modal sau khi xóa thành công
+                            $('#confirmDeleteModal').modal('hide');
+                            window.location = '@Url.Action("QuanLyHang","Admin")';
+                        }
+                    }
+                });
+            });
+        }
+    </script>
+   
+<!-- /.card -->
+<!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+    </aside>
+<!-- ./wrapper -->
+<!-- jQuery -->
+<script src="~/Admin/plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="~/Admin/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- DataTables  & Plugins -->
+<script src="~/Admin/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="~/Admin/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="~/Admin/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="~/Admin/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="../../Admin/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="~/Admin/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="~/Admin/plugins/jszip/jszip.min.js"></script>
+<script src="~/Admin/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="~/Admin/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="~/Admin/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="~/Admin/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="~/Admin/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+<!-- AdminLTE App -->
+<script src="~/Admin/dist/js/adminlte.min.js"></script>
+
+<!-- Page specific script -->
+<script>
+    $(function () {
+        $("#example1").DataTable({
+            "responsive": true, "lengthChange": false, "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    });
+</script>
+
 

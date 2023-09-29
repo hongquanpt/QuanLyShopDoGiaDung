@@ -9,547 +9,626 @@
     var dsdahoanthanh = (List<ShopBanDoGiaDung.Models.MyOrder>)ViewBag.dsdahoanthanh;
     var dsdahuy = (List<ShopBanDoGiaDung.Models.MyOrder>)ViewBag.dsdahuy;
 }
-<div id="content">
 
-     <!-- Topbar -->
-     <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
-          <!-- Sidebar Toggle (Topbar) -->
-          <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-               <i class="fa fa-bars"></i>
-          </button>
+<div class="wrapper">
 
-          <!-- Topbar Search -->
-          <form   method="post" action="/Admin/TimDH">
-               <div class="input-group">
-                    <label style="margin-top: 6px; font-size: 18px;">Chọn 2 mốc thời gian để tìm kiếm:    </label>
-                    <input type="date" class="form-control bg-light border-0 small" @*placeholder="Tìm kiếm"*@ name="tg1"
-                           aria-label="Search" aria-describedby="basic-addon2">
-                    <input type="date" class="form-control bg-light border-0 small ml-5" @*placeholder="Tìm kiếm"*@ name="tg2"
-                           aria-label="Search" aria-describedby="basic-addon2">
-                    <div class="input-group-append">
-                         <button class="btn btn-primary" type="submit" >
-                              <i class="fas fa-search fa-sm"></i>
-                         </button>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Quản lý đơn hàng</h3>
+                            </div>
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li class=" nav-item active"><a class="nav-link active" data-toggle="tab" href="#home">Tất cả đơn hàng (@dstatca.Count())</a></li>
+                                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu0">Chưa thanh toán (@dschuathanhtoan.Count())</a></li>
+                                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu1">Chờ xác nhận (@dschoxacnhan.Count())</a></li>
+                                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu2">Đang vận chuyển (@dsdangvanchuyen.Count())</a></li>
+                                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu3">Đã hoàn thành (@dsdahoanthanh.Count())</a></li>
+                                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu4">Đã hủy (@dsdahuy.Count())</a></li>
+                            </ul>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <div class="tab-content">
+                                    <div id="home" class="tab-pane active">
+                                        <table id="showtable" class="table table-bordered table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <td>Mã đơn hàng</td>
+                                                    <td>Người nhận</td>
+                                                    <td>Địa chỉ giao hàng</td>
+                                                    <td>Ngày mua</td>
+                                                    <td>Tổng tiền</td>
+                                                    <td>Tình trạng</td>
+                                                    <td></td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in dstatca)
+                                                {
+                                                    <tr>
+                                                        <td>@item.MaDonHang</td>
+                                                        <td>@item.NguoiNhan</td>
+                                                        <td>@item.DiaChi</td>
+                                                        <td>@item.NgayMua.Value.ToShortDateString()</td>
+                                                        <td>@item.TongTien.Value.ToString("N0") VND</td>
+                                                        @if (item.TinhTrang == 0)
+                                                        {
+                                                            <td>Chưa thanh toán</td>
+                                                        }
+                                                        @if (item.TinhTrang == 1)
+                                                        {
+                                                            <td>Chờ xác nhận</td>
+                                                        }
+                                                        @if (item.TinhTrang == 2)
+                                                        {
+                                                            <td>Đang giao hàng</td>
+                                                        }
+                                                        @if (item.TinhTrang == 3)
+                                                        {
+                                                            <td>Đã hoàn thành</td>
+                                                        }
+                                                        @if (item.TinhTrang == 4)
+                                                        {
+                                                            <td>Đã hủy</td>
+                                                        }
+                                                        <td><a class="btn btn-success" data-toggle="modal" id="viewbtn" data-target="#showmodal">Chi tiết</a></td>
+
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td>Mã đơn hàng</td>
+                                                    <td>Người nhận</td>
+                                                    <td>Địa chỉ giao hàng</td>
+                                                    <td>Ngày mua</td>
+                                                    <td>Tổng tiền</td>
+                                                    <td>Tình trạng</td>
+                                                    <td></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                        <div id="showmodal" class="modal fade" role="dialog">
+                                            <div class="modal-dialog modal-dialog-centered modal-xl" role="document" style="display: flex; align-items: center; height: 100%; margin-bottom: 0; margin-top: 0">
+                                            </div>
+                                        </div>
+                                        <script>
+                                            $("#showtable").on("click", "#viewbtn", function () {
+                                                var id = $(this).closest("tr").find("td").eq(0).html();
+                                                $.ajax({
+                                                    url: "@Url.Action("MyOrderDetail", "Home")",
+                                                    data: { id: id },
+                                                    success: function (data) {
+                                                        $("#showmodal .modal-dialog").html(data);
+                                                        /* $("#showmodal").modal('show')*/
+                                                    }
+                                                });
+                                            });
+                                        </script>
+
+                                    </div>
+                                    <div id="menu0" class="tab-pane fade">
+                                        <table id="showtable0" class="table table-bordered table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <td>Mã đơn hàng</td>
+                                                    <td>Người nhận</td>
+                                                    <td>Địa chỉ giao hàng</td>
+                                                    <td>Ngày mua</td>
+                                                    <td>Tổng tiền</td>
+                                                    <td>Tình trạng</td>
+                                                    <td></td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in dschuathanhtoan)
+                                                {
+                                                    <tr>
+                                                        <td>@item.MaDonHang</td>
+                                                        <td>@item.NguoiNhan</td>
+                                                        <td>@item.DiaChi</td>
+                                                        <td>@item.NgayMua.Value.ToShortDateString()</td>
+                                                        <td>@item.TongTien.Value.ToString("N0") VND</td>
+                                                        @if (item.TinhTrang == 0)
+                                                        {
+                                                            <td>Chưa thanh toán</td>
+                                                        }
+                                                        @if (item.TinhTrang == 1)
+                                                        {
+                                                            <td>Chờ xác nhận</td>
+                                                        }
+                                                        @if (item.TinhTrang == 2)
+                                                        {
+                                                            <td>Đang giao hàng</td>
+                                                        }
+                                                        @if (item.TinhTrang == 3)
+                                                        {
+                                                            <td>Đã hoàn thành</td>
+                                                        }
+                                                        @if (item.TinhTrang == 4)
+                                                        {
+                                                            <td>Đã hủy</td>
+                                                        }
+                                                        <td><a class="btn btn-success" data-toggle="modal" id="viewbtn0" data-target="#showmodal0">Chi tiết</a></td>
+                                                        @*<td><a class="btn btn-danger" data-toggle="modal" id="viewbtn1" data-target="#showmodal1">Xác nhận</a></td>*@
+
+
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td>Mã đơn hàng</td>
+                                                    <td>Người nhận</td>
+                                                    <td>Địa chỉ giao hàng</td>
+                                                    <td>Ngày mua</td>
+                                                    <td>Tổng tiền</td>
+                                                    <td>Tình trạng</td>
+                                                    <td></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                        <div id="showmodal0" class="modal fade" role="dialog">
+                                            <div class="modal-dialog modal-dialog-centered modal-xl" role="document" style="display: flex; align-items: center; height: 100%; margin-bottom: 0; margin-top: 0">
+                                            </div>
+                                        </div>
+                                        <script>
+                                            $("#showtable0").on("click", "#viewbtn0", function () {
+                                                var id = $(this).closest("tr").find("td").eq(0).html();
+                                                $.ajax({
+                                                    url: "@Url.Action("MyOrderDetail", "Home")",
+                                                    data: { id: id },
+                                                    success: function (data) {
+                                                        $("#showmodal .modal-dialog").html(data);
+                                                        /* $("#showmodal").modal('show')*/
+                                                    }
+                                                });
+                                            });
+                                        </script>
+
+                                    </div>
+                                    <div id="menu1" class="tab-pane fade">
+                                        <table id="showtable1" class="table table-bordered table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <td>Mã đơn hàng</td>
+                                                    <td>Người nhận</td>
+                                                    <td>Địa chỉ giao hàng</td>
+                                                    <td>Ngày mua</td>
+                                                    <td>Tổng tiền</td>
+                                                    <td>Tình trạng</td>
+                                                    <td></td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in dschoxacnhan)
+                                                {
+                                                    <tr>
+                                                        <td>@item.MaDonHang</td>
+                                                        <td>@item.NguoiNhan</td>
+                                                        <td>@item.DiaChi</td>
+                                                        <td>@item.NgayMua.Value.ToShortDateString()</td>
+                                                        <td>@item.TongTien.Value.ToString("N0") VND</td>
+                                                        @if (item.TinhTrang == 0)
+                                                        {
+                                                            <td>Chưa thanh toán</td>
+                                                        }
+                                                        @if (item.TinhTrang == 1)
+                                                        {
+                                                            <td>Chờ xác nhận</td>
+                                                        }
+                                                        @if (item.TinhTrang == 2)
+                                                        {
+                                                            <td>Đang giao hàng</td>
+                                                        }
+                                                        @if (item.TinhTrang == 3)
+                                                        {
+                                                            <td>Đã hoàn thành</td>
+                                                        }
+                                                        @if (item.TinhTrang == 4)
+                                                        {
+                                                            <td>Đã hủy</td>
+                                                        }
+                                                        <td><a class="btn btn-success" data-toggle="modal" id="viewbtn1" data-target="#showmodal1">Chi tiết</a></td>
+                                                        <td><a class="btn btn-danger" id="btnXacNhan">Xác nhận</a></td>
+
+
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td>Mã đơn hàng</td>
+                                                    <td>Người nhận</td>
+                                                    <td>Địa chỉ giao hàng</td>
+                                                    <td>Ngày mua</td>
+                                                    <td>Tổng tiền</td>
+                                                    <td>Tình trạng</td>
+                                                    <td></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                        <div id="showmodal1" class="modal fade" role="dialog">
+                                            <div class="modal-dialog modal-dialog-centered modal-xl" role="document" style="display: flex; align-items: center; height: 100%; margin-bottom: 0; margin-top: 0">
+                                            </div>
+                                            <script>
+                                                $("#showtable1").on("click", "#viewbtn1", function () {
+                                                    var id = $(this).closest("tr").find("td").eq(0).html();
+                                                    $.ajax({
+                                                        url: "@Url.Action("MyOrderDetail", "Home")",
+                                                        data: { id: id },
+                                                        success: function (data) {
+                                                            $("#showmodal1 .modal-dialog").html(data);
+                                                            /* $("#showmodal").modal('show')*/
+                                                        }
+                                                    });
+                                                });
+                                                $("#showtable1").on("click", "#btnXacNhan", function () {
+                                                    var id = $(this).closest("tr").find("td").eq(0).html();
+                                                    $.ajax({
+                                                        url: "@Url.Action("XacNhanDonHang", "Admin")",
+                                                        data: { ma: id },
+                                                        success: function (res) {
+                                                            if (res.status == true) {
+                                                                window.location.href = "/Admin/QuanLyDonHang";
+                                                            }
+                                                            /*$("#showmodal1 .modal-dialog").html(data);*/
+                                                            /* $("#showmodal").modal('show')*/
+                                                        }
+                                                    });
+                                                });
+                                            </script>
+
+                                        </div>
+                                        <!-- /.card-body -->
+                                    </div>
+                                    <div id="menu2" class="tab-pane fade">
+                                        <table id="showtable2" class="table table-bordered table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <td>Mã đơn hàng</td>
+                                                    <td>Người nhận</td>
+                                                    <td>Địa chỉ giao hàng</td>
+                                                    <td>Ngày mua</td>
+                                                    <td>Tổng tiền</td>
+                                                    <td>Tình trạng</td>
+                                                    <td></td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in dsdangvanchuyen)
+                                                {
+                                                    <tr>
+                                                        <td>@item.MaDonHang</td>
+                                                        <td>@item.NguoiNhan</td>
+                                                        <td>@item.DiaChi</td>
+                                                        <td>@item.NgayMua.Value.ToShortDateString()</td>
+                                                        <td>@item.TongTien.Value.ToString("N0") VND</td>
+                                                        @if (item.TinhTrang == 0)
+                                                        {
+                                                            <td>Chưa thanh toán</td>
+                                                        }
+                                                        @if (item.TinhTrang == 1)
+                                                        {
+                                                            <td>Chờ xác nhận</td>
+                                                        }
+                                                        @if (item.TinhTrang == 2)
+                                                        {
+                                                            <td>Đang giao hàng</td>
+                                                        }
+                                                        @if (item.TinhTrang == 3)
+                                                        {
+                                                            <td>Đã hoàn thành</td>
+                                                        }
+                                                        @if (item.TinhTrang == 4)
+                                                        {
+                                                            <td>Đã hủy</td>
+                                                        }
+                                                        <td><a class="btn btn-success" data-toggle="modal" id="viewbtn2" data-target="#showmodal2">Chi tiết</a></td>
+                                                        @*<td><a class="btn btn-danger" data-target="#showmodal2">Đã nhận được hàng</a></td>*@
+
+
+
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td>Mã đơn hàng</td>
+                                                    <td>Người nhận</td>
+                                                    <td>Địa chỉ giao hàng</td>
+                                                    <td>Ngày mua</td>
+                                                    <td>Tổng tiền</td>
+                                                    <td>Tình trạng</td>
+                                                    <td></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                        <div id="showmodal2" class="modal fade" role="dialog">
+                                            <div class="modal-dialog modal-dialog-centered modal-xl" role="document" style="display: flex; align-items: center; height: 100%; margin-bottom: 0; margin-top: 0">
+                                            </div>
+                                            <script>
+                                                $("#showtable2").on("click", "#viewbtn2", function () {
+                                                    var id = $(this).closest("tr").find("td").eq(0).html();
+                                                    $.ajax({
+                                                        url: "@Url.Action("MyOrderDetail", "Home")",
+                                                        data: { id: id },
+                                                        success: function (data) {
+                                                            $("#showmodal2 .modal-dialog").html(data);
+                                                            /* $("#showmodal").modal('show')*/
+                                                        }
+                                                    });
+                                                });
+                                            </script>
+
+                                        </div>
+                                        <!-- /.card-body -->
+                                    </div>
+                                    <div id="menu3" class="tab-pane fade">
+                                        <table id="showtable3" class="table table-bordered table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <td>Mã đơn hàng</td>
+                                                    <td>Người nhận</td>
+                                                    <td>Địa chỉ giao hàng</td>
+                                                    <td>Ngày mua</td>
+                                                    <td>Tổng tiền</td>
+                                                    <td>Tình trạng</td>
+                                                    <td></td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in dsdahoanthanh)
+                                                {
+                                                    <tr>
+                                                        <td>@item.MaDonHang</td>
+                                                        <td>@item.NguoiNhan</td>
+                                                        <td>@item.DiaChi</td>
+                                                        <td>@item.NgayMua.Value.ToShortDateString()</td>
+                                                        <td>@item.TongTien.Value.ToString("N0") VND</td>
+                                                        @if (item.TinhTrang == 0)
+                                                        {
+                                                            <td>Chưa thanh toán</td>
+                                                        }
+                                                        @if (item.TinhTrang == 1)
+                                                        {
+                                                            <td>Chờ xác nhận</td>
+                                                        }
+                                                        @if (item.TinhTrang == 2)
+                                                        {
+                                                            <td>Đang giao hàng</td>
+                                                        }
+                                                        @if (item.TinhTrang == 3)
+                                                        {
+                                                            <td>Đã hoàn thành</td>
+                                                        }
+                                                        @if (item.TinhTrang == 4)
+                                                        {
+                                                            <td>Đã hủy</td>
+                                                        }
+                                                        <td><a class="btn btn-success" data-toggle="modal" id="viewbtn3" data-target="#showmodal3">Chi tiết</a></td>
+                                                        @*<td><a class="btn btn-danger" data-target="#showmodal2">Đã nhận được hàng</a></td>*@
+
+
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td>Mã đơn hàng</td>
+                                                    <td>Người nhận</td>
+                                                    <td>Địa chỉ giao hàng</td>
+                                                    <td>Ngày mua</td>
+                                                    <td>Tổng tiền</td>
+                                                    <td>Tình trạng</td>
+                                                    <td></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                        <div id="showmodal3" class="modal fade" role="dialog">
+                                            <div class="modal-dialog modal-dialog-centered modal-xl" role="document" style="display: flex; align-items: center; height: 100%; margin-bottom: 0; margin-top: 0">
+                                            </div>
+                                            <script>
+                                                $("#showtable3").on("click", "#viewbtn3", function () {
+                                                    var id = $(this).closest("tr").find("td").eq(0).html();
+                                                    $.ajax({
+                                                        url: "@Url.Action("MyOrderDetail", "Home")",
+                                                        data: { id: id },
+                                                        success: function (data) {
+                                                            $("#showmodal3 .modal-dialog").html(data);
+                                                            /* $("#showmodal").modal('show')*/
+                                                        }
+                                                    });
+                                                });
+                                                });
+                                            </script>
+
+                                        </div>
+                                        <!-- /.card-body -->
+                                    </div>
+                                    <div id="menu4" class="tab-pane fade">
+                                        <table id="showtable4" class="table table-bordered table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <td>Mã đơn hàng</td>
+                                                    <td>Người nhận</td>
+                                                    <td>Địa chỉ giao hàng</td>
+                                                    <td>Ngày mua</td>
+                                                    <td>Tổng tiền</td>
+                                                    <td>Tình trạng</td>
+                                                    <td></td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in dsdahuy)
+                                                {
+                                                    <tr>
+                                                        <td>@item.MaDonHang</td>
+                                                        <td>@item.NguoiNhan</td>
+                                                        <td>@item.DiaChi</td>
+                                                        <td>@item.NgayMua.Value.ToShortDateString()</td>
+                                                        <td>@item.TongTien.Value.ToString("N0") VND</td>
+                                                        @if (item.TinhTrang == 0)
+                                                        {
+                                                            <td>Chưa thanh toán</td>
+                                                        }
+                                                        @if (item.TinhTrang == 1)
+                                                        {
+                                                            <td>Chờ xác nhận</td>
+                                                        }
+                                                        @if (item.TinhTrang == 2)
+                                                        {
+                                                            <td>Đang giao hàng</td>
+                                                        }
+                                                        @if (item.TinhTrang == 3)
+                                                        {
+                                                            <td>Đã hoàn thành</td>
+                                                        }
+                                                        @if (item.TinhTrang == 4)
+                                                        {
+                                                            <td>Đã hủy</td>
+                                                        }
+                                                        <td><a class="btn btn-success" data-toggle="modal" id="viewbtn4" data-target="#showmodal4">Chi tiết</a></td>
+                                                        @*<td><a class="btn btn-danger" data-target="#showmodal2">Đã nhận được hàng</a></td>*@
+
+
+
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td>Mã đơn hàng</td>
+                                                    <td>Người nhận</td>
+                                                    <td>Địa chỉ giao hàng</td>
+                                                    <td>Ngày mua</td>
+                                                    <td>Tổng tiền</td>
+                                                    <td>Tình trạng</td>
+                                                    <td></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                        <div id="showmodal4" class="modal fade" role="dialog">
+                                            <div class="modal-dialog modal-dialog-centered modal-xl" role="document" style="display: flex; align-items: center; height: 100%; margin-bottom: 0; margin-top: 0">
+                                            </div>
+                                            <script>
+                                                $("#showtable4").on("click", "#viewbtn4", function () {
+                                                    var id = $(this).closest("tr").find("td").eq(0).html();
+                                                    $.ajax({
+                                                        url: "@Url.Action("MyOrderDetail", "Home")",
+                                                        data: { id: id },
+                                                        success: function (data) {
+                                                            $("#showmodal4 .modal-dialog").html(data);
+                                                            /* $("#showmodal").modal('show')*/
+                                                        }
+                                                    });
+                                                });
+                                            </script>
+
+                                        </div>
+                                        <!-- /.card-body -->
+                                    </div>
+                                </div>
+                        <!-- /.card -->
                     </div>
-               </div>
-          </form>
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- Đoạn mã HTML cho modal xác nhận xóa -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">Bạn có chắc chắn muốn xóa tài khoản?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="confirmDeleteButton">Xóa</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-          <!-- Topbar Navbar -->
-          <ul class="navbar-nav ml-auto">
+    <!-- Đoạn mã JavaScript để xử lý sự kiện xóa -->
+    <script>
+        function XoaTK(ma) {
+            var matk = parseInt(ma);
 
-               <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-               <li class="nav-item dropdown no-arrow d-sm-none">
-                    <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                         <i class="fas fa-search fa-fw"></i>
-                    </a>
-                    <!-- Dropdown - Messages -->
-                    <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                         aria-labelledby="searchDropdown">
-                         <form class="form-inline mr-auto w-100 navbar-search">
-                              <div class="input-group">
-                                   <input type="text" class="form-control bg-light border-0 small"
-                                          placeholder="Search for..." aria-label="Search"
-                                          aria-describedby="basic-addon2">
-                                   <div class="input-group-append">
-                                        <button class="btn btn-primary" type="button">
-                                             <i class="fas fa-search fa-sm"></i>
-                                        </button>
-                                   </div>
-                              </div>
-                         </form>
-                    </div>
-               </li>
+            // Hiển thị modal xác nhận xóa
+            $('#confirmDeleteModal').modal('show');
 
-               <div class="topbar-divider d-none d-sm-block"></div>
+            // Xử lý sự kiện khi người dùng xác nhận xóa
+            $('#confirmDeleteButton').on('click', function () {
+                $.ajax({
+                    url: '/Admin/XoaTK',
+                    data: {
+                        matk: matk
+                    },
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function (res) {
+                        if (res.status == true) {
+                            // Đóng modal sau khi xóa thành công
+                            $('#confirmDeleteModal').modal('hide');
+                            window.location = '@Url.Action("QuanLyTK","Admin")';
+                        }
+                    }
+                });
+            });
+        }
+    </script>
 
-               <!-- Nav Item - User Information -->
-               <li class="nav-item dropdown no-arrow">
-                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                         <span class="mr-2 d-none d-lg-inline text-gray-600 small">Xin chào, Admin</span>
-                         <img class="img-profile rounded-circle"
-                              src="~/Admin/img/undraw_profile.svg">
-                    </a>
-                    <!-- Dropdown - User Information -->
-                    <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                         aria-labelledby="userDropdown">
-                         <div class="dropdown-divider"></div>
-                         <a class="dropdown-item" href="#" onclick="handleLogout()" @*data-toggle="modal" data-target="#logoutModal*@>
-                              <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                              Logout
-                         </a>
-                         <script>
-                                        const handleLogout = () => {
-                                             Swal.fire({
-                                                  title: 'Bạn có chắc chắn muốn đăng xuất?',
-                                                  showCancelButton: true,
-                                                  confirmButtonText: 'Đăng xuất',
-                                                  denyButtonText: `Hủy`,
-                                             }).then((result) => {
-                                                  /* Read more about isConfirmed, isDenied below */
-                                                  if (result.isConfirmed) {
-                                                       window.location = '@Url.Action("Logout","Home")'
-                                                  }
-                                             })
-                                        }
-                         </script>
-                    </div>
-               </li>
 
-          </ul>
-
-     </nav>
-     <!-- End of Topbar -->
-     <!-- Begin Page Content -->
-     <div class="container-fluid">
-          <div class="table-responsive">
-               <div class="table-wrapper">
-                    <div class="table-title">
-                         <div class="row">
-                              <div class="col-sm-5">
-                                   <h2 style="font-weight: bold">Quản lý đơn hàng</h2>
-                              </div>
-                              <div class="col-sm-7">
-                                   @*<a href="#" class="btn btn-primary" style="background-color: #ffb836;"><i class="material-icons" style="color: white;">&#xE147;</i> <span style="color: white;" data-toggle="modal" data-target="#them">Thêm mới</span></a>*@
-                                   @*<a href="#" class="btn btn-secondary" style="display: none;"><i class="material-icons">&#xE24D;</i> <span>Xuất Excel</span></a>*@
-                              </div>
-                         </div>
-                    </div>
-                    <ul class="nav nav-tabs" role="tablist">
-                         <li class=" nav-item active"><a class="nav-link active" data-toggle="tab" href="#home">Tất cả đơn hàng (@dstatca.Count())</a></li>
-                         <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu0">Chưa thanh toán (@dschuathanhtoan.Count())</a></li>
-                         <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu1">Chờ xác nhận (@dschoxacnhan.Count())</a></li>
-                         <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu2">Đang vận chuyển (@dsdangvanchuyen.Count())</a></li>
-                         <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu3">Đã hoàn thành (@dsdahoanthanh.Count())</a></li>
-                         <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu4">Đã hủy (@dsdahuy.Count())</a></li>
-                    </ul>
-                    <div class="tab-content">
-                         <div id="home" class="tab-pane active">
-                              <table class="table table-hover" id="showtable">
-                                   <thead class="thead-light">
-                                        <tr>
-                                             <td>Mã đơn hàng</td>
-                                             <td>Người nhận</td>
-                                             <td>Địa chỉ giao hàng</td>
-                                             <td>Ngày mua</td>
-                                             <td>Tổng tiền</td>
-                                             <td>Tình trạng</td>
-                                             <td></td>
-                                        </tr>
-                                   </thead>
-                                   <tbody>
-                                        @foreach (var item in dstatca)
-                                        {
-                                             <tr>
-                                                  <td>@item.MaDonHang</td>
-                                                  <td>@item.NguoiNhan</td>
-                                                  <td>@item.DiaChi</td>
-                                                  <td>@item.NgayMua.Value.ToShortDateString()</td>
-                                                  <td>@item.TongTien.Value.ToString("N0") VND</td>
-                                                  @if (item.TinhTrang == 0)
-                                                  {
-                                                       <td>Chưa thanh toán</td>
-                                                  }
-                                                  @if (item.TinhTrang == 1)
-                                                  {
-                                                       <td>Chờ xác nhận</td>
-                                                  }
-                                                  @if (item.TinhTrang == 2)
-                                                  {
-                                                       <td>Đang giao hàng</td>
-                                                  }
-                                                  @if (item.TinhTrang == 3)
-                                                  {
-                                                       <td>Đã hoàn thành</td>
-                                                  }
-                                                  @if (item.TinhTrang == 4)
-                                                  {
-                                                       <td>Đã hủy</td>
-                                                  }
-                                                  <td><a class="btn btn-success" data-toggle="modal" id="viewbtn" data-target="#showmodal">Chi tiết</a></td>
-
-                                             </tr>
-                                        }
-                                   </tbody>
-                              </table>
-                              <div id="showmodal" class="modal fade" role="dialog">
-                                   <div class="modal-dialog modal-dialog-centered modal-xl" role="document" style="display: flex; align-items: center; height: 100%; margin-bottom: 0; margin-top: 0">
-
-                                   </div>
-                              </div>
-                              <script>
-                          $("#showtable").on("click", "#viewbtn", function () {
-                           var id = $(this).closest("tr").find("td").eq(0).html();
-                           $.ajax({
-                             url: "@Url.Action("MyOrderDetail", "Home")",
-                              data: { id: id },
-                                success: function (data) {
-                                $("#showmodal .modal-dialog").html(data);
-                    /* $("#showmodal").modal('show')*/
-                                 }
-                            });
-                          });
-                              </script>
-                         </div>
-                         <div id="menu0" class="tab-pane fade">
-                              <table class="table table-striped table-hover" id="showtable0">
-                                   <thead class="thead-light">
-                                        <tr>
-                                             <td>Mã đơn hàng</td>
-                                             <td>Người nhận</td>
-                                             <td>Địa chỉ giao hàng</td>
-                                             <td>Ngày mua</td>
-                                             <td>Tổng tiền</td>
-                                             <td>Tình trạng</td>
-                                             <td></td>
-                                        </tr>
-                                   </thead>
-                                   <tbody>
-                                        @foreach (var item in dschuathanhtoan)
-                                        {
-                                             <tr>
-                                                  <td>@item.MaDonHang</td>
-                                                  <td>@item.NguoiNhan</td>
-                                                  <td>@item.DiaChi</td>
-                                                  <td>@item.NgayMua.Value.ToShortDateString()</td>
-                                                  <td>@item.TongTien.Value.ToString("N0") VND</td>
-                                                  @if (item.TinhTrang == 0)
-                                                  {
-                                                       <td>Chưa thanh toán</td>
-                                                  }
-                                                  @if (item.TinhTrang == 1)
-                                                  {
-                                                       <td>Chờ xác nhận</td>
-                                                  }
-                                                  @if (item.TinhTrang == 2)
-                                                  {
-                                                       <td>Đang giao hàng</td>
-                                                  }
-                                                  @if (item.TinhTrang == 3)
-                                                  {
-                                                       <td>Đã hoàn thành</td>
-                                                  }
-                                                  @if (item.TinhTrang == 4)
-                                                  {
-                                                       <td>Đã hủy</td>
-                                                  }
-                                                  <td><a class="btn btn-success" data-toggle="modal" id="viewbtn0" data-target="#showmodal0">Chi tiết</a></td>
-                                                  @*<td><a class="btn btn-danger" data-toggle="modal" id="viewbtn1" data-target="#showmodal1">Xác nhận</a></td>*@
-
-                                             </tr>
-                                        }
-                                   </tbody>
-                              </table>
-                              <div id="showmodal0" class="modal fade" role="dialog">
-                                   <div class="modal-dialog modal-dialog-centered modal-xl" role="document" style="display: flex; align-items: center; height: 100%; margin-bottom: 0; margin-top: 0">
-
-                                   </div>
-                              </div>
-                              <script>
-                          $("#showtable0").on("click", "#viewbtn0", function () {
-                           var id = $(this).closest("tr").find("td").eq(0).html();
-                           $.ajax({
-                             url: "@Url.Action("MyOrderDetail", "Home")",
-                              data: { id: id },
-                                success: function (data) {
-                                $("#showmodal0 .modal-dialog").html(data);
-                    /* $("#showmodal").modal('show')*/
-                                 }
-                            });
-                          });
-                              </script>
-                         </div>
-                         <div id="menu1" class="tab-pane fade">
-                              <table class="table table-hover" id="showtable1">
-                                   <thead class="thead-light">
-                                        <tr>
-                                             <td>Mã đơn hàng</td>
-                                             <td>Người nhận</td>
-                                             <td>Địa chỉ giao hàng</td>
-                                             <td>Ngày mua</td>
-                                             <td>Tổng tiền</td>
-                                             <td>Tình trạng</td>
-                                             <td></td>
-                                        </tr>
-                                   </thead>
-                                   <tbody>
-                                        @foreach (var item in dschoxacnhan)
-                                        {
-                                             <tr>
-                                                  <td>@item.MaDonHang</td>
-                                                  <td>@item.NguoiNhan</td>
-                                                  <td>@item.DiaChi</td>
-                                                  <td>@item.NgayMua.Value.ToShortDateString()</td>
-                                                  <td>@item.TongTien.Value.ToString("N0") VND</td>
-                                                  @if (item.TinhTrang == 0)
-                                                  {
-                                                       <td>Chưa thanh toán</td>
-                                                  }
-                                                  @if (item.TinhTrang == 1)
-                                                  {
-                                                       <td>Chờ xác nhận</td>
-                                                  }
-                                                  @if (item.TinhTrang == 2)
-                                                  {
-                                                       <td>Đang giao hàng</td>
-                                                  }
-                                                  @if (item.TinhTrang == 3)
-                                                  {
-                                                       <td>Đã hoàn thành</td>
-                                                  }
-                                                  @if (item.TinhTrang == 4)
-                                                  {
-                                                       <td>Đã hủy</td>
-                                                  }
-                                                  <td><a class="btn btn-success" data-toggle="modal" id="viewbtn1" data-target="#showmodal1">Chi tiết</a></td>
-                                                  <td><a class="btn btn-danger" id="btnXacNhan" >Xác nhận</a></td>
-                                             </tr>
-                                        }
-                                   </tbody>
-                              </table>
-                              <div id="showmodal1" class="modal fade" role="dialog">
-                                   <div class="modal-dialog modal-dialog-centered modal-xl" role="document" style="display: flex; align-items: center; height: 100%; margin-bottom: 0; margin-top: 0">
-
-                                   </div>
-                              </div>
-                              <script>
-                          $("#showtable1").on("click", "#viewbtn1", function () {
-                           var id = $(this).closest("tr").find("td").eq(0).html();
-                           $.ajax({
-                             url: "@Url.Action("MyOrderDetail", "Home")",
-                              data: { id: id },
-                                success: function (data) {
-                                $("#showmodal1 .modal-dialog").html(data);
-                    /* $("#showmodal").modal('show')*/
-                                 }
-                            });
-                          });
-                                    $("#showtable1").on("click", "#btnXacNhan", function () {
-                           var id = $(this).closest("tr").find("td").eq(0).html();
-                           $.ajax({
-                             url: "@Url.Action("XacNhanDonHang", "Admin")",
-                              data: { ma: id },
-                                success: function (res) {
-                                     if (res.status == true) {
-                                          window.location.href = "/Admin/QuanLyDonHang";
-                                     }                                 
-                                /*$("#showmodal1 .modal-dialog").html(data);*/
-                    /* $("#showmodal").modal('show')*/
-                                 }
-                            });
-                          });
-                              </script>
-                         </div>
-                         <div id="menu2" class="tab-pane fade">
-                              <table class="table table-hover" id="showtable2">
-                                   <thead class="thead-light">
-                                        <tr>
-                                             <td>Mã đơn hàng</td>
-                                             <td>Người nhận</td>
-                                             <td>Địa chỉ giao hàng</td>
-                                             <td>Ngày mua</td>
-                                             <td>Tổng tiền</td>
-                                             <td>Tình trạng</td>
-                                             <td></td>
-                                        </tr>
-                                   </thead>
-                                   <tbody>
-                                        @foreach (var item in dsdangvanchuyen)
-                                        {
-                                             <tr>
-                                                  <td>@item.MaDonHang</td>
-                                                  <td>@item.NguoiNhan</td>
-                                                  <td>@item.DiaChi</td>
-                                                  <td>@item.NgayMua.Value.ToShortDateString()</td>
-                                                  <td>@item.TongTien.Value.ToString("N0") VND</td>
-                                                  @if (item.TinhTrang == 0)
-                                                  {
-                                                       <td>Chưa thanh toán</td>
-                                                  }
-                                                  @if (item.TinhTrang == 1)
-                                                  {
-                                                       <td>Chờ xác nhận</td>
-                                                  }
-                                                  @if (item.TinhTrang == 2)
-                                                  {
-                                                       <td>Đang giao hàng</td>
-                                                  }
-                                                  @if (item.TinhTrang == 3)
-                                                  {
-                                                       <td>Đã hoàn thành</td>
-                                                  }
-                                                  @if (item.TinhTrang == 4)
-                                                  {
-                                                       <td>Đã hủy</td>
-                                                  }
-                                                  <td><a class="btn btn-success" data-toggle="modal" id="viewbtn2" data-target="#showmodal2">Chi tiết</a></td>
-                                                  @*<td><a class="btn btn-danger" data-target="#showmodal2">Đã nhận được hàng</a></td>*@
-
-                                             </tr>
-                                        }
-                                   </tbody>
-                              </table>
-                              <div id="showmodal2" class="modal fade" role="dialog">
-                                   <div class="modal-dialog modal-dialog-centered modal-xl" role="document" style="display: flex; align-items: center; height: 100%; margin-bottom: 0; margin-top: 0">
-
-                                   </div>
-                              </div>
-                              <script>
-                          $("#showtable2").on("click", "#viewbtn2", function () {
-                           var id = $(this).closest("tr").find("td").eq(0).html();
-                           $.ajax({
-                             url: "@Url.Action("MyOrderDetail", "Home")",
-                              data: { id: id },
-                                success: function (data) {
-                                $("#showmodal2 .modal-dialog").html(data);
-                    /* $("#showmodal").modal('show')*/
-                                 }
-                            });
-                          });
-                              </script>
-                         </div>
-                         <div id="menu3" class="tab-pane fade">
-                              <table class="table table-hover" id="showtable3">
-                                   <thead class="thead-light">
-                                        <tr>
-                                             <td>Mã đơn hàng</td>
-                                             <td>Người nhận</td>
-                                             <td>Địa chỉ giao hàng</td>
-                                             <td>Ngày mua</td>
-                                             <td>Tổng tiền</td>
-                                             <td>Tình trạng</td>
-                                             <td></td>
-                                        </tr>
-                                   </thead>
-                                   <tbody>
-                                        @foreach (var item in dsdahoanthanh)
-                                        {
-                                             <tr>
-                                                  <td>@item.MaDonHang</td>
-                                                  <td>@item.NguoiNhan</td>
-                                                  <td>@item.DiaChi</td>
-                                                  <td>@item.NgayMua.Value.ToShortDateString()</td>
-                                                  <td>@item.TongTien.Value.ToString("N0") VND</td>
-                                                  @if (item.TinhTrang == 0)
-                                                  {
-                                                       <td>Chưa thanh toán</td>
-                                                  }
-                                                  @if (item.TinhTrang == 1)
-                                                  {
-                                                       <td>Chờ xác nhận</td>
-                                                  }
-                                                  @if (item.TinhTrang == 2)
-                                                  {
-                                                       <td>Đang giao hàng</td>
-                                                  }
-                                                  @if (item.TinhTrang == 3)
-                                                  {
-                                                       <td>Đã hoàn thành</td>
-                                                  }
-                                                  @if (item.TinhTrang == 4)
-                                                  {
-                                                       <td>Đã hủy</td>
-                                                  }
-                                                  <td><a class="btn btn-success" data-toggle="modal" id="viewbtn3" data-target="#showmodal3">Chi tiết</a></td>
-                                                  @*<td><a class="btn btn-danger" data-target="#showmodal2">Đã nhận được hàng</a></td>*@
-
-                                             </tr>
-                                        }
-                                   </tbody>
-                              </table>
-                              <div id="showmodal3" class="modal fade" role="dialog">
-                                   <div class="modal-dialog modal-dialog-centered modal-xl" role="document" style="display: flex; align-items: center; height: 100%; margin-bottom: 0; margin-top: 0">
-
-                                   </div>
-                              </div>
-                              <script>
-                          $("#showtable3").on("click", "#viewbtn3", function () {
-                           var id = $(this).closest("tr").find("td").eq(0).html();
-                           $.ajax({
-                             url: "@Url.Action("MyOrderDetail", "Home")",
-                              data: { id: id },
-                                success: function (data) {
-                                $("#showmodal3 .modal-dialog").html(data);
-                    /* $("#showmodal").modal('show')*/
-                                 }
-                            });
-                          });
-                              </script>
-                         </div>
-                         <div id="menu4" class="tab-pane fade">
-                              <table class="table table-hover" id="showtable4">
-                                   <thead class="thead-light">
-                                        <tr>
-                                             <td>Mã đơn hàng</td>
-                                             <td>Người nhận</td>
-                                             <td>Địa chỉ giao hàng</td>
-                                             <td>Ngày mua</td>
-                                             <td>Tổng tiền</td>
-                                             <td>Tình trạng</td>
-                                             <td></td>
-                                        </tr>
-                                   </thead>
-                                   <tbody>
-                                        @foreach (var item in dsdahuy)
-                                        {
-                                             <tr>
-                                                  <td>@item.MaDonHang</td>
-                                                  <td>@item.NguoiNhan</td>
-                                                  <td>@item.DiaChi</td>
-                                                  <td>@item.NgayMua.Value.ToShortDateString()</td>
-                                                  <td>@item.TongTien.Value.ToString("N0") VND</td>
-                                                  @if (item.TinhTrang == 0)
-                                                  {
-                                                       <td>Chưa thanh toán</td>
-                                                  }
-                                                  @if (item.TinhTrang == 1)
-                                                  {
-                                                       <td>Chờ xác nhận</td>
-                                                  }
-                                                  @if (item.TinhTrang == 2)
-                                                  {
-                                                       <td>Đang giao hàng</td>
-                                                  }
-                                                  @if (item.TinhTrang == 3)
-                                                  {
-                                                       <td>Đã hoàn thành</td>
-                                                  }
-                                                  @if (item.TinhTrang == 4)
-                                                  {
-                                                       <td>Đã hủy</td>
-                                                  }
-                                                  <td><a class="btn btn-success" data-toggle="modal" id="viewbtn4" data-target="#showmodal4">Chi tiết</a></td>
-                                                  @*<td><a class="btn btn-danger" data-target="#showmodal2">Đã nhận được hàng</a></td>*@
-
-                                             </tr>
-                                        }
-                                   </tbody>
-                              </table>
-                              <div id="showmodal4" class="modal fade" role="dialog">
-                                   <div class="modal-dialog modal-dialog-centered modal-xl" role="document" style="display: flex; align-items: center; height: 100%; margin-bottom: 0; margin-top: 0">
-
-                                   </div>
-                              </div>
-                              <script>
-                          $("#showtable4").on("click", "#viewbtn4", function () {
-                           var id = $(this).closest("tr").find("td").eq(0).html();
-                           $.ajax({
-                             url: "@Url.Action("MyOrderDetail", "Home")",
-                              data: { id: id },
-                                success: function (data) {
-                                $("#showmodal4 .modal-dialog").html(data);
-                    /* $("#showmodal").modal('show')*/
-                                 }
-                            });
-                          });
-                              </script>
-                         </div>
-                    </div>
-
-               </div>
-          </div>
-
-     </div>
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+    </aside>
+    <!-- /.control-sidebar -->
 </div>
+<!-- ./wrapper -->
+<!-- jQuery -->
+<script src="~/Admin/plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="~/Admin/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- DataTables  & Plugins -->
+<script src="~/Admin/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="~/Admin/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="~/Admin/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="~/Admin/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="../../Admin/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="~/Admin/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="~/Admin/plugins/jszip/jszip.min.js"></script>
+<script src="~/Admin/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="~/Admin/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="~/Admin/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="~/Admin/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="~/Admin/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+<!-- AdminLTE App -->
+<script src="~/Admin/dist/js/adminlte.min.js"></script>
+
+<!-- Page specific script -->
+<script>
+    $(function () {
+        $("#example1").DataTable({
+            "responsive": true, "lengthChange": false, "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    });
+</script>

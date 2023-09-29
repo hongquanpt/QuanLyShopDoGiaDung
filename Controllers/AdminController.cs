@@ -73,9 +73,45 @@ namespace ShopBanDoGiaDung.Controllers
                     status = false,
                     message = "Không tìm thấy tài khoản"
                 });
-            }
+            }            
+        }
+        public IActionResult SuaSP(int ma) {
+            var sp = obj.Sanphams.Find(ma);
+            var dshang = obj.Hangsanxuats.ToList();
+            var dsdm = obj.Danhmucsanphams.ToList();
+            ViewBag.sp = sp;
+            if(sp != null)
+            {
+                var dm = obj.Danhmucsanphams.Find(sp.MaDanhMuc);
+                var hang = obj.Hangsanxuats.Find(sp.MaHang);
+                if(dm != null && hang!=null)
+                {
+                    ViewBag.tendm = dm.TenDanhMuc;
+                    ViewBag.tenhang = hang.TenHang;
+                    ViewBag.dsdm = dsdm;
+                    ViewBag.dshang = dshang;
+                    return View();
+                }
+                else
+                {
+                    // Xử lý trường hợp tk là null (nếu cần)
+                    return Json(new
+                    {
+                        status = false,
+                        message = "Không tìm thấy tài khoản"
+                    });
+                }
 
-            
+            }
+             else
+            {
+                // Xử lý trường hợp tk là null (nếu cần)
+                return Json(new
+                {
+                    status = false,
+                    message = "Không tìm thấy tài khoản"
+                });
+            }
         }
         #endregion
         #region Quản lý hãng
@@ -89,11 +125,22 @@ namespace ShopBanDoGiaDung.Controllers
         {
             Models.Hangsanxuat hsx= new Models.Hangsanxuat();
             hsx.TenHang = ten;
-            obj.Add(hsx);
+            obj.Hangsanxuats.Add(hsx);
             obj.SaveChanges();
             return Json(new 
             { 
                 status = true 
+            });
+        }
+        public IActionResult XoaHang(int ma)
+        {
+            Models.Hangsanxuat hsx = new Models.Hangsanxuat();
+            hsx = obj.Hangsanxuats.Find(ma);
+            obj.Hangsanxuats.Remove(hsx);
+            obj.SaveChanges();
+            return Json(new
+            {
+                status = true
             });
         }
         #endregion
@@ -103,6 +150,17 @@ namespace ShopBanDoGiaDung.Controllers
             var model = obj.Danhmucsanphams.ToList();
             ViewBag.ds= model;
             return View();
+        }
+        public IActionResult XoaDM(int ma)
+        {
+            Models.Danhmucsanpham hsx = new Danhmucsanpham();
+            hsx = obj.Danhmucsanphams.Find(ma);
+            obj.Danhmucsanphams.Remove(hsx);
+            obj.SaveChanges();
+            return Json(new
+            {
+                status = true
+            });
         }
         #endregion
         #region Quản lý đơn hàng

@@ -4,191 +4,162 @@
     var dstk = (List<ShopBanDoGiaDung.Models.Taikhoan>)ViewBag.ds;
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Quản lý tài khoản khách hàng</title>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="~/Admin/plugins/fontawesome-free/css/all.min.css">
-    <!-- DataTables -->
-    <link rel="stylesheet" href="~/Admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" href="~/Admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
-    <link rel="stylesheet" href="~/Admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
-    <!-- Theme style -->
-    <link rel="stylesheet" href="~/Admin/dist/css/adminlte.min.css">
-</head>
-<body class="hold-transition sidebar-mini">
-    <div class="wrapper">
-        <!-- SidebarSearch Form -->
-        <div class="form-inline">
-            <div class="input-group" data-widget="sidebar-search">
-                <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
-                <div class="input-group-append">
-                    <button class="btn btn-sidebar">
-                        <i class="fas fa-search fa-fw"></i>
+
+
+<div class="wrapper">
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Quản lý tài khoản khách hàng</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <table id="example1" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Mã TK</th>
+                                            <th>Họ tên</th>
+                                            <th>Ngày sinh</th>
+                                            <th>Địa chỉ</th>
+                                            <th>Số điện thoại</th>
+                                            <th>Email</th>
+                                            <th>Hành động</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in dstk)
+                                        {
+                                            <tr>
+                                                <td>@item.MaTaiKhoan</td>
+                                                <td>@item.Ten</td>
+                                                <td>@item.NgaySinh</td>
+                                                <td>@item.DiaChi</td>
+                                                <td>@item.Sdt</td>
+                                                <td>@item.Email</td>
+                                                <td>
+                                                    @*<a href="#" class="settings" title="Settings" data-toggle="modal" data-target="#sua"><i class="material-icons">&#xE8B8;</i></a>*@
+                                                    <a href="#" class="delete" title="Delete" data-toggle="modal" data-id="@item.MaTaiKhoan" onclick="XoaTK(@item.MaTaiKhoan)"><i class="material-icons">&#xE5C9;</i></a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>Mã TK</th>
+                                            <th>Họ tên</th>
+                                            <th>Ngày sinh</th>
+                                            <th>Địa chỉ</th>
+                                            <th>Số điện thoại</th>
+                                            <th>Email</th>
+                                            <th>Hành động</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- Đoạn mã HTML cho modal xác nhận xóa -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">Bạn có chắc chắn muốn xóa tài khoản?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-            </div>
-        </div>
-
-
-        <!-- Content Wrapper. Contains page content -->
-        <div class="content-wrapper">
-            <!-- Content Header (Page header) -->
-
-            <!-- Main content -->
-            <section class="content">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-12">
-
-
-                            <div class="card">
-                                <div class="card-header">
-                                    <h3 class="card-title">Quản lý tài khoản khách hàng</h3>
-                                </div>
-                                <!-- /.card-header -->
-                                <div class="card-body">
-                                    <table id="example1" class="table table-bordered table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>Mã TK</th>
-                                                <th>Họ tên</th>
-                                                <th>Ngày sinh</th>
-                                                <th>Địa chỉ</th>
-                                                <th>Số điện thoại</th>
-                                                <th>Email</th>
-                                                <th>Hành động</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var item in dstk)
-                                            {
-                                                <tr>
-                                                    <td>@item.MaTaiKhoan</td>
-                                                    <td>@item.Ten</td>
-                                                    <td>@item.NgaySinh</td>
-                                                    <td>@item.DiaChi</td>
-                                                    <td>@item.Sdt</td>
-                                                    <td>@item.Email</td>
-                                                    <td>
-                                                        @*<a href="#" class="settings" title="Settings" data-toggle="modal" data-target="#sua"><i class="material-icons">&#xE8B8;</i></a>*@
-                                                        <a href="#" class="delete" title="Delete" data-toggle="modal" data-id="@item.MaTaiKhoan" onclick="XoaTK(@item.MaTaiKhoan)"><i class="material-icons">&#xE5C9;</i></a>
-                                                    </td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <th>Mã TK</th>
-                                                <th>Họ tên</th>
-                                                <th>Ngày sinh</th>
-                                                <th>Địa chỉ</th>
-                                                <th>Số điện thoại</th>
-                                                <th>Email</th>
-                                                <th>Hành động</th>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                  
-                                </div>
-                                <!-- /.card-body -->
-                            </div>
-                            <!-- /.card -->
-                        </div>
-                        <!-- /.col -->
-                    </div>
-                    <!-- /.row -->
-                </div>
-                <!-- /.container-fluid -->
-            </section>
-            <!-- /.content -->
-        </div>
-        <!-- Đoạn mã HTML cho modal xác nhận xóa -->
-        <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="confirmDeleteModalLabel">Bạn có chắc chắn muốn xóa tài khoản?</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-footer">         
-                        <button type="button" class="btn btn-primary" id="confirmDeleteButton">Xóa</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                    </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="confirmDeleteButton">Xóa</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
                 </div>
             </div>
         </div>
-
-        <!-- Đoạn mã JavaScript để xử lý sự kiện xóa -->
-        <script>
-            function XoaTK(ma) {
-                var matk = parseInt(ma);
-
-                // Hiển thị modal xác nhận xóa
-                $('#confirmDeleteModal').modal('show');
-
-                // Xử lý sự kiện khi người dùng xác nhận xóa
-                $('#confirmDeleteButton').on('click', function () {
-                    $.ajax({
-                        url: '/Admin/XoaTK',
-                        data: {
-                            matk: matk
-                        },
-                        type: 'POST',
-                        dataType: 'json',
-                        success: function (res) {
-                            if (res.status == true) {
-                                // Đóng modal sau khi xóa thành công
-                                $('#confirmDeleteModal').modal('hide');                      
-                                 window.location = '@Url.Action("QuanLyTK","Admin")';
-                            }
-                        }
-                    });
-                });
-            }
-        </script>
-
-
-        <!-- Control Sidebar -->
-        <aside class="control-sidebar control-sidebar-dark">
-            <!-- Control sidebar content goes here -->
-        </aside>
-        <!-- /.control-sidebar -->
     </div>
-    <!-- ./wrapper -->
-    <!-- jQuery -->
-    <script src="~/Admin/plugins/jquery/jquery.min.js"></script>
-    <!-- Bootstrap 4 -->
-    <script src="~/Admin/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <!-- DataTables  & Plugins -->
-    <script src="~/Admin/plugins/datatables/jquery.dataTables.min.js"></script>
-    <script src="~/Admin/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-    <script src="~/Admin/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="~/Admin/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-    <script src="../../Admin/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="~/Admin/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-    <script src="~/Admin/plugins/jszip/jszip.min.js"></script>
-    <script src="~/Admin/plugins/pdfmake/pdfmake.min.js"></script>
-    <script src="~/Admin/plugins/pdfmake/vfs_fonts.js"></script>
-    <script src="~/Admin/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
-    <script src="~/Admin/plugins/datatables-buttons/js/buttons.print.min.js"></script>
-    <script src="~/Admin/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
-    <!-- AdminLTE App -->
-    <script src="~/Admin/dist/js/adminlte.min.js"></script>
 
-    <!-- Page specific script -->
+    <!-- Đoạn mã JavaScript để xử lý sự kiện xóa -->
     <script>
-        $(function () {
-            $("#example1").DataTable({
-                "responsive": true, "lengthChange": false, "autoWidth": false,
-                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-        });
+        function XoaTK(ma) {
+            var matk = parseInt(ma);
+
+            // Hiển thị modal xác nhận xóa
+            $('#confirmDeleteModal').modal('show');
+
+            // Xử lý sự kiện khi người dùng xác nhận xóa
+            $('#confirmDeleteButton').on('click', function () {
+                $.ajax({
+                    url: '/Admin/XoaTK',
+                    data: {
+                        matk: matk
+                    },
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function (res) {
+                        if (res.status == true) {
+                            // Đóng modal sau khi xóa thành công
+                            $('#confirmDeleteModal').modal('hide');
+                            window.location = '@Url.Action("QuanLyTK","Admin")';
+                        }
+                    }
+                });
+            });
+        }
     </script>
-</body>
-</html>
+
+
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+    </aside>
+    <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+<!-- jQuery -->
+<script src="~/Admin/plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="~/Admin/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- DataTables  & Plugins -->
+<script src="~/Admin/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="~/Admin/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="~/Admin/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="~/Admin/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="../../Admin/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="~/Admin/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="~/Admin/plugins/jszip/jszip.min.js"></script>
+<script src="~/Admin/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="~/Admin/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="~/Admin/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="~/Admin/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="~/Admin/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+<!-- AdminLTE App -->
+<script src="~/Admin/dist/js/adminlte.min.js"></script>
+
+<!-- Page specific script -->
+<script>
+    $(function () {
+        $("#example1").DataTable({
+            "responsive": true, "lengthChange": false, "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    });
+</script>
