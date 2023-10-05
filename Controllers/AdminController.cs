@@ -2,13 +2,18 @@
 using ShopBanDoGiaDung.Data;
 using System;
 using ShopBanDoGiaDung.Models;
+using Microsoft.AspNetCore.Hosting;
 
 namespace ShopBanDoGiaDung.Controllers
 
 {
     public class AdminController : Controller
     {
-        OnlineShopContext obj = new OnlineShopContext();
+        private readonly OnlineShopContext obj;
+        public AdminController (OnlineShopContext obj)
+        {
+            this.obj = obj;
+        }
         public IActionResult Index()
         {
             return View();
@@ -53,6 +58,119 @@ namespace ShopBanDoGiaDung.Controllers
             ViewBag.ds = model;
             return View();  
         }
+        public IActionResult ThemSP()
+        {
+            var dsdm = obj.Danhmucsanphams.ToList();
+            var dshang = obj.Hangsanxuats.ToList();
+            ViewBag.dsdm = dsdm;
+            ViewBag.dshang = dshang;
+            return View();
+        }
+        [HttpPost]
+        public ActionResult ThemSP(Models.Sanpham sp, IFormFile image1, IFormFile image2, IFormFile image3, IFormFile image4, IFormFile image5, IFormFile image6, string DanhMuc, string Hang)
+        {
+            var spmoi = new Models.Sanpham();
+            spmoi.TenSp = sp.TenSp;
+            spmoi.MoTa = sp.MoTa;
+            spmoi.GiaTien = sp.GiaTien;
+            spmoi.SoLuongTrongKho = sp.SoLuongTrongKho;
+            spmoi.SoLuongDaBan = 0;
+
+            if (image1 != null && image1.Length > 0)
+            {
+                string fileName = Path.GetFileName(image1.FileName);
+                string uploadPath = Path.Combine("wwwroot", "Admin", "images", fileName);
+
+                using (var fileStream = new FileStream(uploadPath, FileMode.Create))
+                {
+                    image1.CopyTo(fileStream);
+                }
+
+                spmoi.Anh1 = fileName;
+            }
+
+            if (image2 != null && image2.Length > 0)
+            {
+                string fileName = Path.GetFileName(image2.FileName);
+                string uploadPath = Path.Combine("wwwroot", "Admin", "images", fileName);
+
+                using (var fileStream = new FileStream(uploadPath, FileMode.Create))
+                {
+                    image2.CopyTo(fileStream);
+                }
+
+                spmoi.Anh2 = fileName;
+            }
+
+            if (image3 != null && image3.Length > 0)
+            {
+                string fileName = Path.GetFileName(image3.FileName);
+                string uploadPath = Path.Combine("wwwroot", "Admin", "images", fileName);
+
+                using (var fileStream = new FileStream(uploadPath, FileMode.Create))
+                {
+                    image3.CopyTo(fileStream);
+                }
+
+                spmoi.Anh3 = fileName;
+            }
+            if (image4 != null && image4.Length > 0)
+            {
+                string fileName = Path.GetFileName(image4.FileName);
+                string uploadPath = Path.Combine("wwwroot", "Admin", "images", fileName);
+
+                using (var fileStream = new FileStream(uploadPath, FileMode.Create))
+                {
+                    image4.CopyTo(fileStream);
+                }
+
+                spmoi.Anh4 = fileName;
+            }
+            if (image5 != null && image5.Length > 0)
+            {
+                string fileName = Path.GetFileName(image5.FileName);
+                string uploadPath = Path.Combine("wwwroot", "Admin", "images", fileName);
+
+                using (var fileStream = new FileStream(uploadPath, FileMode.Create))
+                {
+                    image5.CopyTo(fileStream);
+                }
+
+                spmoi.Anh5 = fileName;
+            }
+            if (image6 != null && image6.Length > 0)
+            {
+                string fileName = Path.GetFileName(image6.FileName);
+                string uploadPath = Path.Combine("wwwroot", "Admin", "images", fileName);
+
+                using (var fileStream = new FileStream(uploadPath, FileMode.Create))
+                {
+                    image6.CopyTo(fileStream);
+                }
+
+                spmoi.Anh6 = fileName;
+            }
+            // Lặp lại cho image3, image4, image5, và image6
+
+            var dm = obj.Danhmucsanphams.FirstOrDefault(s => s.TenDanhMuc == DanhMuc);
+            if (dm != null)
+            {
+                spmoi.MaDanhMuc = dm.MaDanhMuc;
+            }
+
+            var hang = obj.Hangsanxuats.FirstOrDefault(s => s.TenHang == Hang);
+            if (hang != null)
+            {
+                spmoi.MaHang = hang.MaHang;
+            }
+
+            obj.Sanphams.Add(spmoi);
+            obj.SaveChanges();
+
+            return RedirectToAction("QuanLySP");
+        }
+
+
         public IActionResult XoaSP(int maSP)
         {
             var tk = obj.Sanphams.Find(maSP);
@@ -71,7 +189,7 @@ namespace ShopBanDoGiaDung.Controllers
                 return Json(new
                 {
                     status = false,
-                    message = "Không tìm thấy tài khoản"
+                    message = "Không tìm thấy sản phẩm"
                 });
             }            
         }
@@ -98,7 +216,7 @@ namespace ShopBanDoGiaDung.Controllers
                     return Json(new
                     {
                         status = false,
-                        message = "Không tìm thấy tài khoản"
+                        message = "Không tìm thấy sản phẩm"
                     });
                 }
 
@@ -109,10 +227,101 @@ namespace ShopBanDoGiaDung.Controllers
                 return Json(new
                 {
                     status = false,
-                    message = "Không tìm thấy tài khoản"
+                    message = "Không tìm thấy sản phẩm"
                 });
             }
         }
+       
+        [HttpPost]
+        public async Task<IActionResult> SuaSP(Models.Sanpham sp, IFormFile image1, IFormFile image2, IFormFile image3, IFormFile image4, IFormFile image5, IFormFile image6, string DanhMuc, string Hang)
+        {
+            var spmoi = obj.Sanphams.Find(sp.MaSp);
+            spmoi.TenSp = sp.TenSp;
+            spmoi.MoTa = sp.MoTa;
+            spmoi.GiaTien = sp.GiaTien;
+            spmoi.SoLuongTrongKho = sp.SoLuongTrongKho;
+            spmoi.SoLuongDaBan = sp.SoLuongDaBan;
+
+            // Đường dẫn đến thư mục lưu trữ tệp ảnh
+            string currentDirectory = System.IO.Directory.GetCurrentDirectory();
+            string uploadPath = Path.Combine(currentDirectory, "wwwroot", "Admin", "images");
+
+
+            // Hàm để lưu tệp ảnh
+            async Task SaveImage(IFormFile image, string imageName, string propertyName)
+            {
+                if (image != null)
+                {
+                    string imagePath = Path.Combine(uploadPath, imageName);
+                    using (var stream = new FileStream(imagePath, FileMode.Create))
+                    {
+                        await image.CopyToAsync(stream);
+                    }
+                    // Gán tên tệp ảnh vào thuộc tính tương ứng
+                    typeof(Models.Sanpham).GetProperty(propertyName)?.SetValue(spmoi, imageName);
+                }
+                else
+                {
+                    // Giữ nguyên ảnh cũ nếu không có ảnh mới
+                    typeof(Models.Sanpham).GetProperty(propertyName)?.SetValue(spmoi, typeof(Models.Sanpham).GetProperty(propertyName)?.GetValue(sp));
+                }
+            }
+
+            // Lưu từng ảnh
+<<<<<<< HEAD
+            if (spmoi.Anh1 != null)
+            {
+                await SaveImage(image1, spmoi.Anh1, nameof(spmoi.Anh1));
+            }
+
+            if (spmoi.Anh2 != null)
+            {
+                await SaveImage(image2, spmoi.Anh2, nameof(spmoi.Anh2));
+            }
+            if (spmoi.Anh3 != null)
+            {
+                await SaveImage(image3, spmoi.Anh3, nameof(spmoi.Anh3));
+            }
+
+            if (spmoi.Anh4 != null)
+            {
+                await SaveImage(image4, spmoi.Anh4, nameof(spmoi.Anh4));
+            }
+            if (spmoi.Anh5 != null)
+            {
+                await SaveImage(image5, spmoi.Anh5, nameof(spmoi.Anh5));
+            }
+
+            if (spmoi.Anh6 != null)
+            {
+                await SaveImage(image6, spmoi.Anh6, nameof(spmoi.Anh6));
+            }
+=======
+            await SaveImage(image1, spmoi.Anh1, nameof(spmoi.Anh1));
+            await SaveImage(image2, spmoi.Anh2, nameof(spmoi.Anh2));
+            await SaveImage(image3, spmoi.Anh3, nameof(spmoi.Anh3));
+            await SaveImage(image4, spmoi.Anh4, nameof(spmoi.Anh4));
+            await SaveImage(image5, spmoi.Anh5, nameof(spmoi.Anh5));
+            await SaveImage(image6, spmoi.Anh6, nameof(spmoi.Anh6));
+
+>>>>>>> 62fbb949830bb0cd6d136a2d7a38b3cb76efa26f
+            // Tìm danh mục và hãng dựa trên tên
+            var dm = obj.Danhmucsanphams.FirstOrDefault(s => s.TenDanhMuc == DanhMuc);
+            if (dm != null)
+            {
+                spmoi.MaDanhMuc = dm.MaDanhMuc;
+            }
+
+            var hang = obj.Hangsanxuats.FirstOrDefault(s => s.TenHang == Hang);
+            if (hang != null)
+            {
+                spmoi.MaHang = hang.MaHang;
+            }
+
+            obj.SaveChanges();
+            return RedirectToAction("QuanLySP");
+        }
+
         #endregion
         #region Quản lý hãng
         public IActionResult QuanLyHang()
@@ -121,10 +330,11 @@ namespace ShopBanDoGiaDung.Controllers
             ViewBag.ds = model;
             return View();
         }
-        public IActionResult ThemHang( string ten)
+        [HttpPost]
+        public IActionResult ThemHang( string tenhang)
         {
             Models.Hangsanxuat hsx= new Models.Hangsanxuat();
-            hsx.TenHang = ten;
+            hsx.TenHang = tenhang;
             obj.Hangsanxuats.Add(hsx);
             obj.SaveChanges();
             return Json(new 

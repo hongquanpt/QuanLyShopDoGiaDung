@@ -4,7 +4,7 @@
     var dstk = (List<ShopBanDoGiaDung.Models.Hangsanxuat>)ViewBag.ds;
 }
 
-<div class="wrapper">
+<div>
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
@@ -39,8 +39,8 @@
                                                 <td>@item.MaHang</td>
                                                 <td>@item.TenHang</td>
                                                 <td>
-                                                    <a href="#" class="settings" title="Settings" data-toggle="modal" id="viewbtn" data-target="#sua"><i class="material-icons">&#xE8B8;</i></a>
-                                                    <a href="#" class="delete" title="Delete" data-toggle="modal" onclick="XoaHang(@item.MaHang)"><i class="material-icons">&#xE5C9;</i></a>
+                                                    <a href="#" class="btn btn-app" title="Settings" data-toggle="modal" id="viewbtn" data-target="#sua"><i class="fas fa-edit"></i>Edit</a>
+                                                    <a href="#" class="btn btn-app" title="Delete" data-toggle="modal" onclick="XoaHang(@item.MaHang)"><i class="material-icons"></i>Delete</a>
                                                 </td>
                                             </tr>
                                         }
@@ -57,7 +57,7 @@
                             </div>
                             <!-- /.card-body -->
                             <div class="card-footer">
-                                <a type="button" class="btn btn-primary" href="#" data-dismiss="modal" id="confirmThem">Thêm hãng mới</a>
+                                <button class="btn btn-primary"  data-dismiss="modal" id="confirmThem" onclick="Them()">Thêm hãng mới</button>
                                 @*<a href="#" class="btn btn-secondary" style="display: none;"><i class="material-icons">&#xE24D;</i> <span>Xuất Excel</span></a>*@
                             </div>
                         </div>
@@ -69,29 +69,52 @@
             </div>
             <!-- /.container-fluid -->
         </section>
-        <!-- /.content -->    
-        <div id="frmThemHang" aria-hidden="true" tabindex="-1" role="dialog">
+        <!-- /.content -->
+        <form id="frmThemHang" method="post" aria-hidden="true" tabindex="-1" role="dialog" style="display: none;">
             <div class="card-body">
                 <div class="form-group">
                     <label for="exampleInputPassword1">Nhập tên hãng</label>
                     <input type="text" class="form-control" id="tenhang" placeholder="Nhập tên hãng mới tại đây">
                 </div>
                 <div class="card-footer">
-                    <a type="button" class="btn btn-primary" href="#" data-dismiss="modal" id="confirm">Thêm hãng</a>
-                    <button type="button" class="btn btn-default" data-dismiss="modal" @*data-toggle="modal" data-target="#error"*@>Hủy bỏ</button>
+                    <a type="button" class="btn btn-primary" data-dismiss="modal" id="confirm" >Thêm hãng</a>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" >Hủy bỏ</button>
                 </div>
             </div>
             <!-- /.card-body -->
-        </div>
-        <script>
-            $('#confirmThem').on('click', function () {
-                $('#frmThemHang').modal('show');
-            }
-        </script>
+        </form>
     </div>
     </div>
 
 
+<script>
+    function Them() {
+        var form = document.getElementById("frmThemHang");
+        form.setAttribute("aria-hidden", "false");
+        form.setAttribute("tabindex", "0");
+        form.style.display = "block";
+        $('#confirm').on('click', function () {
+            $.ajax({
+                url: '/Admin/ThemHang',
+                data: {
+                    tenhang: tenhang
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function (res) {
+                    if (res.status == true) {
+                        // Đóng modal sau khi xóa thành công
+                        form.setAttribute("aria-hidden", "true");
+                        form.setAttribute("tabindex", "-1");
+                        form.style.display = "none";
+                        window.location = '@Url.Action("QuanLyHang","Admin")';
+                    }
+                }
+            });
+        });
+    }
+       
+</script>
     <!-- Đoạn mã HTML cho modal xác nhận xóa -->
     <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
