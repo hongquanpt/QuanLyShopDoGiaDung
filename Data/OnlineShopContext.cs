@@ -39,7 +39,7 @@ public partial class OnlineShopContext : DbContext
     public virtual DbSet<Vanchuyen> Vanchuyens { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Data Source=quan\\hq;Initial Catalog=OnlineShop;Integrated Security=True;Encrypt=false;Trusted_Connection=True;TrustServerCertificate=True;");
+        => optionsBuilder.UseSqlServer("Data Source=HN-TreanT;Initial Catalog=OnlineShop;Integrated Security=True;Persist Security Info=False;Pooling=False;Encrypt=False;App=EntityFramework");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
