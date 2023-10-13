@@ -268,7 +268,7 @@ namespace ShopBanDoGiaDung.Controllers
             }
 
             // Lưu từng ảnh
-<<<<<<< HEAD
+
             if (spmoi.Anh1 != null)
             {
                 await SaveImage(image1, spmoi.Anh1, nameof(spmoi.Anh1));
@@ -296,15 +296,6 @@ namespace ShopBanDoGiaDung.Controllers
             {
                 await SaveImage(image6, spmoi.Anh6, nameof(spmoi.Anh6));
             }
-=======
-            await SaveImage(image1, spmoi.Anh1, nameof(spmoi.Anh1));
-            await SaveImage(image2, spmoi.Anh2, nameof(spmoi.Anh2));
-            await SaveImage(image3, spmoi.Anh3, nameof(spmoi.Anh3));
-            await SaveImage(image4, spmoi.Anh4, nameof(spmoi.Anh4));
-            await SaveImage(image5, spmoi.Anh5, nameof(spmoi.Anh5));
-            await SaveImage(image6, spmoi.Anh6, nameof(spmoi.Anh6));
-
->>>>>>> 62fbb949830bb0cd6d136a2d7a38b3cb76efa26f
             // Tìm danh mục và hãng dựa trên tên
             var dm = obj.Danhmucsanphams.FirstOrDefault(s => s.TenDanhMuc == DanhMuc);
             if (dm != null)
