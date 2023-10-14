@@ -3,22 +3,19 @@
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
     var dstk = (List<ShopBanDoGiaDung.Models.Taikhoan>)ViewBag.ds;
 }
-<!-- Content Wrapper. Contains page content -->
+@* <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <!-- Main content -->
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
+<!-- Content Header (Page header) -->
+<!-- Main content -->
+<section class="content">
+<div class="container-fluid">
+<div class="row">
+<div class="col-12">
 
 
-<<<<<<< HEAD
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Quản lý tài khoản khách hàng</h3>
-=======
-
+<div class="card">
+<div class="card-header">
+<h3 class="card-title">Quản lý tài khoản khách hàng</h3> *@
 <div class="wrapper">
 
     <!-- Content Wrapper. Contains page content -->
@@ -60,8 +57,11 @@
                                                 <td>@item.Sdt</td>
                                                 <td>@item.Email</td>
                                                 <td>
-                                                    @*<a href="#" class="settings" title="Settings" data-toggle="modal" data-target="#sua"><i class="material-icons">&#xE8B8;</i></a>*@
-                                                    <a href="#" class="btn btn-app" data-id="@item.MaTaiKhoan" onclick="XoaTK(@item.MaTaiKhoan)"><i class="material-icons"></i>Delete</a>
+                                                    @*<a href="#" class="settings" title="Settings" data-toggle="modal"
+                                                data-target="#sua"><i class="material-icons">&#xE8B8;</i></a>*@
+                                                    <a href="#" class="btn btn-app" data-id="@item.MaTaiKhoan"
+                                                        onclick="XoaTK(@item.MaTaiKhoan)"><i
+                                                            class="material-icons"></i>Delete</a>
                                                 </td>
                                             </tr>
                                         }
@@ -81,7 +81,6 @@
 
                             </div>
                             <!-- /.card-body -->
->>>>>>> 62fbb949830bb0cd6d136a2d7a38b3cb76efa26f
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
@@ -108,8 +107,11 @@
                                             <td>@item.Sdt</td>
                                             <td>@item.Email</td>
                                             <td>
-                                                @*<a href="#" class="settings" title="Settings" data-toggle="modal" data-target="#sua"><i class="material-icons">&#xE8B8;</i></a>*@
-                                                <a href="#" class="btn btn-app" data-id="@item.MaTaiKhoan" onclick="XoaTK(@item.MaTaiKhoan)"><i class="material-icons"></i>Delete</a>
+                                                @*<a href="#" class="settings" title="Settings" data-toggle="modal"
+                                            data-target="#sua"><i class="material-icons">&#xE8B8;</i></a>*@
+                                                <a href="#" class="btn btn-app" data-id="@item.MaTaiKhoan"
+                                                    onclick="XoaTK(@item.MaTaiKhoan)"><i
+                                                        class="material-icons"></i>Delete</a>
                                             </td>
                                         </tr>
                                     }
@@ -135,13 +137,14 @@
                 <!-- /.col -->
             </div>
             <!-- /.row -->
-        </div>
-        <!-- /.container-fluid -->
+    </div>
+    <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
 </div>
 <!-- Đoạn mã HTML cho modal xác nhận xóa -->
-<div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -179,7 +182,7 @@
                     if (res.status == true) {
                         // Đóng modal sau khi xóa thành công
                         $('#confirmDeleteModal').modal('hide');
-                        window.location = '@Url.Action("QuanLyTK","Admin")';
+                        window.location = '@Url.Action("QuanLyTK", "Admin")';
                     }
                 }
             });
