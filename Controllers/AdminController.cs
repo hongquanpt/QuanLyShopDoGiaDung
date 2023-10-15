@@ -333,15 +333,29 @@ namespace ShopBanDoGiaDung.Controllers
                 status = true 
             });
         }
-        public IActionResult XoaHang(int ma)
+        public IActionResult XoaHang(int matk)
         {
             Models.Hangsanxuat hsx = new Models.Hangsanxuat();
-            hsx = obj.Hangsanxuats.Find(ma);
+            hsx = obj.Hangsanxuats.Find(matk);
             obj.Hangsanxuats.Remove(hsx);
             obj.SaveChanges();
             return Json(new
             {
                 status = true
+            });
+        }
+        public IActionResult SuaHang(int id) { 
+            var model= obj.Hangsanxuats.Find(id);
+            return View(model); 
+        }
+        [HttpPost]
+        public IActionResult SuaHang(int id, string name) {
+            var hsx = obj.Hangsanxuats.Find(id);
+            hsx.TenHang=name;
+            obj.SaveChanges();
+            return Json(new 
+            { 
+                status = true 
             });
         }
         #endregion
@@ -352,15 +366,26 @@ namespace ShopBanDoGiaDung.Controllers
             ViewBag.ds= model;
             return View();
         }
-        public IActionResult XoaDM(int ma)
+        public IActionResult XoaDM(int madm)
         {
             Models.Danhmucsanpham hsx = new Danhmucsanpham();
-            hsx = obj.Danhmucsanphams.Find(ma);
+            hsx = obj.Danhmucsanphams.Find(madm);
             obj.Danhmucsanphams.Remove(hsx);
             obj.SaveChanges();
             return Json(new
             {
                 status = true
+            });
+        }
+        public IActionResult ThemDM(string tendm)
+        {
+            Models.Danhmucsanpham dm = new Danhmucsanpham();
+            dm.TenDanhMuc = tendm;
+            obj.Danhmucsanphams.Add(dm);
+            obj.SaveChanges();
+            return Json(new
+            {
+                status= true
             });
         }
         #endregion
@@ -457,6 +482,26 @@ namespace ShopBanDoGiaDung.Controllers
             ViewBag.dsdahoanthanh = ds4;
             ViewBag.dsdahuy = ds5;
             return View();
+        }
+        public IActionResult XacNhanDH(int madh)
+        {
+            var dh = obj.Donhangs.Find(madh);
+            dh.TinhTrang = 2;
+            obj.SaveChanges();
+            return Json(new
+            {
+                status=true
+            });
+        }
+        public IActionResult VanChuyenDH(int madh)
+        {
+            var dh=obj.Donhangs.Find( madh);
+            dh.TinhTrang = 3;
+            obj.SaveChanges();
+            return Json(new 
+            { 
+                status=true 
+            });
         }
         #endregion
         #endregion

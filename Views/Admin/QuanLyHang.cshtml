@@ -70,18 +70,17 @@
             <!-- /.container-fluid -->
         </section>
         <!-- /.content -->
-        <form id="frmThemHang" method="post" aria-hidden="true" tabindex="-1" role="dialog" style="display: none;">
+        <form id="frmThemHang" method="post" aria-hidden="true" tabindex="-1" role="dialog" style="display: none;" enctype="multipart/form-data">
             <div class="card-body">
                 <div class="form-group">
                     <label for="exampleInputPassword1">Nhập tên hãng</label>
                     <input type="text" class="form-control" id="tenhang" placeholder="Nhập tên hãng mới tại đây">
                 </div>
                 <div class="card-footer">
-                    <a type="button" class="btn btn-primary" data-dismiss="modal" id="confirm" >Thêm hãng</a>
-                    <button type="button" class="btn btn-default" data-dismiss="modal" >Hủy bỏ</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="confirm" >Thêm hãng</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="cancel">Hủy bỏ</button>
                 </div>
             </div>
-            <!-- /.card-body -->
         </form>
     </div>
     </div>
@@ -94,27 +93,38 @@
         form.setAttribute("tabindex", "0");
         form.style.display = "block";
         $('#confirm').on('click', function () {
-            $.ajax({
-                url: '/Admin/ThemHang',
-                data: {
-                    tenhang: tenhang
-                },
-                type: 'POST',
-                dataType: 'json',
-                success: function (res) {
-                    if (res.status == true) {
-                        // Đóng modal sau khi xóa thành công
-                        form.setAttribute("aria-hidden", "true");
-                        form.setAttribute("tabindex", "-1");
-                        form.style.display = "none";
-                        window.location = '@Url.Action("QuanLyHang","Admin")';
+            var tenhang = $('#tenhang').val().toString();
+            if (tenhang.trim() === "") {
+                // Kiểm tra nếu trường TenHang rỗng
+                alert("Bạn chưa nhập tên hãng.");
+            } else {
+                // Nếu trường TenHang không rỗng, tiến hành gửi yêu cầu AJAX
+                $.ajax({
+                    url: '/Admin/ThemHang',
+                    data: {
+                        tenhang: tenhang
+                    },
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function (res) {
+                        if (res.status == true) {
+                            // Đóng modal sau khi xóa thành công
+                            form.setAttribute("aria-hidden", "true");
+                            form.setAttribute("tabindex", "-1");
+                            form.style.display = "none";
+                        }
                     }
-                }
-            });
+                });
+            }
+        });
+        $('#cancel').on('click', function () {
+            form.setAttribute("aria-hidden", "true");
+            form.setAttribute("tabindex", "-1");
+            form.style.display = "none";
         });
     }
-       
 </script>
+
     <!-- Đoạn mã HTML cho modal xác nhận xóa -->
     <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
