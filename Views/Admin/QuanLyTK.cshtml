@@ -83,53 +83,7 @@
                             <!-- /.card-body -->
                         </div>
                         <!-- /.card-header -->
-                        <div class="card-body">
-                            <table id="example1" class="table table-bordered table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Mã TK</th>
-                                        <th>Họ tên</th>
-                                        <th>Ngày sinh</th>
-                                        <th>Địa chỉ</th>
-                                        <th>Số điện thoại</th>
-                                        <th>Email</th>
-                                        <th>Hành động</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in dstk)
-                                    {
-                                        <tr>
-                                            <td>@item.MaTaiKhoan</td>
-                                            <td>@item.Ten</td>
-                                            <td>@item.NgaySinh</td>
-                                            <td>@item.DiaChi</td>
-                                            <td>@item.Sdt</td>
-                                            <td>@item.Email</td>
-                                            <td>
-                                                @*<a href="#" class="settings" title="Settings" data-toggle="modal"
-                                            data-target="#sua"><i class="material-icons">&#xE8B8;</i></a>*@
-                                                <a href="#" class="btn btn-app" data-id="@item.MaTaiKhoan"
-                                                    onclick="XoaTK(@item.MaTaiKhoan)"><i
-                                                        class="material-icons"></i>Delete</a>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th>Mã TK</th>
-                                        <th>Họ tên</th>
-                                        <th>Ngày sinh</th>
-                                        <th>Địa chỉ</th>
-                                        <th>Số điện thoại</th>
-                                        <th>Email</th>
-                                        <th>Hành động</th>
-                                    </tr>
-                                </tfoot>
-                            </table>
-
-                        </div>
+           
                         <!-- /.card-body -->
                     </div>
                     <!-- /.card -->

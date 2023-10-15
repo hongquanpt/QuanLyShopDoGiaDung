@@ -59,6 +59,10 @@
 
                             </div>
                             <!-- /.card-body -->
+                            <div class="card-footer">
+                                <button class="btn btn-primary" data-dismiss="modal" id="confirmThem" onclick="Them()">Thêm danh mục mới</button>
+                                @*<a href="#" class="btn btn-secondary" style="display: none;"><i class="material-icons">&#xE24D;</i> <span>Xuất Excel</span></a>*@
+                            </div>
                         </div>
                         <!-- /.card -->
                     </div>
@@ -69,7 +73,60 @@
             <!-- /.container-fluid -->
         </section>
         <!-- /.content -->
+        <form id="frmThemDM" method="post" aria-hidden="true" tabindex="-1" role="dialog" style="display: none;" enctype="multipart/form-data">
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Nhập tên danh mục</label>
+                    <input type="text" class="form-control" id="tendm" placeholder="Nhập tên danh mục mới tại đây">
+                </div>
+                <div class="card-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="confirm">Thêm danh mục</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="cancel">Hủy bỏ</button>
+                </div>
+            </div>
+        </form>
     </div>
+
+    <script>
+        function Them() {
+            var form = document.getElementById("frmThemDM");
+            form.setAttribute("aria-hidden", "false");
+            form.setAttribute("tabindex", "0");
+            form.style.display = "block";
+            $('#confirm').on('click', function () {
+                var tendm = $('#tendm').val().toString();
+                if (tendm.trim() === "") {
+                    // Kiểm tra nếu trường TenDM rỗng
+                    alert("Bạn chưa nhập tên danh mục.");
+                } else {
+                    // Nếu trường TenDM không rỗng, tiến hành gửi yêu cầu AJAX
+                    $.ajax({
+                        url: '/Admin/ThemDM', // Điều chỉnh URL nếu cần thiết
+                        data: {
+                            tendm: tendm
+                        },
+                        type: 'POST',
+                        dataType: 'json',
+                        success: function (res) {
+                            if (res.status == true) {
+                                // Đóng modal sau khi thêm thành công
+                                form.setAttribute("aria-hidden", "true");
+                                form.setAttribute("tabindex", "-1");
+                                form.style.display = "none";
+                            }
+                        }
+                    });
+                }
+            });
+            $('#cancel').on('click', function () {
+                form.setAttribute("aria-hidden", "true");
+                form.setAttribute("tabindex", "-1");
+                form.style.display = "none";
+            });
+        }
+    </script>
+
+
     <!-- Đoạn mã HTML cho modal xác nhận xóa -->
     <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -90,8 +147,8 @@
 
     <!-- Đoạn mã JavaScript để xử lý sự kiện xóa -->
     <script>
-        function XoaDanhMuc(ma) {
-            var mahang = parseInt(ma);
+        function XoaDanhMuc(madm) {
+            var mahang = parseInt(madm);
 
             // Hiển thị modal xác nhận xóa
             $('#confirmDeleteModal').modal('show');
@@ -101,7 +158,7 @@
                 $.ajax({
                     url: '/Admin/XoaDM',
                     data: {
-                        matk: matk
+                        madm: madm
                     },
                     type: 'POST',
                     dataType: 'json',

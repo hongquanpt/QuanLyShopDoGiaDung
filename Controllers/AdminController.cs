@@ -3,7 +3,7 @@ using ShopBanDoGiaDung.Data;
 using System;
 using ShopBanDoGiaDung.Models;
 using Microsoft.AspNetCore.Hosting;
-
+using System.Linq;
 namespace ShopBanDoGiaDung.Controllers
 
 {
@@ -18,6 +18,7 @@ namespace ShopBanDoGiaDung.Controllers
         {
             return View();
         }
+       
         #region Quản lý
         #region Quản lý tài khoản
         public IActionResult QuanLyTK()
@@ -236,81 +237,91 @@ namespace ShopBanDoGiaDung.Controllers
         public async Task<IActionResult> SuaSP(Models.Sanpham sp, IFormFile image1, IFormFile image2, IFormFile image3, IFormFile image4, IFormFile image5, IFormFile image6, string DanhMuc, string Hang)
         {
             var spmoi = obj.Sanphams.Find(sp.MaSp);
-            spmoi.TenSp = sp.TenSp;
-            spmoi.MoTa = sp.MoTa;
-            spmoi.GiaTien = sp.GiaTien;
-            spmoi.SoLuongTrongKho = sp.SoLuongTrongKho;
-            spmoi.SoLuongDaBan = sp.SoLuongDaBan;
-
-            // Đường dẫn đến thư mục lưu trữ tệp ảnh
-            string currentDirectory = System.IO.Directory.GetCurrentDirectory();
-            string uploadPath = Path.Combine(currentDirectory, "wwwroot", "Admin", "images");
-
-
-            // Hàm để lưu tệp ảnh
-            async Task SaveImage(IFormFile image, string imageName, string propertyName)
+            if(spmoi != null)
             {
-                if (image != null)
+                spmoi.TenSp = sp.TenSp;
+                spmoi.MoTa = sp.MoTa;
+                spmoi.GiaTien = sp.GiaTien;
+                spmoi.SoLuongTrongKho = sp.SoLuongTrongKho;
+                spmoi.SoLuongDaBan = sp.SoLuongDaBan;
+
+                // Đường dẫn đến thư mục lưu trữ tệp ảnh
+                string currentDirectory = System.IO.Directory.GetCurrentDirectory();
+                string uploadPath = Path.Combine(currentDirectory, "wwwroot", "Admin", "images");
+
+
+                // Hàm để lưu tệp ảnh
+                async Task SaveImage(IFormFile image, string imageName, string propertyName)
                 {
-                    string imagePath = Path.Combine(uploadPath, imageName);
-                    using (var stream = new FileStream(imagePath, FileMode.Create))
+                    if (image != null)
                     {
-                        await image.CopyToAsync(stream);
+                        string imagePath = Path.Combine(uploadPath, imageName);
+                        using (var stream = new FileStream(imagePath, FileMode.Create))
+                        {
+                            await image.CopyToAsync(stream);
+                        }
+                        // Gán tên tệp ảnh vào thuộc tính tương ứng
+                        typeof(Models.Sanpham).GetProperty(propertyName)?.SetValue(spmoi, imageName);
                     }
-                    // Gán tên tệp ảnh vào thuộc tính tương ứng
-                    typeof(Models.Sanpham).GetProperty(propertyName)?.SetValue(spmoi, imageName);
+                    else
+                    {
+                        // Giữ nguyên ảnh cũ nếu không có ảnh mới
+                        typeof(Models.Sanpham).GetProperty(propertyName)?.SetValue(spmoi, typeof(Models.Sanpham).GetProperty(propertyName)?.GetValue(sp));
+                    }
                 }
-                else
+
+                // Lưu từng ảnh
+
+                if (spmoi.Anh1 != null)
                 {
-                    // Giữ nguyên ảnh cũ nếu không có ảnh mới
-                    typeof(Models.Sanpham).GetProperty(propertyName)?.SetValue(spmoi, typeof(Models.Sanpham).GetProperty(propertyName)?.GetValue(sp));
+                    await SaveImage(image1, spmoi.Anh1, nameof(spmoi.Anh1));
                 }
-            }
 
-            // Lưu từng ảnh
+                if (spmoi.Anh2 != null)
+                {
+                    await SaveImage(image2, spmoi.Anh2, nameof(spmoi.Anh2));
+                }
+                if (spmoi.Anh3 != null)
+                {
+                    await SaveImage(image3, spmoi.Anh3, nameof(spmoi.Anh3));
+                }
 
-            if (spmoi.Anh1 != null)
-            {
-                await SaveImage(image1, spmoi.Anh1, nameof(spmoi.Anh1));
-            }
+                if (spmoi.Anh4 != null)
+                {
+                    await SaveImage(image4, spmoi.Anh4, nameof(spmoi.Anh4));
+                }
+                if (spmoi.Anh5 != null)
+                {
+                    await SaveImage(image5, spmoi.Anh5, nameof(spmoi.Anh5));
+                }
 
-            if (spmoi.Anh2 != null)
-            {
-                await SaveImage(image2, spmoi.Anh2, nameof(spmoi.Anh2));
-            }
-            if (spmoi.Anh3 != null)
-            {
-                await SaveImage(image3, spmoi.Anh3, nameof(spmoi.Anh3));
-            }
+                if (spmoi.Anh6 != null)
+                {
+                    await SaveImage(image6, spmoi.Anh6, nameof(spmoi.Anh6));
+                }
+                // Tìm danh mục và hãng dựa trên tên
+                var dm = obj.Danhmucsanphams.FirstOrDefault(s => s.TenDanhMuc == DanhMuc);
+                if (dm != null)
+                {
+                    spmoi.MaDanhMuc = dm.MaDanhMuc;
+                }
 
-            if (spmoi.Anh4 != null)
-            {
-                await SaveImage(image4, spmoi.Anh4, nameof(spmoi.Anh4));
-            }
-            if (spmoi.Anh5 != null)
-            {
-                await SaveImage(image5, spmoi.Anh5, nameof(spmoi.Anh5));
-            }
+                var hang = obj.Hangsanxuats.FirstOrDefault(s => s.TenHang == Hang);
+                if (hang != null)
+                {
+                    spmoi.MaHang = hang.MaHang;
+                }
 
-            if (spmoi.Anh6 != null)
-            {
-                await SaveImage(image6, spmoi.Anh6, nameof(spmoi.Anh6));
+                obj.SaveChanges();
+                return RedirectToAction("QuanLySP");
             }
-            // Tìm danh mục và hãng dựa trên tên
-            var dm = obj.Danhmucsanphams.FirstOrDefault(s => s.TenDanhMuc == DanhMuc);
-            if (dm != null)
+            else
             {
-                spmoi.MaDanhMuc = dm.MaDanhMuc;
+                return Json(new
+                {
+                    status = false
+                });
             }
-
-            var hang = obj.Hangsanxuats.FirstOrDefault(s => s.TenHang == Hang);
-            if (hang != null)
-            {
-                spmoi.MaHang = hang.MaHang;
-            }
-
-            obj.SaveChanges();
-            return RedirectToAction("QuanLySP");
         }
 
         #endregion
@@ -333,16 +344,50 @@ namespace ShopBanDoGiaDung.Controllers
                 status = true 
             });
         }
-        public IActionResult XoaHang(int ma)
-        {
-            Models.Hangsanxuat hsx = new Models.Hangsanxuat();
-            hsx = obj.Hangsanxuats.Find(ma);
-            obj.Hangsanxuats.Remove(hsx);
-            obj.SaveChanges();
-            return Json(new
+        public IActionResult XoaHang(int matk)
+        {         
+            var hsx = obj.Hangsanxuats.Find(matk);
+            if(hsx != null)
             {
-                status = true
-            });
+                obj.Hangsanxuats.Remove(hsx);
+                obj.SaveChanges();
+                return Json(new
+                {
+                    status = true
+                });
+            }
+            else
+            {
+                return Json(new
+                {
+                    status = false
+                });
+            }
+           
+        }
+        public IActionResult SuaHang(int id) { 
+            var model= obj.Hangsanxuats.Find(id);
+            return View(model); 
+        }
+        [HttpPost]
+        public IActionResult SuaHang(int id, string name) {
+            var hsx = obj.Hangsanxuats.Find(id);
+            if(hsx != null)
+            {
+                hsx.TenHang = name;
+                obj.SaveChanges();
+                return Json(new
+                {
+                    status = true
+                });
+            }
+            else
+            {
+                return Json(new
+                {
+                    status = false
+                });
+            }
         }
         #endregion
         #region Quản lý danh mục
@@ -352,15 +397,35 @@ namespace ShopBanDoGiaDung.Controllers
             ViewBag.ds= model;
             return View();
         }
-        public IActionResult XoaDM(int ma)
+        public IActionResult XoaDM(int madm)
+        {           
+           var hsx = obj.Danhmucsanphams.Find(madm);
+            if (hsx != null)
+            {
+                obj.Danhmucsanphams.Remove(hsx);
+                obj.SaveChanges();
+                return Json(new
+                {
+                    status = true
+                });
+            }
+            else
+            {
+                return Json(new
+                {
+                    status = false
+                });
+            }
+        }
+        public IActionResult ThemDM(string tendm)
         {
-            Models.Danhmucsanpham hsx = new Danhmucsanpham();
-            hsx = obj.Danhmucsanphams.Find(ma);
-            obj.Danhmucsanphams.Remove(hsx);
+            Models.Danhmucsanpham dm = new Danhmucsanpham();
+            dm.TenDanhMuc = tendm;
+            obj.Danhmucsanphams.Add(dm);
             obj.SaveChanges();
             return Json(new
             {
-                status = true
+                status= true
             });
         }
         #endregion
@@ -458,6 +523,64 @@ namespace ShopBanDoGiaDung.Controllers
             ViewBag.dsdahuy = ds5;
             return View();
         }
+        public IActionResult XacNhanDH(int madh)
+        {
+            var dh = obj.Donhangs.Find(madh);
+            if (dh != null) 
+            {
+                dh.TinhTrang = 2;
+                obj.SaveChanges();
+                return Json(new
+                {
+                    status = true
+                });
+            }
+            else
+            {
+                return Json(new
+                {
+                    status = false
+                });
+            }
+            
+        }
+        public IActionResult VanChuyenDH(int madh)
+        {
+            var dh=obj.Donhangs.Find( madh);
+            if (dh != null)
+            {
+                dh.TinhTrang = 3;
+                obj.SaveChanges();
+                return Json(new
+                {
+                    status = true
+                });
+            }
+            else
+            {
+                return Json(new
+                {
+                    status = false
+                });
+            }
+        }
+        public IActionResult MyOrderDetail(int id)
+        {
+            var kq = from a in obj.Chitietdonhangs
+                     join b in obj.Sanphams on a.MaSp equals b.MaSp
+                     where a.MaDonHang == id
+                     select new MyOrderDetail()
+                     {
+                         MaSanPham = b.MaSp,
+                         TenSP = b.TenSp,
+                         Anh = b.Anh1,
+                         GiaBan = b.GiaTien,
+                         SoLuong = a.SoLuongMua,
+                         ThanhTien = b.GiaTien * a.SoLuongMua
+                     };
+            var ds = kq.ToList();
+            return PartialView(ds);
+        }
         #endregion
         #endregion
         #region Thống kê
@@ -470,7 +593,7 @@ namespace ShopBanDoGiaDung.Controllers
         [HttpPost]
        public IActionResult TKDoanhthu(int year)
         {
-            var ds = obj.Donhangs.Where(s => s.NgayLap.Value.Year.ToString().Equals(year.ToString())).ToList();
+            var ds = obj.Donhangs.Where(s => s.NgayLap != null && s.NgayLap.Value.Year.ToString().Equals(year.ToString())).ToList();
             var list = new List<ThongKeDoanhThu>();
             long? sum1 = 0;
             long? sum2 = 0;
@@ -487,7 +610,7 @@ namespace ShopBanDoGiaDung.Controllers
             foreach (var item in ds)
             {
 
-                if (item.NgayLap.Value.Month.ToString() == "1")
+                if (item.NgayLap.HasValue && item.NgayLap.Value.Month.ToString() == "1")
                 {
                     sum1 += item.TongTien;
                 }
@@ -499,7 +622,7 @@ namespace ShopBanDoGiaDung.Controllers
             foreach (var item in ds)
             {
 
-                if (item.NgayLap.Value.Month.ToString() == "2")
+                if (item.NgayLap.HasValue && item.NgayLap.Value.Month.ToString() == "2")
                 {
                     sum2 += item.TongTien;
                 }
@@ -512,7 +635,7 @@ namespace ShopBanDoGiaDung.Controllers
             foreach (var item in ds)
             {
 
-                if (item.NgayLap.Value.Month.ToString() == "3")
+                if (item.NgayLap.HasValue && item.NgayLap.Value.Month.ToString() == "3")
                 {
                     sum3 += item.TongTien;
                 }
@@ -524,8 +647,8 @@ namespace ShopBanDoGiaDung.Controllers
             list.Add(tk3);
             foreach (var item in ds)
             {
-                long? sum = 0;
-                if (item.NgayLap.Value.Month.ToString() == "4")
+              
+                if (item.NgayLap.HasValue && item.NgayLap.Value.Month.ToString() == "4")
                 {
                     sum4 += item.TongTien;
                 }
@@ -538,7 +661,7 @@ namespace ShopBanDoGiaDung.Controllers
             foreach (var item in ds)
             {
 
-                if (item.NgayLap.Value.Month.ToString() == "5")
+                if (item.NgayLap.HasValue && item.NgayLap.Value.Month.ToString() == "5")
                 {
                     sum5 += item.TongTien;
                 }
@@ -551,7 +674,7 @@ namespace ShopBanDoGiaDung.Controllers
             foreach (var item in ds)
             {
 
-                if (item.NgayLap.Value.Month.ToString() == "6")
+                if (item.NgayLap.HasValue && item.NgayLap.Value.Month.ToString() == "6")
                 {
                     sum6 += item.TongTien;
                 }
@@ -564,7 +687,7 @@ namespace ShopBanDoGiaDung.Controllers
             foreach (var item in ds)
             {
 
-                if (item.NgayLap.Value.Month.ToString() == "7")
+                if (item.NgayLap.HasValue && item.NgayLap.Value.Month.ToString() == "7")
                 {
                     sum7 += item.TongTien;
                 }
@@ -577,7 +700,7 @@ namespace ShopBanDoGiaDung.Controllers
             foreach (var item in ds)
             {
 
-                if (item.NgayLap.Value.Month.ToString() == "8")
+                if (item.NgayLap.HasValue && item.NgayLap.Value.Month.ToString() == "8")
                 {
                     sum8 += item.TongTien;
                 }
@@ -590,7 +713,7 @@ namespace ShopBanDoGiaDung.Controllers
             foreach (var item in ds)
             {
                 ;
-                if (item.NgayLap.Value.Month.ToString() == "9")
+                if (item.NgayLap.HasValue && item.NgayLap.Value.Month.ToString() == "9")
                 {
                     sum9 += item.TongTien;
                 }
@@ -603,7 +726,7 @@ namespace ShopBanDoGiaDung.Controllers
             foreach (var item in ds)
             {
 
-                if (item.NgayLap.Value.Month.ToString() == "10")
+                if (item.NgayLap.HasValue && item.NgayLap.Value.Month.ToString() == "10")
                 {
                     sum10 += item.TongTien;
                 }
@@ -616,7 +739,7 @@ namespace ShopBanDoGiaDung.Controllers
             foreach (var item in ds)
             {
 
-                if (item.NgayLap.Value.Month.ToString() == "11")
+                if (item.NgayLap.HasValue && item.NgayLap.Value.Month.ToString() == "11")
                 {
                     sum11 += item.TongTien;
                 }
@@ -629,7 +752,7 @@ namespace ShopBanDoGiaDung.Controllers
             foreach (var item in ds)
             {
 
-                if (item.NgayLap.Value.Month.ToString() == "12")
+                if (item.NgayLap.HasValue && item.NgayLap.Value.Month.ToString() == "12")
                 {
                     sum12 += item.TongTien;
                 }
