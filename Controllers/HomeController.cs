@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using QuanLyShopDoGiaDung.authorize;
 using ShopBanDoGiaDung.Data;
 using ShopBanDoGiaDung.Models;
 using System.Diagnostics;
@@ -18,6 +20,7 @@ namespace ShopBanDoGiaDung.Controllers
             _context = context;
         }
 
+        [CustomAuthorize("khach")]
         public IActionResult Index()
         {
             var sanpham = (from a in _context.Sanphams
@@ -31,11 +34,6 @@ namespace ShopBanDoGiaDung.Controllers
         }
 
 
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

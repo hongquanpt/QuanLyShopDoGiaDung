@@ -1,0 +1,29 @@
+﻿@model ShopBanDoGiaDung.Common.LoginInfo
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOGIN</title>
+</head>
+<body>
+    <form asp-controller="Access" asp-action="Login" method="POST">
+        <h1>LOGIN</h1>
+        <input type="text" asp-for="Email">
+        <input type="password" asp-for="Password">
+        <label for="">
+            <input type="checkbox" asp-for="KeepLoggedIn">
+            Keep me logged in
+        </label>
+        <button type="submit">submit</button>
+        @if (ViewData["ValidateMessage"] != null)
+        {
+            <label>@ViewData["ValidateMessage"]</label>
+        }
+    </form>
+
+</body>
+</html>

@@ -5,10 +5,9 @@
         @foreach (var item in Model)
         {
 
-            <ul class="kid-menu ">
+            <ul class="kid-menu">
                 <li><a href="@Url.Action("SPHang","Home", new { id = item.MaHang, ten =item.TenHang})">@item.TenHang</a></li>
             </ul>
         }
-
     </ul>
 </div>

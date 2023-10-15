@@ -104,8 +104,9 @@
 
         @RenderBody()
         <div class="sub-cate">
-            @await Html.PartialAsync("~/Views/Home/Hang.cshtml", hang)
             @await Html.PartialAsync("~/Views/Home/ProductCategory.cshtml", danhmuc)
+            @await Html.PartialAsync("~/Views/Home/Hang.cshtml", hang)
+          
             <script type="text/javascript">
                 $(function () {
                     var menu_ul = $('.menu > li > ul'),
