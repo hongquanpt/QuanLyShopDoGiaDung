@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var danhmuc = (List<ShopBanDoGiaDung.Models.Danhmucsanpham>)ViewBag.danhmucsp;
+    var hang = (List<ShopBanDoGiaDung.Models.Hangsanxuat>)ViewBag.hang;
+}
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -87,7 +91,7 @@
                 <div class="header-bottom-right">
 
 
-                    }
+
 
                     <div class="clearfix"> </div>
                 </div>
@@ -97,15 +101,11 @@
     </div>
     <!---->
     <div class="container">
+
         @RenderBody()
         <div class="sub-cate">
-            @{
-                /* Html.RenderAction("ProductCategory", "Home");
-                }
-                <!--initiate accordion-->
-                @{
-                /* Html.RenderAction("Hang", "Home");*/
-            }
+            @await Html.PartialAsync("~/Views/Home/Hang.cshtml", hang)
+            @await Html.PartialAsync("~/Views/Home/ProductCategory.cshtml", danhmuc)
             <script type="text/javascript">
                 $(function () {
                     var menu_ul = $('.menu > li > ul'),
@@ -166,58 +166,9 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <div class="container d-flex">
-                <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3723.649793342786!2d105.78431471488373!3d21.04669418598872!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab2d88bb4195%3A0x3006e474cce20274!2zSOG7jWMgdmnhu4duIEvhu7kgdGh14bqtdCBRdcOibiBz4bux!5e0!3m2!1svi!2s!4v1670420855037!5m2!1svi!2s"
-                    width="945" height="450" style="border:0;" allowfullscreen="" loading="lazy"
-                    referrerpolicy="no-referrer-when-downgrade"></iframe>
-                @*<div class="footer-bottom-cate">
-                <h6>CATEGORIES</h6>
-                <ul>
-                <li><a href="#">Curabitur sapien</a></li>
-                <li><a href="#">Dignissim purus</a></li>
-                <li><a href="#">Tempus pretium</a></li>
-                <li><a href="#">Dignissim neque</a></li>
-                <li><a href="#">Ornared id aliquet</a></li>
-                <li><a href="#">Ultrices id du</a></li>
-                <li><a href="#">Commodo sit</a></li>
-                <li><a href="#">Urna ac tortor sc</a></li>
-                <li><a href="#">Ornared id aliquet</a></li>
-                <li><a href="#">Urna ac tortor sc</a></li>
-                <li><a href="#">Eget nisi laoreet</a></li>
-                <li><a href="#">Faciisis ornare</a></li>
-                </ul>
-                </div>
-                <div class="footer-bottom-cate bottom-grid-cat">
-                <h6>FEATURE PROJECTS</h6>
-                <ul>
-                <li><a href="#">Curabitur sapien</a></li>
-                <li><a href="#">Dignissim purus</a></li>
-                <li><a href="#">Tempus pretium</a></li>
-                <li><a href="#">Dignissim neque</a></li>
-                <li><a href="#">Ornared id aliquet</a></li>
-                <li><a href="#">Ultrices id du</a></li>
-                <li><a href="#">Commodo sit</a></li>
-                </ul>
-                </div>
-                <div class="footer-bottom-cate">
-                <h6>TOP BRANDS</h6>
-                <ul>
-                <li><a href="#">Curabitur sapien</a></li>
-                <li><a href="#">Dignissim purus</a></li>
-                <li><a href="#">Tempus pretium</a></li>
-                <li><a href="#">Dignissim neque</a></li>
-                <li><a href="#">Ornared id aliquet</a></li>
-                <li><a href="#">Ultrices id du</a></li>
-                <li><a href="#">Commodo sit</a></li>
-                <li><a href="#">Urna ac tortor sc</a></li>
-                <li><a href="#">Ornared id aliquet</a></li>
-                <li><a href="#">Urna ac tortor sc</a></li>
-                <li><a href="#">Eget nisi laoreet</a></li>
-                <li><a href="#">Faciisis ornare</a></li>
-                </ul>
-                </div>*@
-                <div class="footer-bottom-cate cate-bottom">
+
+            <div class="container" style="display:flex; flex-direction: row">
+                <div style="width: 25%; ">
                     <h3>SHOP TUẤN TRẦN</h3>
                     <ul>
                         <li>Địa chỉ </li>
@@ -230,7 +181,14 @@
                         target="_blank">W3layouts</a> </p></li>*@
                     </ul>
                 </div>
-                <div class="clearfix"> </div>
+                <div style="width:80%;">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3723.649793342786!2d105.78431471488373!3d21.04669418598872!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab2d88bb4195%3A0x3006e474cce20274!2zSOG7jWMgdmnhu4duIEvhu7kgdGh14bqtdCBRdcOibiBz4bux!5e0!3m2!1svi!2s!4v1670420855037!5m2!1svi!2s"
+                        height="450" style="border:0;width:100%" allowfullscreen="" loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+
+                @* <div class="clearfix"> </div>*@
             </div>
         </div>
     </div>

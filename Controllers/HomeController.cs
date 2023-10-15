@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ShopBanDoGiaDung.Data;
 using ShopBanDoGiaDung.Models;
 using System.Diagnostics;
+
 
 namespace ShopBanDoGiaDung.Controllers
 {
@@ -23,8 +25,12 @@ namespace ShopBanDoGiaDung.Controllers
                            select a).Take(6);
             var model = sanpham.ToList();
             ViewBag.sanpham = model;
+            ViewBag.danhmucsp = _context.Danhmucsanphams.ToList();
+            ViewBag.hang = _context.Hangsanxuats.ToList();
             return View();
         }
+
+
 
         public IActionResult Privacy()
         {
