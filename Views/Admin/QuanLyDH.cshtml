@@ -25,7 +25,7 @@
                             <h3 class="card-title">Quản lý đơn hàng</h3>
                         </div>
                         <ul class="nav nav-tabs" role="tablist">
-                            <li class=" nav-item active"><a class="nav-link active" data-toggle="tab" href="#home">Tất cả đơn hàng (@dstatca.Count())</a></li>
+                            <li class=" nav-item active"><a class="nav-link active" data-toggle="tab" href="#Admin">Tất cả đơn hàng (@dstatca.Count())</a></li>
                             <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu0">Chưa thanh toán (@dschuathanhtoan.Count())</a></li>
                             <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu1">Chờ xác nhận (@dschoxacnhan.Count())</a></li>
                             <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu2">Đang vận chuyển (@dsdangvanchuyen.Count())</a></li>
@@ -35,7 +35,7 @@
                         <!-- /.card-header -->
                         <div class="card-body">
                             <div class="tab-content">
-                                <div id="home" class="tab-pane active">
+                                <div id="Admin" class="tab-pane active">
                                     <table id="showtable" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
@@ -102,11 +102,11 @@
                                         $("#showtable").on("click", "#viewbtn", function () {
                                             var id = $(this).closest("tr").find("td").eq(0).html();
                                             $.ajax({
-                                                url: "@Url.Action("MyOrderDetail", "Home")",
+                                                url: "@Url.Action("MyOrderDetail", "Admin")",
                                                 data: { id: id },
                                                 success: function (data) {
                                                     $("#showmodal .modal-dialog").html(data);
-                                                    /* $("#showmodal").modal('show')*/
+                                               
                                                 }
                                             });
                                         });
@@ -182,7 +182,7 @@
                                         $("#showtable0").on("click", "#viewbtn0", function () {
                                             var id = $(this).closest("tr").find("td").eq(0).html();
                                             $.ajax({
-                                                url: "@Url.Action("MyOrderDetail", "Home")",
+                                                url: "@Url.Action("MyOrderDetail", "Admin")",
                                                 data: { id: id },
                                                 success: function (data) {
                                                     $("#showmodal .modal-dialog").html(data);
@@ -261,7 +261,7 @@
                                             $("#showtable1").on("click", "#viewbtn1", function () {
                                                 var id = $(this).closest("tr").find("td").eq(0).html();
                                                 $.ajax({
-                                                    url: "@Url.Action("MyOrderDetail", "Home")",
+                                                    url: "@Url.Action("MyOrderDetail", "Admin")",
                                                     data: { id: id },
                                                     success: function (data) {
                                                         $("#showmodal1 .modal-dialog").html(data);
@@ -272,11 +272,11 @@
                                             $("#showtable1").on("click", "#btnXacNhan", function () {
                                                 var id = $(this).closest("tr").find("td").eq(0).html();
                                                 $.ajax({
-                                                    url: "@Url.Action("XacNhanDonHang", "Admin")",
-                                                    data: { ma: id },
+                                                    url: "@Url.Action("XacNhanDH", "Admin")",
+                                                    data: { madh: id },
                                                     success: function (res) {
                                                         if (res.status == true) {
-                                                            window.location.href = "/Admin/QuanLyDonHang";
+                                                            window.location.href = "/Admin/QuanLyDH";
                                                         }
                                                         /*$("#showmodal1 .modal-dialog").html(data);*/
                                                         /* $("#showmodal").modal('show')*/
@@ -331,7 +331,7 @@
                                                         <td>Đã hủy</td>
                                                     }
                                                     <td><a class="btn btn-success" data-toggle="modal" id="viewbtn2" data-target="#showmodal2">Chi tiết</a></td>
-                                                    @*<td><a class="btn btn-danger" data-target="#showmodal2">Đã nhận được hàng</a></td>*@
+                                                    <td><a class="btn btn-danger" id="btnDaGiao">Đã giao</a></td>
 
 
 
@@ -357,10 +357,24 @@
                                             $("#showtable2").on("click", "#viewbtn2", function () {
                                                 var id = $(this).closest("tr").find("td").eq(0).html();
                                                 $.ajax({
-                                                    url: "@Url.Action("MyOrderDetail", "Home")",
+                                                    url: "@Url.Action("MyOrderDetail", "Admin")",
                                                     data: { id: id },
                                                     success: function (data) {
                                                         $("#showmodal2 .modal-dialog").html(data);
+                                                        /* $("#showmodal").modal('show')*/
+                                                    }
+                                                });
+                                            });
+                                            $("#showtable2").on("click", "#btnDaGiao", function () {
+                                                var id = $(this).closest("tr").find("td").eq(0).html();
+                                                $.ajax({
+                                                    url: "@Url.Action("VanChuyenDH", "Admin")",
+                                                    data: { madh: id },
+                                                    success: function (res) {
+                                                        if (res.status == true) {
+                                                            window.location.href = "/Admin/QuanLyDH";
+                                                        }
+                                                        /*$("#showmodal1 .modal-dialog").html(data);*/
                                                         /* $("#showmodal").modal('show')*/
                                                     }
                                                 });
@@ -438,7 +452,7 @@
                                             $("#showtable3").on("click", "#viewbtn3", function () {
                                                 var id = $(this).closest("tr").find("td").eq(0).html();
                                                 $.ajax({
-                                                    url: "@Url.Action("MyOrderDetail", "Home")",
+                                                    url: "@Url.Action("MyOrderDetail", "Admin")",
                                                     data: { id: id },
                                                     success: function (data) {
                                                         $("#showmodal3 .modal-dialog").html(data);
@@ -446,7 +460,6 @@
                                                     }
                                                 });
                                             });
-                                                                                                                                                                                    });
                                         </script>
 
                                     </div>
@@ -521,7 +534,7 @@
                                             $("#showtable4").on("click", "#viewbtn4", function () {
                                                 var id = $(this).closest("tr").find("td").eq(0).html();
                                                 $.ajax({
-                                                    url: "@Url.Action("MyOrderDetail", "Home")",
+                                                    url: "@Url.Action("MyOrderDetail", "Admin")",
                                                     data: { id: id },
                                                     success: function (data) {
                                                         $("#showmodal4 .modal-dialog").html(data);

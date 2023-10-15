@@ -3,7 +3,7 @@ using ShopBanDoGiaDung.Data;
 using System;
 using ShopBanDoGiaDung.Models;
 using Microsoft.AspNetCore.Hosting;
-
+using System.Linq;
 namespace ShopBanDoGiaDung.Controllers
 
 {
@@ -18,6 +18,7 @@ namespace ShopBanDoGiaDung.Controllers
         {
             return View();
         }
+       
         #region Quản lý
         #region Quản lý tài khoản
         public IActionResult QuanLyTK()
@@ -562,6 +563,23 @@ namespace ShopBanDoGiaDung.Controllers
                     status = false
                 });
             }
+        }
+        public IActionResult MyOrderDetail(int id)
+        {
+            var kq = from a in obj.Chitietdonhangs
+                     join b in obj.Sanphams on a.MaSp equals b.MaSp
+                     where a.MaDonHang == id
+                     select new MyOrderDetail()
+                     {
+                         MaSanPham = b.MaSp,
+                         TenSP = b.TenSp,
+                         Anh = b.Anh1,
+                         GiaBan = b.GiaTien,
+                         SoLuong = a.SoLuongMua,
+                         ThanhTien = b.GiaTien * a.SoLuongMua
+                     };
+            var ds = kq.ToList();
+            return PartialView(ds);
         }
         #endregion
         #endregion
