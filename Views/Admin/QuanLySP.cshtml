@@ -31,7 +31,7 @@
                                         <th>Giá bán</th>
                                         <th>Số lượng đã bán</th>
                                         <th>Số lượng còn lại</th>
-                                        <th>Hành động</th>
+                  
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -40,14 +40,15 @@
                                         <tr>
                                             <td>@item.MaSp</td>
                                             <td>@item.TenSp</td>
-                                            <td><img class="img-responsive" style=" max-width: 100%;" src="~/Admin/images/@item.Anh1" /></td>
+                                            <td><img class="img-responsive" style=" max-width: 50%;" src="~/Admin/images/@item.Anh1" /></td>
                                             <td>@item.GiaTien.Value.ToString("N0")</td>
                                             <td>@item.SoLuongDaBan</td>
                                             <td>@item.SoLuongTrongKho</td>
                                             <td>
-                                                <a href="@Url.Action("SuaSP","Admin",new { ma = item.MaSp})" class="btn btn-app" style="background-size:1px" ><i class="fas fa-edit"></i>Edit</a>
-                                                <a href="#" class="btn btn-app" title="Delete" data-toggle="modal" onclick="XoaSP(@item.MaSp)"><i class="material-icons"></i>Delete</a>
+                                                <a href="@Url.Action("SuaSP","Admin",new { ma = item.MaSp})" class="btn btn-success" >Edit</a>
+                                    
                                             </td>
+                                            <td><a class="btn btn-success" title="Delete" data-toggle="modal" onclick="XoaSP(@item.MaSp)">Delete</a></td>
                                         </tr>
                                     }
                                 </tbody>
@@ -59,7 +60,7 @@
                                         <th>Giá bán</th>
                                         <th>Số lượng đã bán</th>
                                         <th>Số lượng còn lại</th>
-                                        <th>Hành động</th>
+                                 
                                     </tr>
                                 </tfoot>
                             </table>

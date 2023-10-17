@@ -367,7 +367,7 @@ namespace ShopBanDoGiaDung.Controllers
         }
         public IActionResult SuaHang(int id) { 
             var model= obj.Hangsanxuats.Find(id);
-            return View(model); 
+            return View(model);
         }
         [HttpPost]
         public IActionResult SuaHang(int id, string name) {
@@ -427,6 +427,29 @@ namespace ShopBanDoGiaDung.Controllers
             {
                 status= true
             });
+        }
+        public IActionResult SuaDM(int id)
+        {
+            var dm = obj.Danhmucsanphams.Find(id);
+            return PartialView(dm);
+        }
+        [HttpPost]
+        public IActionResult SuaDM(int id, string name)
+        {
+            var dm = obj.Danhmucsanphams.Find(id);
+            if(dm != null)
+            {
+                dm.TenDanhMuc = name;
+                obj.SaveChanges();
+                return Json(new
+                {
+                    status = true
+                });
+            }
+            else
+            {
+                return Json(new { status = false });
+            }
         }
         #endregion
         #region Quản lý đơn hàng

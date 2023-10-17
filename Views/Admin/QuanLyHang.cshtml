@@ -23,13 +23,11 @@
                          
                             <!-- /.card-header -->
                             <div class="card-body">
-                                <table id="example1" class="table table-bordered table-striped">
+                                <table id="example1" class="table table-bordered table-striped"> 
                                     <thead>
                                         <tr>
                                             <th>Mã hãng</th>
-                                            <th>Tên hãng</th>
-                                            <th>Hành động</th>
-
+                                            <th>Tên hãng</th>                                          
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -38,18 +36,15 @@
                                             <tr>
                                                 <td>@item.MaHang</td>
                                                 <td>@item.TenHang</td>
-                                                <td>
-                                                    <a href="#" class="btn btn-app" title="Settings" data-toggle="modal" id="viewbtn" data-target="#sua"><i class="fas fa-edit"></i>Edit</a>
-                                                    <a href="#" class="btn btn-app" title="Delete" data-toggle="modal" onclick="XoaHang(@item.MaHang)"><i class="material-icons"></i>Delete</a>
-                                                </td>
+                                                <td><a href="@Url.Action("SuaHang","Admin",new { id = item.MaHang})" class="btn btn-success">Edit</a></td>
+                                                <td><a href="#" class="btn btn-success" onclick="XoaHang(@item.MaHang)">Delete</a></td>
                                             </tr>
                                         }
                                     </tbody>
                                     <tfoot>
                                         <tr>
                                             <th>Mã hãng</th>
-                                            <th>Tên hãng</th>
-                                            <th>Hành động</th>
+                                            <th>Tên hãng</th>                                            
                                         </tr>
                                     </tfoot>
                                 </table>
@@ -82,9 +77,9 @@
                 </div>
             </div>
         </form>
+       
     </div>
-    </div>
-
+</div>
 
 <script>
     function Them() {
@@ -112,6 +107,7 @@
                             form.setAttribute("aria-hidden", "true");
                             form.setAttribute("tabindex", "-1");
                             form.style.display = "none";
+                            window.location = '@Url.Action("QuanLyHang","Admin")';
                         }
                     }
                 });

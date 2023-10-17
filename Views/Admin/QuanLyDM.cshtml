@@ -20,7 +20,7 @@
 
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Quản lý tài khoản khách hàng</h3>
+                                <h3 class="card-title">Quản lý thông tin danh mục</h3>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
@@ -28,31 +28,26 @@
                                     <thead>
                                         <tr>
                                             <th>Mã danh mục</th>
-                                            <th>Tên danh mục</th>
-                                            <th>Hành động</th>
+                                            <th>Tên danh mục</th>                                   
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach (var item in dstk)
                                         {
                                             <tr>
-
                                                 <td>@item.MaDanhMuc</td>
                                                 <td>@item.TenDanhMuc</td>
-
                                                 <td>
-                                                    <a href="#" class="btn btn-app" title="Settings" data-toggle="modal" id="viewbtn" data-target="#sua"><i class="fas fa-edit"></i>Edit</a>
-                                                    <a href="#" class="btn btn-app" title="Delete" data-toggle="modal" onclick="XoaDanhMuc(@item.MaDanhMuc)"><i class="material-icons"></i>Delete</a>
+                                                    <a href="@Url.Action("SuaDM","Admin",new {id=item.MaDanhMuc})" class="btn btn-success">Edit</a>
                                                 </td>
+                                                <td><a class="btn btn-success" onclick="XoaDanhMuc(@item.MaDanhMuc)">Delete</a></td>
                                             </tr>
                                         }
                                     </tbody>
                                     <tfoot>
                                         <tr>
                                             <th>Mã danh mục</th>
-                                            <th>Tên danh mục</th>
-                                            <th>Hành động</th>
-
+                                            <th>Tên danh mục</th> 
                                         </tr>
                                     </tfoot>
                                 </table>
@@ -113,6 +108,7 @@
                                 form.setAttribute("aria-hidden", "true");
                                 form.setAttribute("tabindex", "-1");
                                 form.style.display = "none";
+                                window.location = '@Url.Action("QuanLyDM","Admin")';
                             }
                         }
                     });
