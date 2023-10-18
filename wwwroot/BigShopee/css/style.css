@@ -11,6 +11,7 @@ body {
 
 
      body a {
+          color: black;
           transition: 0.5s all;
           -webkit-transition: 0.5s all;
           -o-transition: 0.5s all;

@@ -36,11 +36,11 @@ namespace ShopBanDoGiaDung.Controllers
         }
         public IActionResult Login()
         {
-            ClaimsPrincipal claimUser = HttpContext.User;
+           /* ClaimsPrincipal claimUser = HttpContext.User;
             if (claimUser.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Home");
-            }
+            }*/
             return View();
         }
 
@@ -90,6 +90,13 @@ namespace ShopBanDoGiaDung.Controllers
                 return RedirectToAction("Index", "Home");
             }
             return View();
+        }
+
+        public ActionResult Logout()
+        {
+           
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login");
         }
 
     }

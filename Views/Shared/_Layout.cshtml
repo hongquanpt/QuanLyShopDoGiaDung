@@ -1,6 +1,9 @@
-﻿@{
-    var danhmuc = (List<ShopBanDoGiaDung.Models.Danhmucsanpham>)ViewBag.danhmucsp;
-    var hang = (List<ShopBanDoGiaDung.Models.Hangsanxuat>)ViewBag.hang;
+﻿
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    string sessionvalue = HttpContextAccessor.HttpContext.Session.GetString("email");
+
 }
 <!DOCTYPE html>
 <html>
@@ -11,7 +14,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <link href="~/BigShopee/css/bootstra.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/BigShopee/css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
     <link href="~/BigShopee/js/jquery.min.js" rel="stylesheet" type="text/css" media="all" />
     <!--theme-style-->
 
@@ -50,25 +53,6 @@
                     </ul>
                     <div class="clearfix"> </div>
                 </div>
-                @*<div class="top-header-right">
-                <div class="down-top">
-                <select class="in-drop">
-                <option value="English" class="in-of">English</option>
-                <option value="Japanese" class="in-of">Japanese</option>
-                <option value="French" class="in-of">French</option>
-                <option value="German" class="in-of">German</option>
-                </select>
-                </div>
-                <div class="down-top top-down">
-                <select class="in-drop">
-
-                <option value="Dollar" class="in-of">Dollar</option>
-                <option value="Yen" class="in-of">Yen</option>
-                <option value="Euro" class="in-of">Euro</option>
-                </select>
-                </div>
-                <div class="clearfix"> </div>
-                </div>*@
                 <div class="clearfix"> </div>
             </div>
         </div>
@@ -87,10 +71,57 @@
                     </form>
                     <div class="clearfix"> </div>
                 </div>
-                <div class="header-bottom-right">
+                <div class="header-bottom-right" >
+                    @if (sessionvalue == null)
+                    {
+                        <div class="account"><a href="@Url.Action("Login", "Access")"><span> </span>TÀI KHOẢN</a></div>
+                    }
+                    else
+                    {
+                        <div class="dropdown">
+                            <div class="account dropdown-toggle" data-toggle="dropdown"><a href="@Url.Action("Login", "Home")"><span> </span>Chào, @sessionvalue </a></div>
+                            <ul class="dropdown-menu" style="margin-top: 35px">
+                                <li><a href="@Url.Action("profile", "Home")">Thông tin tài khoản</a></li>
+                                <li><a href="@Url.Action("MyOrder", "Home")">Lịch sử mua hàng</a></li>
+                                <li><a href="@Url.Action("ChangePassword", "Home")">Đổi mật khẩu</a></li>
+                            </ul>
+                        </div>
+                        @*<div class="account"><a href="#"><span> </span>@Session["Ten"]</a></div>*@
 
+                    }
+                    @if (sessionvalue != null)
+                    {
+                        <div class="cart"><a href="@Url.Action("Index", "Cart")"><span> </span>GIỎ HÀNG</a></div>
+                    }
+                    else
+                    {
+                        <div class="cart"><a href="@Url.Action("Login", "Access")"><span> </span>GIỎ HÀNG</a></div>
+                    }
 
+                    @if (sessionvalue == null)
+                        {
+                        
+                            @*<li style="color:black;list-style:none"><a asp-controller="Access" asp-action="Login"><span> </span>ĐĂNG NHẬP</a></li>
+                            <span>|</span>
+                            <li style="color:black;list-style:none"><a href="@Url.Action("Register", "Access")">ĐĂNG KÍ</a></li>*@
+                       <a asp-controller="Access" asp-action="Login">ĐĂNG NHẬP</a>
+                       <span>|</span>
+                        <a asp-controller="Access" asp-action="Register">ĐĂNG KÍ</a>
+                       
 
+                        }   
+                        else
+                    {
+                            
+                          <div>
+                            <button style="border:none; background-color:transparent; font-size:16px; margin-right:5px" onclick="handleLogout()">
+                                ĐĂNG XUẤT
+                            </button>
+                            <i style="font-size:18px;color:#F97E76" class="fas fa-sign-out-alt" onclick="handleLogout()"></i>
+                          </div>
+
+                        }
+                    </ul>
 
                     <div class="clearfix"> </div>
                 </div>
@@ -103,8 +134,8 @@
 
         @RenderBody()
         <div class="sub-cate">
-            await Html.PartialAsync("~/Views/Home/ProductCategory.cshtml", danhmuc)
-            await Html.PartialAsync("~/Views/Home/Hang.cshtml", hang)
+            @await Component.InvokeAsync("DanhMuc")
+            @await Component.InvokeAsync("Hang")
 
             <script type="text/javascript">
                 $(function () {
@@ -125,16 +156,7 @@
 
                 });
             </script>
-            @*<div class=" chain-grid menu-chain">
-            <a href="single.html"><img class="img-responsive chain" src="~/BigShopee/images/wat.jpg" alt=" "
-            /></a>
-            <div class="grid-chain-bottom chain-watch">
-            <span class="actual dolor-left-grid">300$</span>
-            <span class="reducedfrom">500$</span>
-            <h6>Lorem ipsum dolor</h6>
-            </div>
-            </div>
-            <a class="view-all all-product" href="product.html">VIEW ALL PRODUCTS<span> </span></a>*@
+
         </div>
         <div class="clearfix"> </div>
     </div>
@@ -192,6 +214,23 @@
         </div>
     </div>
 </body>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="~/Scripts/Cart.js"></script>
+<script>
+   
+    const handleLogout = () => {
+        Swal.fire({
+            title: 'Bạn có chắc chắn muốn đăng xuất?',
+            showCancelButton: true,
+            confirmButtonText: 'Đăng xuất',
+            denyButtonText: `Hủy`,
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                window.location = '@Url.Action("Logout","Access")'
+            }
+        })
+    }
+</script>
 
 </html>

@@ -1,0 +1,602 @@
+﻿@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+     ViewBag.Title = "ProductDetail1";
+     Layout = "~/Views/Shared/_Layout.cshtml";
+     var sp = (ShopBanDoGiaDung.Models.Sanpham)ViewBag.sanpham;
+     var dg = (List<QuanLyShopDoGiaDung.Common.CommentView>)ViewBag.danhgia;
+     var sao = (double)ViewBag.sao;
+     string sessionvalue = HttpContextAccessor.HttpContext.Session.GetString("email");
+}
+<style>
+     div.stars {
+          width: 270px;
+          display: inline-block;
+     }
+
+     input.star {
+          display: none;
+     }
+
+     label.star {
+          float: right;
+          padding: 10px;
+          font-size: 36px;
+          color: #444;
+          transition: all .2s;
+     }
+
+     input.star:checked ~ label.star:before {
+          content: '\f005';
+          color: #FD4;
+          transition: all .25s;
+     }
+
+     input.star-5:checked ~ label.star:before {
+          color: #FE7;
+          text-shadow: 0 0 20px #952;
+     }
+
+     input.star-1:checked ~ label.star:before {
+          color: #F62;
+     }
+
+     label.star:hover {
+          transform: rotate(-15deg) scale(1.3);
+     }
+
+     label.star:before {
+          content: '\f006';
+          font-family: FontAwesome;
+     }
+</style>
+<div class=" single_top">
+     <div class="single_grid">
+          <div class="grid images_3_of_2">
+               <ul id="etalage">
+                    <li>
+                         <a href="optionallink.html">
+                              <img class="etalage_thumb_image img-responsive" src="~/Assets/BigShopee/images/@sp.Anh1" />
+                              <img class="etalage_source_image img-responsive" src="~/Assets/BigShopee/images/@sp.Anh1" title="" />
+                         </a>
+                    </li>
+                    <li>
+                         <img class="etalage_thumb_image img-responsive" src="~/Assets/BigShopee/images/@sp.Anh2" />
+                         <img class="etalage_source_image img-responsive" src="~/Assets/BigShopee/images/@sp.Anh2" title="" />
+                    </li>
+                    <li>
+                         <img class="etalage_thumb_image img-responsive" src="~/Assets/BigShopee/images/@sp.Anh3" />
+                         <img class="etalage_source_image img-responsive" src="~/Assets/BigShopee/images/@sp.Anh3" />
+                    </li>
+                    <li>
+                         <img class="etalage_thumb_image img-responsive" src="~/Assets/BigShopee/images/@sp.Anh4" />
+                         <img class="etalage_source_image img-responsive" src="~/Assets/BigShopee/images/@sp.Anh4" />
+                    </li>
+                    <li>
+                         <img class="etalage_thumb_image img-responsive" src="~/Assets/BigShopee/images/@sp.Anh5" />
+                         <img class="etalage_source_image img-responsive" src="~/Assets/BigShopee/images/@sp.Anh5" />
+                    </li>
+                    <li>
+                         <img class="etalage_thumb_image img-responsive" src="~/Assets/BigShopee/images/@sp.Anh6" />
+                         <img class="etalage_source_image img-responsive" src="~/Assets/BigShopee/images/@sp.Anh6" />
+                    </li>
+               </ul>
+               <div class="clearfix"> </div>
+          </div>
+          <div class="desc1 span_3_of_2">
+               <h4>@sp.TenSp</h4>
+               @if (sao == 0)
+               {
+
+                    <span>Chưa có đánh giá</span>
+               }
+               else
+               {
+                    <div>
+                         @if (sao > 0 && sao < 1)
+                         {
+                              <ul class="list-inline mb-0" style=" font-size: 16px;">
+                                   <li>@sao / 5.0 ( @dg.Count() đánh giá )</li>
+                                   <li class="list-inline-item me-0"><i class="fas fa-star-half-alt text-warning" style="color:yellow"></i></li>
+                                   <li class="list-inline-item me-0"><i class="far fa-star text-warning" style="color:yellow"></i></li>
+                                   <li class="list-inline-item me-0"><i class="far fa-star text-warning" style="color:yellow"></i></li>
+                                   <li class="list-inline-item me-0"><i class="far fa-star text-warning" style="color:yellow"></i></li>
+                                   <li class="list-inline-item me-0"><i class="far fa-star-half-alt text-warning" style="color:yellow"></i></li>
+                              </ul>
+                         }
+                         @if (sao >= 1 && sao < 2)
+                         {
+                              <ul class="list-inline mb-0" style=" font-size: 16px;">
+                                   <li>@sao / 5.0 ( @dg.Count() đánh giá )</li>
+                                   <li class="list-inline-item me-0"><i class="fas fa-star text-warning" style="color:yellow"></i></li>
+                                   <li class="list-inline-item me-0"><i class="fas fa-star-half-alt text-warning" style="color:yellow"></i></li>
+                                   <li class="list-inline-item me-0"><i class="far fa-star text-warning" style="color:yellow"></i></li>
+                                   <li class="list-inline-item me-0"><i class="far fa-star text-warning" style="color:yellow"></i></li>
+                                   <li class="list-inline-item me-0"><i class="far fa-star text-warning" style="color:yellow"></i></li>
+                              </ul>
+                         }
+                         @if (sao >= 2 && sao < 3)
+                         {
+                              <ul class="list-inline mb-0" style=" font-size: 16px;">
+                                   <li>@sao / 5.0 ( @dg.Count() đánh giá )</li>
+                                   <li class="list-inline-item me-0"><i class="fas fa-star text-warning" style="color:yellow"></i></li>
+                                   <li class="list-inline-item me-0"><i class="fas fa-star text-warning" style="color:yellow"></i></li>
+                                   <li class="list-inline-item me-0"><i class="fas fa-star-half-alt text-warning" style="color:yellow"></i></li>
+                                   <li class="list-inline-item me-0"><i class="far fa-star text-warning" style="color:yellow"></i></li>
+                                   <li class="list-inline-item me-0"><i class="far fa-star text-warning" style="color:yellow"></i></li>
+                              </ul>
+                         }
+                         @if (sao >= 3 && sao < 4)
+                         {
+                              <ul class="list-inline mb-0" style=" font-size: 16px;">
+                                   <li>@sao / 5.0 ( @dg.Count() đánh giá )</li>
+                                   <li class="list-inline-item me-0"><i class="fas fa-star text-warning" style="color:yellow"></i></li>
+                                   <li class="list-inline-item me-0"><i class="fas fa-star text-warning" style="color:yellow"></i></li>
+                                   <li class="list-inline-item me-0"><i class="fas fa-star text-warning" style="color:yellow"></i></li>
+                                   <li class="list-inline-item me-0"><i class="fas fa-star-half-alt text-warning" style="color:yellow"></i></li>
+                                   <li class="list-inline-item me-0"><i class="far fa-star text-warning" style="color:yellow"></i></li>
+                              </ul>
+                         }
+                         @if (sao >= 4 && sao < 5)
+                         {
+                              <ul class="list-inline mb-0" style=" font-size: 16px;">
+                                   <li>@sao / 5.0 ( @dg.Count() đánh giá )</li>
+                                   <li class="list-inline-item me-0"><i class="fas fa-star text-warning" style="color:yellow"></i></li>
+                                   <li class="list-inline-item me-0"><i class="fas fa-star text-warning" style="color:yellow"></i></li>
+                                   <li class="list-inline-item me-0"><i class="fas fa-star text-warning" style="color:yellow"></i></li>
+                                   <li class="list-inline-item me-0"><i class="fas fa-star text-warning" style="color:yellow"></i></li>
+                                   <li class="list-inline-item me-0"><i class="fas fa-star-half-alt text-warning" style="color:yellow"></i></li>
+                              </ul>
+                         }
+                         @if (sao == 5)
+                         {
+                              <ul class="list-inline mb-0" style=" font-size: 16px;">
+                                   <li>@sao / 5.0 ( @dg.Count() đánh giá )</li>
+                                   <li class="list-inline-item me-0"><i class="fas fa-star text-warning" style="color:yellow"></i></li>
+                                   <li class="list-inline-item me-0"><i class="fas fa-star text-warning" style="color:yellow"></i></li>
+                                   <li class="list-inline-item me-0"><i class="fas fa-star text-warning" style="color:yellow"></i></li>
+                                   <li class="list-inline-item me-0"><i class="fas fa-star text-warning" style="color:yellow"></i></li>
+                                   <li class="list-inline-item me-0"><i class="fas fa-star text-warning" style="color:yellow"></i></li>
+                              </ul>
+                         }
+
+                    </div>
+               }
+               <div class="cart-b">
+                    <div class="left-n">@sp.GiaTien</div>
+                    @if (sessionvalue != null)
+                    {
+                         <a class="now-get get-cart-in" id="btnAdd" data-id="@sp.MaSp" href="#">THÊM VÀO GIỎ</a>
+                    }
+                    else
+                    {
+                         <a class="now-get get-cart-in" href="@Url.Action("Login", "Home")">THÊM VÀO GIỎ</a>
+                    }
+
+
+                    <div class="clearfix"></div>
+               </div>
+               <h6>Đã bán : <span style="color:red">@sp.SoLuongDaBan</span> sản phẩm ,còn  <span style="color:red">@sp.SoLuongTrongKho</span>  sản phẩm </h6>
+               <p>      @sp.MoTa.</p>
+               @*<div class="share">
+                         <h5>Share Product :</h5>
+                         <ul class="share_nav">
+                              <li><a href="#"><img src="~/Assets/BigShopee/images/facebook.png" title="facebook"></a></li>
+                              <li><a href="#"><img src="~/Assets/BigShopee/images/twitter.png" title="Twiiter"></a></li>
+                              <li><a href="#"><img src="~/Assets/BigShopee/images/rss.png" title="Rss"></a></li>
+                              <li><a href="#"><img src="~/Assets/BigShopee/images/gpluse.png" title="Google+"></a></li>
+                         </ul>
+                    </div>*@
+
+
+          </div>
+          <div class="clearfix"> </div>
+     </div>
+     @*<ul id="flexiselDemo1">
+               <li><img src="~/Assets/BigShopee/images/pi.jpg" /><div class="grid-flex"><a href="#">Bloch</a><p>Rs 850</p></div></li>
+               <li><img src="~/Assets/BigShopee/images/pi1.jpg" /><div class="grid-flex"><a href="#">Capzio</a><p>Rs 850</p></div></li>
+               <li><img src="~/Assets/BigShopee/images/pi2.jpg" /><div class="grid-flex"><a href="#">Zumba</a><p>Rs 850</p></div></li>
+               <li><img src="~/Assets/BigShopee/images/pi3.jpg" /><div class="grid-flex"><a href="#">Bloch</a><p>Rs 850</p></div></li>
+               <li><img src="~/Assets/BigShopee/images/pi4.jpg" /><div class="grid-flex"><a href="#">Capzio</a><p>Rs 850</p></div></li>
+          </ul>*@
+     <script type="text/javascript">
+          $(window).load(function () {
+               $("#flexiselDemo1").flexisel({
+                    visibleItems: 5,
+                    animationSpeed: 1000,
+                    autoPlay: true,
+                    autoPlaySpeed: 3000,
+                    pauseOnHover: true,
+                    enableResponsiveBreakpoints: true,
+                    responsiveBreakpoints: {
+                         portrait: {
+                              changePoint: 480,
+                              visibleItems: 1
+                         },
+                         landscape: {
+                              changePoint: 640,
+                              visibleItems: 2
+                         },
+                         tablet: {
+                              changePoint: 768,
+                              visibleItems: 3
+                         }
+                    }
+               });
+
+          });
+     </script>
+     <script type="text/javascript" src="~/Assets/BigShopee/js/jquery.flexisel.js"></script>
+     <div class="product_desc">
+          <div id="horizontalTab" style="display: block; width: 100%; margin: 0px;">
+               <ul class="resp-tabs-list">
+                    @*<li class="resp-tab-item" aria-controls="tab_item-0" role="tab">Thông số kỹ thuật</li>*@
+                    <li class="resp-tab-item resp-tab-active" aria-controls="tab_item-1" role="tab">Đánh giá</li>
+                    @*<li class="resp-tab-item" aria-controls="tab_item-2" role="tab">Product Reviews</li>*@
+                    <div class="clear"></div>
+               </ul>
+               <div class="resp-tabs-container">
+                    @*<h2 class="resp-accordion resp-tab-active" role="tab" aria-controls="tab_item-0"><span class="resp-arrow"></span>Thông tin sản phẩm</h2><div class="product-desc resp-tab-content resp-tab-content-active" aria-labelledby="tab_item-0" style="display:block">
+                         <p>Lorem Ipsum is simply dummy text of the <span>printing and typesetting industry</span>. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
+                         <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, <span>when an unknown printer took a galley of type and scrambled</span> it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.<span> It has survived not only five centuries</span>, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
+                         <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
+                    </div>*@
+
+                    @*<h2 class="resp-accordion" role="tab" aria-controls="tab_item-1"><span class="resp-arrow"></span>product Tags</h2><div class="product-tags resp-tab-content" aria-labelledby="tab_item-1">
+                              <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
+                              <h4>Add Your Tags:</h4>
+                              <div class="input-box">
+                                   <input type="text" value="">
+                              </div>
+                              <div class="button"><span><a href="#">Add Tags</a></span></div>
+                         </div>*@
+
+                    <h2 class="resp-accordion" role="tab" aria-controls="tab_item-2"><span class="resp-arrow"></span>Đánh giá</h2>
+                    <div class="review resp-tab-content resp-tab-active" aria-labelledby="tab_item-2">
+
+                         @*<h4>Lorem ipsum Review by <a href="#">Finibus Bonorum</a></h4>
+                              <ul>
+                                   <li>Price :<a href="#"><img src="images/price-rating.png" alt=""></a></li>
+                                   <li>Value :<a href="#"><img src="images/value-rating.png" alt=""></a></li>
+                                   <li>Quality :<a href="#"><img src="images/quality-rating.png" alt=""></a></li>
+                              </ul>
+                              <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type
+                              and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>*@
+                         <!--<div class="row mb-4">
+                         <h5 class="mb-4">Tất cả đánh giá</h5>-->
+                         <!-- Rating info -->
+                         <!--<div class="col-md-4 mb-3 mb-md-0">
+                         <div class="text-center">-->
+                         <!-- Info -->
+                         <!--<h2 class="mb-0">4.5</h2>-->
+                         <!-- Star -->
+                         <!--<ul class="list-inline mb-0">
+                                        <li class="list-inline-item me-0"><i class="fas fa-star text-warning"></i></li>
+                                        <li class="list-inline-item me-0"><i class="fas fa-star text-warning"></i></li>
+                                        <li class="list-inline-item me-0"><i class="fas fa-star text-warning"></i></li>
+                                        <li class="list-inline-item me-0"><i class="fas fa-star text-warning"></i></li>
+                                        <li class="list-inline-item me-0"><i class="fas fa-star-half-alt text-warning"></i></li>
+                                   </ul>
+                                   <p class="mb-0">(Dựa trên đánh giá trong ngày)</p>
+                              </div>
+                         </div>-->
+                         <!-- Progress-bar and star -->
+                         <!--<div class="col-md-8">
+                         <div class="row align-items-center text-center">-->
+                         <!-- Progress bar and Rating -->
+                         <!--<div class="col-6 col-sm-8">-->
+                         <!-- Progress item -->
+                         <!--<div class="progress progress-sm bg-warning bg-opacity-15">
+                                   <div class="progress-bar bg-warning" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                                   </div>
+                              </div>
+                         </div>
+
+                         <div class="col-6 col-sm-4">-->
+                         <!-- Star item -->
+                         <!--<ul class="list-inline mb-0">
+                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
+                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
+                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
+                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
+                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
+                              </ul>
+                         </div>-->
+                         <!-- Progress bar and Rating -->
+                         <!--<div class="col-6 col-sm-8">-->
+                         <!-- Progress item -->
+                         <!--<div class="progress progress-sm bg-warning bg-opacity-15">
+                                   <div class="progress-bar bg-warning" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">
+                                   </div>
+                              </div>
+                         </div>
+
+                         <div class="col-6 col-sm-4">-->
+                         <!-- Star item -->
+                         <!--<ul class="list-inline mb-0">
+                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
+                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
+                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
+                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
+                                   <li class="list-inline-item me-0 small"><i class="far fa-star text-warning"></i></li>
+                              </ul>
+                         </div>-->
+                         <!-- Progress bar and Rating -->
+                         <!--<div class="col-6 col-sm-8">-->
+                         <!-- Progress item -->
+                         <!--<div class="progress progress-sm bg-warning bg-opacity-15">
+                                   <div class="progress-bar bg-warning" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
+                                   </div>
+                              </div>
+                         </div>
+
+                         <div class="col-6 col-sm-4">-->
+                         <!-- Star item -->
+                         <!--<ul class="list-inline mb-0">
+                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
+                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
+                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
+                                   <li class="list-inline-item me-0 small"><i class="far fa-star text-warning"></i></li>
+                                   <li class="list-inline-item me-0 small"><i class="far fa-star text-warning"></i></li>
+                              </ul>
+                         </div>-->
+                         <!-- Progress bar and Rating -->
+                         <!--<div class="col-6 col-sm-8">-->
+                         <!-- Progress item -->
+                         <!--<div class="progress progress-sm bg-warning bg-opacity-15">
+                                   <div class="progress-bar bg-warning" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">
+                                   </div>
+                              </div>
+                         </div>
+
+                         <div class="col-6 col-sm-4">-->
+                         <!-- Star item -->
+                         <!--<ul class="list-inline mb-0">
+                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
+                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
+                                   <li class="list-inline-item me-0 small"><i class="far fa-star text-warning"></i></li>
+                                   <li class="list-inline-item me-0 small"><i class="far fa-star text-warning"></i></li>
+                                   <li class="list-inline-item me-0 small"><i class="far fa-star text-warning"></i></li>
+                              </ul>
+                         </div>-->
+                         <!-- Progress bar and Rating -->
+                         <!--<div class="col-6 col-sm-8">-->
+                         <!-- Progress item -->
+                         <!--<div class="progress progress-sm bg-warning bg-opacity-15">
+                                   <div class="progress-bar bg-warning" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
+                                   </div>
+                              </div>
+                         </div>
+
+                         <div class="col-6 col-sm-4">-->
+                         <!-- Star item -->
+                         <!--<ul class="list-inline mb-0">
+                                                  <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
+                                                  <li class="list-inline-item me-0 small"><i class="far fa-star text-warning"></i></li>
+                                                  <li class="list-inline-item me-0 small"><i class="far fa-star text-warning"></i></li>
+                                                  <li class="list-inline-item me-0 small"><i class="far fa-star text-warning"></i></li>
+                                                  <li class="list-inline-item me-0 small"><i class="far fa-star text-warning"></i></li>
+                                             </ul>
+                                        </div>
+                                   </div>
+                              </div>
+                         </div>-->
+                         <div class="your-review">
+                              <h3>Hãy cho chúng tôi biết cảm nhận của bạn khi sử dụng sản phẩm</h3>
+                              @*<p>Write Your Own Review?</p>*@
+
+                              @*<div>
+                                        <span><label>Nickname<span class="red">*</span></label></span>
+                                        <span><input type="text" value=""></span>
+                                   </div>*@
+                              <div>
+                                   <span><label>Đánh giá với tên @sessionvalue<span class="red">*</span></label></span>
+                                   @*<span><input type="text" value=""></span>*@
+                              </div>
+                              <link rel='stylesheet prefetch' href='https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css'>
+                              <form method="post" action="/Home/Comment">
+                                   <div>
+                                        <div class="stars" style=" margin-left: 306px;">
+                                             <input class="star star-5" id="star-5" type="radio" value="5" name="DanhGia" />
+                                             <label class="star star-5" for="star-5"></label>
+                                             <input class="star star-4" id="star-4" type="radio" value="4" name="DanhGia" />
+                                             <label class="star star-4" for="star-4"></label>
+                                             <input class="star star-3" id="star-3" type="radio" value="3" name="DanhGia" />
+                                             <label class="star star-3" for="star-3"></label>
+                                             <input class="star star-2" id="star-2" type="radio" value="2" name="DanhGia" />
+                                             <label class="star star-2" for="star-2"></label>
+                                             <input class="star star-1" id="star-1" type="radio" value="1" name="DanhGia" />
+                                             <label class="star star-1" for="star-1"></label>
+                                        </div>
+                                        <div>
+                                             <span><label>Bình luận của bạn<span class="red">*</span></label></span>
+                                             <span><input type="text" name="NoiDungBinhLuan" placeholder="Nhập đánh giá của bạn tại đây" style="width: 63%; height: 44px;"></span>
+                                             <span style="display:none"><input type="number" name="MaTaiKhoan" value="@sessionvalue"></span>
+                                             <span style="display:none"><input type="number" name="MaSP" value="@sp.MaSp"></span>
+                                             @if (sessionvalue == null)
+                                             {
+
+
+                                                  <span style="margin-top:20px"><input type="submit" disabled="disabled" class="btn btn-success" value="BÌNH LUẬN" style="line-height: 27px;"></span>
+                                             }
+                                             else
+                                             {
+                                                  <span style="margin-top:20px"><input type="submit" class="btn btn-success" value="BÌNH LUẬN" style="line-height: 27px;"></span>
+                                             }
+
+
+                                        </div>
+                                   </div>
+
+                              </form>
+                              <div id="div_allcomment">
+                                   <h3>Tất cả đánh giá (@dg.Count đánh giá)</h3>
+                                   @foreach (var itemcomment in dg)
+                                   {
+                                        <div class="row" style="margin-left: 14px; margin-top: 24px;">
+                                             <!-- Review item START -->
+                                             <div class="d-md-flex my-4" style="display:inline-flex">
+                                                  <!-- Avatar -->
+                                                  <div class="avatar avatar-xl me-4 flex-shrink-0">
+                                                       <img class="avatar-img img-circle" src="~/Assets/BigShopee/images/avartar.jpg" alt="avatar" width="40" style="width: 79px; margin-top: 9px">
+                                                  </div>
+                                                  <!-- Text -->
+                                                  <div class="col-md-12">
+                                                       <div class="d-sm-flex mt-1 mt-md-0 align-items-center">
+                                                            <h5 class="me-3 mb-0">@itemcomment.TenTaiKhoan</h5>
+                                                            <!-- Review star -->
+                                                            <ul class="list-inline mb-0">
+                                                                 <li class="list-inline-item me-0"><i class="fas fa-star text-warning" style="color:yellow"></i></li>
+                                                                 @if (itemcomment.DanhGia >= 2)
+                                                                 {
+                                                                      <li class="list-inline-item me-0"><i class="fas fa-star text-warning" style="color:yellow"></i></li>
+
+                                                                 }
+                                                                 else
+                                                                 {
+                                                                      <li class="list-inline-item me-0"><i class="far fa-star text-warning" style="color:yellow"></i></li>
+                                                                 }
+                                                                 @if (itemcomment.DanhGia >= 3)
+                                                                 {
+                                                                      <li class="list-inline-item me-0"><i class="fas fa-star text-warning" style="color:yellow"></i></li>
+
+                                                                 }
+                                                                 else
+                                                                 {
+                                                                      <li class="list-inline-item me-0"><i class="far fa-star text-warning" style="color:yellow"></i></li>
+                                                                 }
+                                                                 @if (itemcomment.DanhGia >= 4)
+                                                                 {
+                                                                      <li class="list-inline-item me-0"><i class="fas fa-star text-warning" style="color:yellow"></i></li>
+
+                                                                 }
+                                                                 else
+                                                                 {
+                                                                      <li class="list-inline-item me-0"><i class="far fa-star text-warning" style="color:yellow"></i></li>
+                                                                 }
+                                                                 @if (itemcomment.DanhGia >= 5)
+                                                                 {
+                                                                      <li class="list-inline-item me-0"><i class="fas fa-star text-warning" style="color:yellow"></i></li>
+
+                                                                 }
+                                                                 else
+                                                                 {
+                                                                      <li class="list-inline-item me-0"><i class="far fa-star text-warning" style="color:yellow"></i></li>
+                                                                 }
+
+                                                            </ul>
+                                                       </div>
+                                                       <!-- Info -->
+                                                       <p class="small mb-2">@itemcomment.ThoiGian</p>
+                                                       <div class="mt-2">
+                                                            <p class="mb-2">@itemcomment.NoiDung</p>
+                                                            <div class="bg-white"></div>
+                                                            <div class="d-flex flex-row">
+                                                                 <a class="accordion-collapse collapse show" href="#commmentreply-itemcomment.ID" data-bs-toggle="collapse" aria-expanded="true" aria-controls="collapse-1">
+                                                                      <i class="fas fa-reply me-2"></i>Phản hồi
+                                                                 </a>
+                                                            </div>
+
+                                                       </div>
+                                                       <!--<div id="commmentreply-itemcomment.ID" class="bg-light p-2 collapse">
+                                                       <div class="d-flex flex-row align-items-start">-->
+                                                       @*<img class="avatar-img rounded-circle" src="/assets/client/images/avatar/09.jpg" alt="avatar" width="40">*@
+                                                       <!--<textarea class="form-control" id="txtCommentMsg_itemcomment.ID" placeholder="Viết nhận xét tại đây" rows="3"></textarea>
+
+                                                            </div>
+                                                            <div class="mt-2 text-right">
+                                                                 <a class="abcdefghkj" data-productid="itemcomment.ProductID" data-userid="ViewBag.UserID" data-parentid="itemcomment.ID" data-commentmsg="txtCommentMsg_itemcomment.ID">
+                                                                      <input type="submit" class="btn btn-primary mb-0" value="Gửi bình luận" />
+                                                                 </a>
+                                                            </div>
+                                                       </div>-->
+                                                       <!-- Reply button -->
+                                                       <!--{Html.RenderAction("_ChildComment", "Product", new { parentid = itemcomment.ID, productid = itemcomment.ProductID });}-->
+                                                  </div>
+
+                                             </div>
+                                        </div>
+
+                                   }
+
+                              </div>
+
+
+                         </div>
+                    </div>
+               </div>
+          </div>
+          @*<div class="toogle">
+                    <h3 class="m_3">Product Details</h3>
+                    <p class="m_text">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum.</p>
+               </div>*@
+          <script src="~/Assets/BigShopee/js/jquery.etalage.min.js"></script>
+          <script>
+               jQuery(document).ready(function ($) {
+
+                    $('#etalage').etalage({
+                         thumb_image_width: 400,
+                         thumb_image_height: 400,
+                         source_image_width: 900,
+                         source_image_height: 1200,
+                         show_hint: true,
+                         click_callback: function (image_anchor, instance_id) {
+                              alert('Callback example:\nYou clicked on an image with the anchor: "' + image_anchor + '"\n(in Etalage instance: "' + instance_id + '")');
+                         }
+                    });
+
+               });
+          </script>
+          <script>
+               function formatcurrency(cur) {
+                    return new Intl.NumberFormat('vi-vn', { style: 'currency', currency: 'vnd' }).format(cur);
+               }
+               const moneylist = document.querySelectorAll(".left-n")
+               for (let i = 0; i < moneylist.length; i++) {
+                    moneylist[i].innerHTML = formatcurrency(Number(moneylist[i].innerHTML))
+               }
+          </script>
+          <script src="~/Assets/HomeShoppe/js/easyResponsiveTabs.js" type="text/javascript"></script>
+          <link href="~/Assets/HomeShoppe/css/easy-responsive-tabs.css" rel="stylesheet" type="text/css" media="all" />
+          <script type="text/javascript">
+               $(document).ready(function () {
+                    $('#horizontalTab').easyResponsiveTabs({
+                         type: 'default', //Types: default, vertical, accordion
+                         width: 'auto', //auto or any width like 600px
+                         fit: true   // 100% fit in a container
+                    });
+               });
+          </script>
+          @*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>*@
+          @*<script type="text/javascript">
+               $(function () {
+                   $("#addtocart").click(function () {
+                       var model = {};
+                       //lấy id sản phẩm
+                       model.Id = @Model.Id;
+                       // lấy số lượng đặt hàng
+                       model.Quantity = $("#ipQuantity").val();
+                       debugger;
+                       $.ajax({
+                           type: "POST",
+                           url: '@Url.Action("AddToCart", "Cart")',
+                           data:  JSON.stringify(model) ,
+                           dataType: "json",
+                           contentType: "application/json; charset=utf-8",
+                           success: function () {
+                               alert("Thêm giỏ hàng thành công!")
+                               $('#CartCount').text(@Session["count"] + 1);
+                           },
+                           error: function () {
+                               alert("Lỗi trong khi thêm vào giỏ hàng!");
+                           }
+                       });
+                       return false;
+                   });
+               });
+                </script>*@
+          @*<link rel="stylesheet" href="~/Assets/HomeShoppe/css/style.css" type="text/css" media="all" />*@
+     </div>
+</div>
+
+

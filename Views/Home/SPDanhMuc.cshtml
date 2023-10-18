@@ -1,0 +1,104 @@
+﻿@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+     ViewBag.Title = "SPDanhMuc";
+     Layout = "~/Views/Shared/_Layout.cshtml";
+     var sp = (List<ShopBanDoGiaDung.Models.Sanpham>)ViewBag.sanpham;
+     string ten = ViewBag.tendanhmuc;
+      string sessionvalue = HttpContextAccessor.HttpContext.Session.GetString("email");
+}
+
+<div class="shoes-grid">
+     <div class="products" style="margin-top: 28px;}">
+          <h5 class="latest-product text-uppercase">@ten</h5>
+          @*<a class="view-all" href="@Url.Action("AllProduct","Home")">Tất cả sản phẩm<span> </span></a>*@
+     </div>
+     <div class="product-left">
+          @foreach (var it in sp)
+          {
+               <div class="col-md-4 chain-grid">
+                    <a href="@Url.Action("ProductDetail","Home", new { id = it.MaSp})"><img class="img-responsive chain" src="~/BigShopee/images/@it.Anh1" alt=" "></a>
+                    <span class="star"> </span>
+                    <div class="grid-chain-bottom">
+                         <h6><a href="@Url.Action("ProductDetail","Home", new { id = it.MaSp})">@it.TenSp</a></h6>
+                         <div class="star-price">
+                              <div class="dolor-grid">
+                                   <span class="actual">@it.GiaTien</span>
+
+                                   @*<span class="reducedfrom">400$</span>*@
+                                   <br /><span>Đã bán @it.SoLuongDaBan</span>
+                                   @*<span class="rating">
+                                             <input type="radio" class="rating-input" id="rating-input-1-5" name="rating-input-1">
+                                             <label for="rating-input-1-5" class="rating-star1"> </label>
+                                             <input type="radio" class="rating-input" id="rating-input-1-4" name="rating-input-1">
+                                             <label for="rating-input-1-4" class="rating-star1"> </label>
+                                             <input type="radio" class="rating-input" id="rating-input-1-3" name="rating-input-1">
+                                             <label for="rating-input-1-3" class="rating-star"> </label>
+                                             <input type="radio" class="rating-input" id="rating-input-1-2" name="rating-input-1">
+                                             <label for="rating-input-1-2" class="rating-star"> </label>
+                                             <input type="radio" class="rating-input" id="rating-input-1-1" name="rating-input-1">
+                                             <label for="rating-input-1-1" class="rating-star"> </label>
+                                        </span>*@
+                              </div>
+                              @if (sessionvalue != null)
+                              {
+                                   <a class="now-get get-cart" onclick="addItem(@it.MaSp)">THÊM VÀO GIỎ</a>
+                              }
+                              else
+                              {
+                                   <a class="now-get get-cart" href="@Url.Action("Login", "Access")">THÊM VÀO GIỎ</a>
+                              }
+                              <script>
+                                   function addItem(ma) {
+                                        var productid = parseInt(ma);
+
+                                        $.ajax({
+                                             url: '/Cart/AddItem',
+                                             data: {
+                                                  productId: productid
+                                             },
+                                             type: 'POST',
+                                             dataType: 'json',
+                                             success: function (res) {
+                                                  if (res.status == true) {
+                                                       Swal.fire({
+                                                            position: 'center',
+                                                            icon: 'success',
+                                                            title: 'Thêm sản phẩm vào giỏ hàng thành công',
+                                                            showConfirmButton: false,
+                                                            timer: 1500
+                                                       })
+
+                                                  }
+                                                  else {
+                                                       Swal.fire({
+                                                            position: 'center',
+                                                            icon: 'error',
+                                                            title: 'Xin lỗi, sản phẩm bạn vừa chọn đang tạm hết hàng',
+                                                            showConfirmButton: false,
+                                                            timer: 700
+                                                       })
+                                                  }
+                                             }
+
+                                        });
+                                   }
+                              </script>
+                              <div class="clearfix"> </div>
+                         </div>
+                    </div>
+               </div>
+          }
+          <div class="clearfix"> </div>
+     </div>
+</div>
+<script>
+     function formatcurrency(cur) {
+          return new Intl.NumberFormat('vi-vn', { style: 'currency', currency: 'vnd' }).format(cur);
+     }
+     const moneylist = document.querySelectorAll(".actual")
+     for (let i = 0; i < moneylist.length; i++) {
+          moneylist[i].innerHTML = formatcurrency(Number(moneylist[i].innerHTML))
+     }
+</script>
+
