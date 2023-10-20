@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
 using ShopBanDoGiaDung.Common;
+using QuanLyShopDoGiaDung.Common;
+using ShopBanDoGiaDung.Models;
 
 namespace ShopBanDoGiaDung.Controllers
 {
@@ -90,6 +92,43 @@ namespace ShopBanDoGiaDung.Controllers
                 return RedirectToAction("Index", "Home");
             }
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterInfo registerInfo)
+        {
+            var user = await _context.Taikhoans.SingleOrDefaultAsync(c => c.Email == registerInfo.Email);
+            if (user != null)
+            {
+                ViewData["ValidateMessage"] = "Tài khoản đã tồn tại";
+                 return RedirectToAction("Login", "Access");
+            }
+            var f_password = GetMD5(registerInfo.Password);
+            Taikhoan newTk = new Taikhoan(){
+                Ten= registerInfo.Ten ,
+                Email = registerInfo.Email,
+                MatKhau = registerInfo.Password,
+                Quyen = "khach"
+            };
+            _context.Taikhoans.Add(newTk);
+            await _context.SaveChangesAsync(); 
+            List<Claim> claims = new List<Claim>()
+                  {
+                      new Claim(ClaimTypes.NameIdentifier,registerInfo.Email),
+                      new Claim("OtherProperties","Example Role")
+
+                  };
+             HttpContext.Session.SetString("email", registerInfo.Email);
+             HttpContext.Session.SetInt32("Ma", newTk.MaTaiKhoan);
+
+             ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+             AuthenticationProperties properties = new AuthenticationProperties()
+                {
+                    AllowRefresh = true
+                };
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(claimsIdentity), properties); 
+            return RedirectToAction("Index", "Home");
         }
 
         public ActionResult Logout()

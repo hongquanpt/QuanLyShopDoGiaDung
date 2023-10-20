@@ -20,7 +20,8 @@ body {
      }
 
 .top-header {
-     background: #F97E76;
+     /* background: #F97E76; */
+     background-color: #1DBAA5;
      padding: 0.7em 0;
 }
 
@@ -370,6 +371,8 @@ a.now-get {
      padding: 0.6em 0.8em;
      background: #323A45;
      text-decoration: none;
+     cursor: pointer;
+     /* background-color: #1DBAA5; */
 }
 
      a.now-get:hover {
@@ -2145,4 +2148,8 @@ select.in-drop {
                color: #333;
                font-weight: bold;
           }
+}
+
+.product-left{
+     /* min-height: 930px; */
 }

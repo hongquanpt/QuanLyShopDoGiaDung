@@ -12,8 +12,9 @@
     <title>Online Shop</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
     <link href="~/BigShopee/css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
     <link href="~/BigShopee/js/jquery.min.js" rel="stylesheet" type="text/css" media="all" />
     <!--theme-style-->
@@ -34,6 +35,7 @@
             crossorigin="anonymous"></script>
     <script src="~/BigShopee/js/jquery.min.js"></script>
     <script src="~/Scripts/jquery.validate.js"></script>
+
 
 </head>
 
@@ -60,7 +62,7 @@
             <div class="container">
                 <div class="header-bottom-left">
                     <div class="logo">
-                        <a href="@Url.Action("Index", "Home")"><img src="~/BigShopee/images/logo.png" alt=" " /></a>
+                        <a asp-controller="Home" asp-action="Index"><img src="~/BigShopee/images/logo.png" alt=" " /></a>
                     </div>
                     <form method="post" action="/Home/search">
                         <div class="search">
@@ -74,36 +76,38 @@
                 <div class="header-bottom-right" >
                     @if (sessionvalue == null)
                     {
-                        <div class="account"><a href="@Url.Action("Login", "Access")"><span> </span>TÀI KHOẢN</a></div>
+                        <div class="account"><a asp-action="Login" asp-controller="Access"><span> </span>TÀI KHOẢN</a></div>
                     }
                     else
                     {
                         <div class="dropdown">
-                            <div class="account dropdown-toggle" data-toggle="dropdown"><a href="@Url.Action("Login", "Home")"><span> </span>Chào, @sessionvalue </a></div>
-                            <ul class="dropdown-menu" style="margin-top: 35px">
-                                <li><a href="@Url.Action("profile", "Home")">Thông tin tài khoản</a></li>
-                                <li><a href="@Url.Action("MyOrder", "Home")">Lịch sử mua hàng</a></li>
-                                <li><a href="@Url.Action("ChangePassword", "Home")">Đổi mật khẩu</a></li>
-                            </ul>
-                        </div>
-                        @*<div class="account"><a href="#"><span> </span>@Session["Ten"]</a></div>*@
-
+                            <div class="account dropdown-toggle" data-toggle="dropdown">                      
+                                  <a style="cursor: pointer;"><span> </span>Chào, @sessionvalue </a>
+                            </div>
+                            <ul class="dropdown-menu" style="margin-top: 45px">
+                                <li><a asp-controller="Home" asp-action="profile" >
+                                    <i style="color:#F97E76;"  class="fas fa-user"></i>
+                                    Thông tin tài khoản</a>
+                                </li>
+                                <li><a asp-controller="Home" asp-action="MyOrder" >
+                                     <i style="color:#F97E76;"  class="fas fa-receipt"></i>
+                                    Lịch sử mua hàng</a></li>
+                             </ul>
+                         </div>
+                      
                     }
                     @if (sessionvalue != null)
                     {
-                        <div class="cart"><a href="@Url.Action("Index", "Cart")"><span> </span>GIỎ HÀNG</a></div>
+                        <div class="cart"><a asp-controller="Cart" asp-action="Index" ><span> </span>GIỎ HÀNG</a></div>
                     }
                     else
                     {
-                        <div class="cart"><a href="@Url.Action("Login", "Access")"><span> </span>GIỎ HÀNG</a></div>
+                        <div class="cart"><a asp-controller="Access" asp-action="Login" ><span> </span>GIỎ HÀNG</a></div>
                     }
 
                     @if (sessionvalue == null)
                         {
                         
-                            @*<li style="color:black;list-style:none"><a asp-controller="Access" asp-action="Login"><span> </span>ĐĂNG NHẬP</a></li>
-                            <span>|</span>
-                            <li style="color:black;list-style:none"><a href="@Url.Action("Register", "Access")">ĐĂNG KÍ</a></li>*@
                        <a asp-controller="Access" asp-action="Login">ĐĂNG NHẬP</a>
                        <span>|</span>
                         <a asp-controller="Access" asp-action="Register">ĐĂNG KÍ</a>
@@ -117,7 +121,7 @@
                             <button style="border:none; background-color:transparent; font-size:16px; margin-right:5px" onclick="handleLogout()">
                                 ĐĂNG XUẤT
                             </button>
-                            <i style="font-size:18px;color:#F97E76" class="fas fa-sign-out-alt" onclick="handleLogout()"></i>
+                            <i  style="font-size:18px;color:#F97E76; cursor: pointer;" class="fas fa-sign-out-alt" onclick="handleLogout()"></i>
                           </div>
 
                         }
@@ -137,25 +141,7 @@
             @await Component.InvokeAsync("DanhMuc")
             @await Component.InvokeAsync("Hang")
 
-            <script type="text/javascript">
-                $(function () {
-                    var menu_ul = $('.menu > li > ul'),
-                        menu_a = $('.menu > li > a');
-                    menu_ul.hide();
-                    menu_a.click(function (e) {
-                        e.preventDefault();
-                        if (!$(this).hasClass('active')) {
-                            menu_a.removeClass('active');
-                            menu_ul.filter(':visible').slideUp('normal');
-                            $(this).addClass('active').next().stop(true, true).slideDown('normal');
-                        } else {
-                            $(this).removeClass('active');
-                            $(this).next().stop(true, true).slideUp('normal');
-                        }
-                    });
-
-                });
-            </script>
+     
 
         </div>
         <div class="clearfix"> </div>
@@ -191,13 +177,13 @@
 
             <div class="container" style="display:flex; flex-direction: row">
                 <div style="width: 25%; ">
-                    <h3>SHOP TUẤN TRẦN</h3>
+                    <h3>BIG SHOPPE</h3>
                     <ul>
                         <li>Địa chỉ </li>
                         <li>236 Hoàng Quốc Việt, Cổ Nhuế 1,</li>
                         <li> Bắc Từ Liêm, Hà Nội</li>
-                        <li>Facebook <a href="https://www.facebook.com/tuan.teotop.376">Tuấn Trần</a></li>
-                        <li>Email:tt09112k@gmail.com</li>
+                        <li>Facebook <a href="https://www.facebook.com/tuan.teotop.376">Hoàng Nam</a></li>
+                        <li>Email:hntreant23@gmail.com</li>
                         <li class="phone">SĐT: 0866020523</li>
                         @*<li class="temp"> <p class="footer-class">Design by <a href="http://w3layouts.com/"
                         target="_blank">W3layouts</a> </p></li>*@
@@ -216,6 +202,7 @@
 </body>
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="~/Scripts/Cart.js"></script>
+
 <script>
    
     const handleLogout = () => {
