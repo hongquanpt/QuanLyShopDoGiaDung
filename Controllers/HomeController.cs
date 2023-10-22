@@ -35,28 +35,28 @@ namespace ShopBanDoGiaDung.Controllers
             return View();
         }
 
-        public ActionResult SPHang(int id, string ten,int PageIndex, int PageSize)
+        public ActionResult SPHang(int idHang, string ten,int PageIndex, int PageSize)
         {
             if(PageIndex == 0 || PageSize == 0 ){
                 PageIndex = 1;
                 PageSize = 100;
             }
             ViewBag.tenhang = ten;
-            IQueryable<Sanpham> query = (IQueryable<Sanpham>)_context.Sanphams.Where(s=> s.MaHang == id);
+            IQueryable<Sanpham> query = (IQueryable<Sanpham>)_context.Sanphams.Where(s=> s.MaHang == idHang);
             List<Sanpham> model = query.ToList();
             var count = query.Count();
              PaginatedList<Sanpham> data = new PaginatedList<Sanpham>(model,count,PageIndex, PageSize );     
             ViewBag.sanpham = data;
             return View();
         }
-        public ActionResult SPDanhMuc(int id, string ten, int PageIndex, int PageSize)
+        public ActionResult SPDanhMuc(int idCategory, string ten, int PageIndex, int PageSize)
         {
             if(PageIndex == 0 || PageSize == 0 ){
                 PageIndex = 1;
                 PageSize = 100;
             }
             ViewBag.tendanhmuc = ten;
-            IQueryable<Sanpham> query = (IQueryable<Sanpham>)_context.Sanphams.Where(s=> s.MaDanhMuc == id);
+            IQueryable<Sanpham> query = (IQueryable<Sanpham>)_context.Sanphams.Where(s=> s.MaDanhMuc == idCategory);
             List<Sanpham> model = query.ToList();
             var count = query.Count();
              PaginatedList<Sanpham> data = new PaginatedList<Sanpham>(model,count,PageIndex, PageSize );     

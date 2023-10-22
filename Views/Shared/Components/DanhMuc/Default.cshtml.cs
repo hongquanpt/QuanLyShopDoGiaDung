@@ -19,6 +19,7 @@ namespace QuanLyShopDoGiaDung.Views.Shared.Components.DanhMuc
 
         public void OnGet()
         {
+            // var id = HttpContext.Request.Query["idCategory"];
         }
     }
 }

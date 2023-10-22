@@ -1,13 +1,23 @@
 @model List<ShopBanDoGiaDung.Models.Hangsanxuat>
+    @{
+        var id =  ViewBag.idHang; 
+    }
 <div class=" top-nav rsidebar span_1_of_left" style="margin-top: 37px">
     <h3 class="cate">HÃNG SẢN XUẤT</h3>
     <ul class="menu">
         @foreach (var item in Model)
         {
-
-            <ul class="kid-menu">
-                <li><a href="@Url.Action("SPHang","Home", new { id = item.MaHang, ten =item.TenHang})">@item.TenHang</a></li>
+            if(id == item.MaHang){
+              <ul style="background-color: #1DBAA5;" class="kid-menu">
+                <li><a href="@Url.Action("SPHang","Home", new { idHang = item.MaHang, ten =item.TenHang})">@item.TenHang</a></li>
+              </ul>
+            }else{
+             <ul class="kid-menu">
+                <li><a href="@Url.Action("SPHang","Home", new { idHang = item.MaHang, ten =item.TenHang})">@item.TenHang</a></li>
             </ul>
+            }
+
+            
         }
     </ul>
 </div>

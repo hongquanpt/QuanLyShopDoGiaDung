@@ -16,7 +16,9 @@ namespace QuanLyShopDoGiaDung.ViewComponents
 
          public IViewComponentResult Invoke()
         {
+            var idHang = HttpContext.Request.Query["idHang"];
             List<Hangsanxuat> lst = _context.Hangsanxuats.ToList();
+            ViewBag.idHang = Convert.ToInt32(idHang);
             return View(lst);
         }
     }
