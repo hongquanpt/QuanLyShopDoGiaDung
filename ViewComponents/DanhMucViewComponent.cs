@@ -14,7 +14,9 @@ namespace QuanLyShopDoGiaDung.ViewComponents
         }
         public  IViewComponentResult Invoke()
         {
+            var idCategory = HttpContext.Request.Query["idCategory"];
             List<Danhmucsanpham> lst =  _context.Danhmucsanphams.ToList();
+            ViewBag.idCategory = Convert.ToInt32(idCategory);
             return View(lst);
         }
         
