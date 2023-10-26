@@ -131,17 +131,6 @@ namespace QuanLyShopDoGiaDung.Controllers
             });
         }
 
-        //  public ActionResult Total()
-        //     {
-        //         var sessionCart = (List<CartModel>)Session[SessionCart];
-        //         int total = 0;
-        //         foreach (var item in sessionCart)
-        //         {
-        //             total += Int32.Parse(item.sanpham.GiaTien.ToString()) * Int32.Parse(item.soluong.ToString());
-        //         }
-        //         ViewBag.tong = total;
-        //         return PartialView();
-        //     }
 
          [HttpPost]
         public JsonResult Update(int productId, int amount)
