@@ -1,1 +1,130 @@
-﻿
+﻿@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+@model List<QuanLyShopDoGiaDung.Models.CartModel>
+@{
+     ViewBag.Title = "Index";
+     Layout = "~/Views/Shared/_Layout.cshtml";
+    string Ten = HttpContextAccessor.HttpContext.Session.GetString("Ten");
+    string SDT = HttpContextAccessor.HttpContext.Session.GetString("SDT");
+    string DiaChi = HttpContextAccessor.HttpContext.Session.GetString("DiaChi");
+}
+
+<div class=" single_top">
+     <div class="single_grid">
+          <div id="cartContent">
+               @if (Model.Count > 0)
+               {
+                    <table class="table table-hover">
+                         <thead>
+                              <tr>
+                                   <td>Mã sản phẩm</td>
+                                   <td>Tên sản phẩm</td>
+                                   @* <td>Ảnh SP</td> *@
+                                   <td>Số lượng</td>
+                                   <td>Đơn giá</td>
+                                   <td>Thành tiền</td>
+                                   <td></td>
+                              </tr>
+                         </thead>
+                         <tbody>
+                              @foreach (var item in Model)
+                              {
+                                   <tr>
+                                        <td>@item.sanpham.MaSp</td>
+                                        <td><a asp-action="ProductDetail" asp-controller="Home"  asp-route-id="@item.sanpham.MaSp">@item.sanpham.TenSp</a></td>
+                                        @* <td><img class="img-responsive" src="~/BigShopee/images/@item.sanpham.Anh1" /></td> *@
+                                        @* <td><input type="number" onkeydown="return false //return value false" min="1" max="@item.sanpham.SoLuongTrongKho" class="txtQuantity" id="quantity" data-id="@item.sanpham.MaSp" value="@item.soluong"/></td> *@
+                                        @* <td><input type="number" min="1" max="@item.sanpham.SoLuongTrongKho" onclick="updateAmount(@item.sanpham.MaSp)" class="txtQuantity" id="quantity" value="@item.soluong"/></td> *@
+                                        <td><input id="input_amout_@item.sanpham.MaSp" type="number" min="1" max="@item.sanpham.SoLuongTrongKho" onchange="updateAmount(@item.sanpham.MaSp)" value="@item.soluong"></td>
+
+                                        <td id="gia" data-price="@item.sanpham.GiaTien">@item.sanpham.GiaTien.Value.ToString("N0")</td>
+                                        <td id="amount_@item.sanpham.MaSp">@((item.sanpham.GiaTien * item.soluong).Value.ToString("N0"))</td>
+                                        <td><a href="#" data-id="@item.sanpham.MaSp" class="btn-delete">Xoá</a></td>
+                                   </tr>
+                              }
+
+                         </tbody>
+                    </table>
+                    <button id="btnContinue" class="btn btn-success">Tiếp tục mua hàng</button>
+                    <button id="btnDeleteAll" class="btn btn-danger">Xoá giỏ hàng</button>
+                    <button class="btn btn-primary" id="btnCheckout">Mua hàng</button>
+                    @* { Html.Reder("Total", "Cart"); } *@
+               }
+               else
+               {
+                    <span class="alert alert-danger">Chưa có sản phẩm nào trong giỏ hàng</span>
+               }
+
+               <div class="clearfix"> </div>
+          </div>
+
+          <div id="divCheckout" style="display:none;">
+               <div class="reservation_top">
+                    <div class="contact_right">
+                         <h3>NHẬP THÔNG TIN GIAO HÀNG</h3>
+                         <div class="contact-form">
+                              <form method="post" action="/Cart/ThanhToan" autocomplete="off">
+                                   <div class="register-top-grid">
+                                        @*<h3>NHẬP THÔNG TIN GIAO HÀNG</h3>*@
+                                        <div class="mation">
+                                             <span>Họ tên <label style="color: red;font-size:14px;">*</label></span>
+                                             <input type="text" style="color:black" id="Ten" name="ten" value="@Ten">
+
+
+                                             <span>Số điện thoại <label style="color: red;font-size:14px;">*</label></span>
+                                             <input type="text" style="color:black" id="SDT" name="SDT" value="@SDT">
+
+                                             <span>Địa chỉ  <label style="color: red;font-size:14px;">*</label></span>
+                                             <input type="text" style="color:black" id="DiaChi" name="DiaChi" value="@DiaChi">
+
+                                             <span>Chọn hình thức thanh toán <label style="color: red;font-size:14px;">*</label></span>
+                                             <div class="form-group" style="width:90%">
+                                                
+                                                  <select class="form-control" id="httt" name="httt">
+                                                       <option value="1">Thanh toán qua VNPay</option>
+                                                       <option value="2">Thanh toán khi nhận hàng</option>
+
+                                                  </select>
+                                             </div>
+                                            
+                                        </div>
+                                      
+                                   </div>
+                              <button type="submit" class="btn btn-success">Thanh Toán </button>
+                                   <div class="clearfix"> </div>
+                                 
+                              </form>
+
+                         </div>
+                    </div>
+               </div>
+          </div>
+     </div>
+
+</div>
+
+<script>
+
+       function updateAmount(ma) {
+          var amount = $(`#input_amout_${ma}`).val() 
+          var productid = parseInt(ma);
+
+          $.ajax({
+               url: '/Cart/Update',
+               data: {
+                    productId: productid,
+                    amount: amount
+               },
+               type: 'POST',
+               dataType: 'json',
+               success: function (res) {
+                    console.log(res)
+                    $(`#amount_${ma}`).html(`${res.price.toLocaleString('en-US')}`);
+                    
+               }
+
+          });
+     }
+  
+</script>
+
