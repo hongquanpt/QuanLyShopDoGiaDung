@@ -4,6 +4,8 @@ using System;
 using ShopBanDoGiaDung.Models;
 using Microsoft.AspNetCore.Hosting;
 using System.Linq;
+using System.Drawing.Printing;
+using PagedList;
 namespace ShopBanDoGiaDung.Controllers
 
 {
@@ -50,14 +52,23 @@ namespace ShopBanDoGiaDung.Controllers
             }
 
         }
-        
+
         #endregion
         #region Quản lý sản phẩm
-        public IActionResult QuanLySP()
+        public IActionResult QuanLySP(int page = 1, int pageSize = 10)
         {
-            var model = obj.Sanphams.ToList();
-            ViewBag.ds = model;
-            return View();  
+            // Thực hiện truy vấn và phân trang
+            var query = obj.Sanphams.OrderByDescending(sp => sp.MaSp);
+            var model = query.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            // Tính toán thông tin phân trang
+            var totalItemCount = query.Count();
+            var pagedList = new StaticPagedList<Sanpham>(model, page, pageSize, totalItemCount);
+            ViewBag.PageStartItem = (page - 1) * pageSize + 1;
+            ViewBag.PageEndItem = Math.Min(page * pageSize, totalItemCount);
+            ViewBag.Page = page;
+
+            return View(pagedList);
         }
         public IActionResult ThemSP()
         {
@@ -322,6 +333,43 @@ namespace ShopBanDoGiaDung.Controllers
                     status = false
                 });
             }
+        }
+        public IActionResult timKiemSanPham(string tenSP, int page = 1, int pageSize = 2)
+        {
+            if (!string.IsNullOrEmpty(tenSP))
+            {
+                var query = from sp in obj.Sanphams where sp.TenSp.Contains(tenSP) select sp;
+
+                // Thực hiện phân trang
+                var model = query.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+                // Tính toán thông tin phân trang
+                var totalItemCount = query.Count();
+
+                if (model.Count == 0)
+                {
+                    // Nếu không tìm thấy kết quả, điều hướng đến trang thông báo
+                    return RedirectToAction("ThongBaoRong", "Admin");
+                }
+
+                var pagedList = new StaticPagedList<Sanpham>(model, page, pageSize, totalItemCount);
+
+                // Truyền dữ liệu phân trang và kết quả tìm kiếm vào view
+                ViewBag.PageStartItem = (page - 1) * pageSize + 1;
+                ViewBag.PageEndItem = Math.Min(page * pageSize, totalItemCount);
+                ViewBag.Page = page;
+                ViewBag.SearchTerm = tenSP;
+
+                return View(pagedList);
+            }
+            else
+            {
+                return RedirectToAction("ThongBaoRong", "Admin");
+            }
+        }
+        public IActionResult ThongBaoRong()
+        {
+            return View();
         }
 
         #endregion
