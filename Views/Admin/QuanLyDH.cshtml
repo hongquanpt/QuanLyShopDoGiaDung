@@ -1,13 +1,14 @@
-﻿
+﻿@using PagedList
 @{
     ViewBag.Title = "QuanLyDonHang";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
-    var dstatca = (List<ShopBanDoGiaDung.Models.MyOrder>)ViewBag.dstatca;
-    var dschuathanhtoan = (List<ShopBanDoGiaDung.Models.MyOrder>)ViewBag.dschuathanhtoan;
-    var dschoxacnhan = (List<ShopBanDoGiaDung.Models.MyOrder>)ViewBag.dschoxacnhan;
-    var dsdangvanchuyen = (List<ShopBanDoGiaDung.Models.MyOrder>)ViewBag.dsdangvanchuyen;
-    var dsdahoanthanh = (List<ShopBanDoGiaDung.Models.MyOrder>)ViewBag.dsdahoanthanh;
-    var dsdahuy = (List<ShopBanDoGiaDung.Models.MyOrder>)ViewBag.dsdahuy;
+    var dstatca = ViewBag.pagedList as PagedList<MyOrder>;
+    var dschuathanhtoan = ViewBag.pagedList0 as PagedList<MyOrder>;
+    var dschoxacnhan = ViewBag.pagedList1 as PagedList<MyOrder>;
+    var dsdangvanchuyen = ViewBag.pagedList2 as PagedList<MyOrder>;
+    var dsdahoanthanh = ViewBag.pagedList3 as PagedList<MyOrder>;
+    var dsdahuy = ViewBag.pagedList4 as PagedList<MyOrder>;
+
 }
 
 <!-- Content Wrapper. Contains page content -->
@@ -25,12 +26,12 @@
                             <h3 class="card-title">Quản lý đơn hàng</h3>
                         </div>
                         <ul class="nav nav-tabs" role="tablist">
-                            <li class=" nav-item active"><a class="nav-link active" data-toggle="tab" href="#Admin">Tất cả đơn hàng (@dstatca.Count())</a></li>
-                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu0">Chưa thanh toán (@dschuathanhtoan.Count())</a></li>
-                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu1">Chờ xác nhận (@dschoxacnhan.Count())</a></li>
-                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu2">Đang vận chuyển (@dsdangvanchuyen.Count())</a></li>
-                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu3">Đã hoàn thành (@dsdahoanthanh.Count())</a></li>
-                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu4">Đã hủy (@dsdahuy.Count())</a></li>
+                            <li class=" nav-item active"><a class="nav-link active" data-toggle="tab" href="#Admin">Tất cả đơn hàng (@ViewBag.TotalOrdersCount)</a></li>
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu0">Chưa thanh toán (@ViewBag.UnpaidOrdersCount)</a></li>
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu1">Chờ xác nhận (@ViewBag.PendingOrdersCount)</a></li>
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu2">Đang vận chuyển (@ViewBag.ShippingOrdersCount)</a></li>
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu3">Đã hoàn thành (@ViewBag.CompletedOrdersCount)</a></li>
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu4">Đã hủy (@ViewBag.CanceledOrdersCount)</a></li>
                         </ul>
                         <!-- /.card-header -->
                         <div class="card-body">
@@ -94,6 +95,37 @@
                                             </tr>
                                         </tfoot>
                                     </table>
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-5">
+                                            <div class="dataTables_info" id="example1_info" role="status" aria-live="polite">
+                                                Showing @dstatca.FirstItemOnPage to @dstatca.LastItemOnPage of @dstatca.TotalItemCount entries
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-7">
+                                            <div class="dataTables_paginate paging_simple_numbers" id="example1_paginate">
+                                                <ul class="pagination">
+                                                    @if (dstatca.HasPreviousPage)
+                                                    {
+                                                        <li class="paginate_button page-item" id="example1_previous">
+                                                            <a href="@Url.Action("QuanLyDH", new { page = 1 })" aria-controls="example1" data-dt-idx="0" tabindex="0" class="page-link">First</a>
+                                                        </li>
+                                                    }
+                                                    @for (int i = 1; i <= dstatca.PageCount; i++)
+                                                    {
+                                                        <li class="paginate_button page-item @(i == dstatca.PageNumber ? "active" : "")">
+                                                            <a href="@Url.Action("QuanLyDH", new { page = i })" aria-controls="example1" data-dt-idx="@i" tabindex="0" class="page-link">@i</a>
+                                                        </li>
+                                                    }
+                                                    @if (dstatca.HasNextPage)
+                                                    {
+                                                        <li class="paginate_button page-item" id="example1_next">
+                                                            <a href="@Url.Action("QuanLyDH", new { page = dstatca.PageCount })" aria-controls="example1" data-dt-idx="2" tabindex="0" class="page-link">Last</a>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div id="showmodal" class="modal fade" role="dialog">
                                         <div class="modal-dialog modal-dialog-centered modal-xl" role="document" style="display: flex; align-items: center; height: 100%; margin-bottom: 0; margin-top: 0">
                                         </div>
@@ -174,6 +206,37 @@
                                             </tr>
                                         </tfoot>
                                     </table>
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-5">
+                                            <div class="dataTables_info" id="example1_info" role="status" aria-live="polite">
+                                                Showing @dschuathanhtoan.FirstItemOnPage to @dschuathanhtoan.LastItemOnPage of @dschuathanhtoan.TotalItemCount entries
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-7">
+                                            <div class="dataTables_paginate paging_simple_numbers" id="example1_paginate">
+                                                <ul class="pagination">
+                                                    @if (dschuathanhtoan.HasPreviousPage)
+                                                    {
+                                                        <li class="paginate_button page-item" id="example1_previous">
+                                                            <a href="@Url.Action("QuanLyDH", new { page = 1 })" aria-controls="example1" data-dt-idx="0" tabindex="0" class="page-link">First</a>
+                                                        </li>
+                                                    }
+                                                    @for (int i = 1; i <= dschuathanhtoan.PageCount; i++)
+                                                    {
+                                                        <li class="paginate_button page-item @(i == dschuathanhtoan.PageNumber ? "active" : "")">
+                                                            <a href="@Url.Action("QuanLyDH", new { page = i })" aria-controls="example1" data-dt-idx="@i" tabindex="0" class="page-link">@i</a>
+                                                        </li>
+                                                    }
+                                                    @if (dschuathanhtoan.HasNextPage)
+                                                    {
+                                                        <li class="paginate_button page-item" id="example1_next">
+                                                            <a href="@Url.Action("QuanLyDH", new { page = dschuathanhtoan.PageCount })" aria-controls="example1" data-dt-idx="2" tabindex="0" class="page-link">Last</a>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div id="showmodal0" class="modal fade" role="dialog">
                                         <div class="modal-dialog modal-dialog-centered modal-xl" role="document" style="display: flex; align-items: center; height: 100%; margin-bottom: 0; margin-top: 0">
                                         </div>
@@ -254,6 +317,37 @@
                                             </tr>
                                         </tfoot>
                                     </table>
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-5">
+                                            <div class="dataTables_info" id="example1_info" role="status" aria-live="polite">
+                                                Showing @dschoxacnhan.FirstItemOnPage to @dschoxacnhan.LastItemOnPage of @dschoxacnhan.TotalItemCount entries
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-7">
+                                            <div class="dataTables_paginate paging_simple_numbers" id="example1_paginate">
+                                                <ul class="pagination">
+                                                    @if (dschoxacnhan.HasPreviousPage)
+                                                    {
+                                                        <li class="paginate_button page-item" id="example1_previous">
+                                                            <a href="@Url.Action("QuanLyDH", new { page = 1 })" aria-controls="example1" data-dt-idx="0" tabindex="0" class="page-link">First</a>
+                                                        </li>
+                                                    }
+                                                    @for (int i = 1; i <= dschoxacnhan.PageCount; i++)
+                                                    {
+                                                        <li class="paginate_button page-item @(i == dschoxacnhan.PageNumber ? "active" : "")">
+                                                            <a href="@Url.Action("QuanLyDH", new { page = i })" aria-controls="example1" data-dt-idx="@i" tabindex="0" class="page-link">@i</a>
+                                                        </li>
+                                                    }
+                                                    @if (dschoxacnhan.HasNextPage)
+                                                    {
+                                                        <li class="paginate_button page-item" id="example1_next">
+                                                            <a href="@Url.Action("QuanLyDH", new { page = dschoxacnhan.PageCount })" aria-controls="example1" data-dt-idx="2" tabindex="0" class="page-link">Last</a>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div id="showmodal1" class="modal fade" role="dialog">
                                         <div class="modal-dialog modal-dialog-centered modal-xl" role="document" style="display: flex; align-items: center; height: 100%; margin-bottom: 0; margin-top: 0">
                                         </div>
@@ -350,6 +444,37 @@
                                             </tr>
                                         </tfoot>
                                     </table>
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-5">
+                                            <div class="dataTables_info" id="example1_info" role="status" aria-live="polite">
+                                                Showing @dsdangvanchuyen.FirstItemOnPage to @dsdangvanchuyen.LastItemOnPage of @dsdangvanchuyen.TotalItemCount entries
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-7">
+                                            <div class="dataTables_paginate paging_simple_numbers" id="example1_paginate">
+                                                <ul class="pagination">
+                                                    @if (dsdangvanchuyen.HasPreviousPage)
+                                                    {
+                                                        <li class="paginate_button page-item" id="example1_previous">
+                                                            <a href="@Url.Action("QuanLyDH", new { page = 1 })" aria-controls="example1" data-dt-idx="0" tabindex="0" class="page-link">First</a>
+                                                        </li>
+                                                    }
+                                                    @for (int i = 1; i <= dsdangvanchuyen.PageCount; i++)
+                                                    {
+                                                        <li class="paginate_button page-item @(i == dsdangvanchuyen.PageNumber ? "active" : "")">
+                                                            <a href="@Url.Action("QuanLyDH", new { page = i })" aria-controls="example1" data-dt-idx="@i" tabindex="0" class="page-link">@i</a>
+                                                        </li>
+                                                    }
+                                                    @if (dsdangvanchuyen.HasNextPage)
+                                                    {
+                                                        <li class="paginate_button page-item" id="example1_next">
+                                                            <a href="@Url.Action("QuanLyDH", new { page = dsdangvanchuyen.PageCount })" aria-controls="example1" data-dt-idx="2" tabindex="0" class="page-link">Last</a>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div id="showmodal2" class="modal fade" role="dialog">
                                         <div class="modal-dialog modal-dialog-centered modal-xl" role="document" style="display: flex; align-items: center; height: 100%; margin-bottom: 0; margin-top: 0">
                                         </div>
@@ -445,6 +570,37 @@
                                             </tr>
                                         </tfoot>
                                     </table>
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-5">
+                                            <div class="dataTables_info" id="example1_info" role="status" aria-live="polite">
+                                                Showing @dsdahoanthanh.FirstItemOnPage to @dsdahoanthanh.LastItemOnPage of @dsdahoanthanh.TotalItemCount entries
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-7">
+                                            <div class="dataTables_paginate paging_simple_numbers" id="example1_paginate">
+                                                <ul class="pagination">
+                                                    @if (dsdahoanthanh.HasPreviousPage)
+                                                    {
+                                                        <li class="paginate_button page-item" id="example1_previous">
+                                                            <a href="@Url.Action("QuanLyDH", new { page = 1 })" aria-controls="example1" data-dt-idx="0" tabindex="0" class="page-link">First</a>
+                                                        </li>
+                                                    }
+                                                    @for (int i = 1; i <= dsdahoanthanh.PageCount; i++)
+                                                    {
+                                                        <li class="paginate_button page-item @(i == dsdahoanthanh.PageNumber ? "active" : "")">
+                                                            <a href="@Url.Action("QuanLyDH", new { page = i })" aria-controls="example1" data-dt-idx="@i" tabindex="0" class="page-link">@i</a>
+                                                        </li>
+                                                    }
+                                                    @if (dsdahoanthanh.HasNextPage)
+                                                    {
+                                                        <li class="paginate_button page-item" id="example1_next">
+                                                            <a href="@Url.Action("QuanLyDH", new { page = dsdahoanthanh.PageCount })" aria-controls="example1" data-dt-idx="2" tabindex="0" class="page-link">Last</a>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div id="showmodal3" class="modal fade" role="dialog">
                                         <div class="modal-dialog modal-dialog-centered modal-xl" role="document" style="display: flex; align-items: center; height: 100%; margin-bottom: 0; margin-top: 0">
                                         </div>
@@ -527,6 +683,37 @@
                                             </tr>
                                         </tfoot>
                                     </table>
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-5">
+                                            <div class="dataTables_info" id="example1_info" role="status" aria-live="polite">
+                                                Showing @dsdahuy.FirstItemOnPage to @dsdahuy.LastItemOnPage of @dsdahuy.TotalItemCount entries
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-7">
+                                            <div class="dataTables_paginate paging_simple_numbers" id="example1_paginate">
+                                                <ul class="pagination">
+                                                    @if (dsdahuy.HasPreviousPage)
+                                                    {
+                                                        <li class="paginate_button page-item" id="example1_previous">
+                                                            <a href="@Url.Action("QuanLyDH", new { page = 1 })" aria-controls="example1" data-dt-idx="0" tabindex="0" class="page-link">First</a>
+                                                        </li>
+                                                    }
+                                                    @for (int i = 1; i <= dsdahuy.PageCount; i++)
+                                                    {
+                                                        <li class="paginate_button page-item @(i == dsdahuy.PageNumber ? "active" : "")">
+                                                            <a href="@Url.Action("QuanLyDH", new { page = i })" aria-controls="example1" data-dt-idx="@i" tabindex="0" class="page-link">@i</a>
+                                                        </li>
+                                                    }
+                                                    @if (dsdahuy.HasNextPage)
+                                                    {
+                                                        <li class="paginate_button page-item" id="example1_next">
+                                                            <a href="@Url.Action("QuanLyDH", new { page = dsdahuy.PageCount })" aria-controls="example1" data-dt-idx="2" tabindex="0" class="page-link">Last</a>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div id="showmodal4" class="modal fade" role="dialog">
                                         <div class="modal-dialog modal-dialog-centered modal-xl" role="document" style="display: flex; align-items: center; height: 100%; margin-bottom: 0; margin-top: 0">
                                         </div>
@@ -614,34 +801,5 @@
 <aside class="control-sidebar control-sidebar-dark">
     <!-- Control sidebar content goes here -->
 </aside>
-<!-- /.control-sidebar -->
-<!-- ./wrapper -->
-<!-- jQuery -->
-<script src="~/Admin/plugins/jquery/jquery.min.js"></script>
-<!-- Bootstrap 4 -->
-<script src="~/Admin/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!-- DataTables  & Plugins -->
-<script src="~/Admin/plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="~/Admin/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="~/Admin/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-<script src="~/Admin/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-<script src="../../Admin/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-<script src="~/Admin/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-<script src="~/Admin/plugins/jszip/jszip.min.js"></script>
-<script src="~/Admin/plugins/pdfmake/pdfmake.min.js"></script>
-<script src="~/Admin/plugins/pdfmake/vfs_fonts.js"></script>
-<script src="~/Admin/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
-<script src="~/Admin/plugins/datatables-buttons/js/buttons.print.min.js"></script>
-<script src="~/Admin/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
-<!-- AdminLTE App -->
-<script src="~/Admin/dist/js/adminlte.min.js"></script>
 
-<!-- Page specific script -->
-<script>
-    $(function () {
-        $("#example1").DataTable({
-            "responsive": true, "lengthChange": false, "autoWidth": false,
-            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-    });
-</script>
+<script src="~/Admin/dist/js/adminlte.min.js"></script>
