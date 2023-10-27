@@ -462,18 +462,28 @@ var cart = {
                     }
                })
           });
-          $('#btnDeleteAll').off('click').on('click', function () {
-               $.ajax({
-                    url: '/Cart/DeleteAll',
-                    dataType: 'json',
-                    type: 'POST',
-                    success: function (res) {
-                         if (res.status == true) {
-                              window.location.href = "/Cart";
-                         }
-                    }
-               })
-          });
+          // $('#btnDeleteAll').off('click').on('click', function () {
+          //      Swal.fire({
+          //           title: 'Bạn có chắc chắn muốn xóa giỏ hàng ?',
+          //          showCancelButton: true,
+          //          confirmButtonText: 'Xóa',
+          //          denyButtonText: `Hủy`
+          //       }).then((result)=> {
+          //           if(result.isConfirmed){
+          //                $.ajax({
+          //                     url: '/Cart/DeleteAll',
+          //                     dataType: 'json',
+          //                     type: 'POST',
+          //                     success: function (res) {
+          //                          if (res.status == true) {
+          //                               window.location.href = "/Cart";
+          //                          }
+          //                     }
+          //                })
+          //           }
+          //       })
+              
+          // });
           $('.txtQuantity').off('click').on('change', function () {
                var quantity = parseInt($(this).val());
                var productid = parseInt($(this).data('id'));

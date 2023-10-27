@@ -10,6 +10,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Logging;
 using QuanLyShopDoGiaDung.Models;
 using ShopBanDoGiaDung.Data;
+using ShopBanDoGiaDung.Models;
 
 namespace QuanLyShopDoGiaDung.Controllers
 {
@@ -29,11 +30,19 @@ namespace QuanLyShopDoGiaDung.Controllers
             {
                 var cart = HttpContext.Session.Get(SessionCart);
                 var list = new List<CartModel>();
+                var tongtien = 0;
+                
                 if (cart != null)
                 {
                     var json = Encoding.UTF8.GetString(cart);
                      list = JsonSerializer.Deserialize<List<CartModel>>(json);
+                     foreach (var item in list)
+                        {
+                            tongtien +=item.soluong *  Convert.ToInt32(item.sanpham.GiaTien);
+                        }
                 }
+                
+                ViewBag.tongtien = tongtien;
                 return View(list);
             }
 
@@ -140,6 +149,7 @@ namespace QuanLyShopDoGiaDung.Controllers
             var json = Encoding.UTF8.GetString(cart);
             var  list = JsonSerializer.Deserialize<List<CartModel>>(json);
             float price = 0;
+            float tongtien = 0;
         
 
             foreach (var item in list)
@@ -148,7 +158,9 @@ namespace QuanLyShopDoGiaDung.Controllers
                 if(item.sanpham.MaSp == productId){
                     item.soluong = amount;
                     price = amount * Convert.ToInt32(item.sanpham.GiaTien);
+                     
                 }
+                tongtien += item.soluong * Convert.ToInt32(item.sanpham.GiaTien);
             }
            var jsonSetSession = JsonSerializer.Serialize(list);
             var byteArrayCart = Encoding.UTF8.GetBytes(jsonSetSession);
@@ -157,11 +169,74 @@ namespace QuanLyShopDoGiaDung.Controllers
             {
                 status = true,
                 productId = productId ,
-                price = price
+                price = price,
+                tongtien = tongtien
                 
             });
         }
 
+        public JsonResult DeleteAll(){
+            HttpContext.Session.Remove(SessionCart);
+            return Json( new {
+                status = true
+            });
+        }
+        
+        [HttpPost]
+        public async Task<JsonResult> ThanhToan(ThongTinThanhToan thanhToan) {
+                try {
+                    var order = new Donhang();
+                    order.MaTaiKhoan = HttpContext.Session.GetInt32("Ma");
+                    order.NgayLap = DateTime.Now; /*Convert.ToDateTime("2/2/2022")*/;
+                    var cart = HttpContext.Session.Get(SessionCart);
+                    var json = Encoding.UTF8.GetString(cart);
+                    var  list = JsonSerializer.Deserialize<List<CartModel>>(json);
+                    long total = 0;
+                    foreach (var item in list)
+                    {
+                        total +=item.soluong *  Convert.ToInt32(item.sanpham.GiaTien);
+                    }
+                    order.TongTien = total;
+                    order.TinhTrang = 1;
+                    //Thêm Order               
+                    _context.Donhangs.Add(order);
+                    await _context.SaveChangesAsync();
+                    var id = order.MaDonHang;
+                    var vc = new Vanchuyen();
+                    vc.MaDonHang = id;
+                    vc.NguoiNhan = thanhToan.ten;
+                    vc.DiaChi =thanhToan.DiaChi;
+                    vc.Sdt = thanhToan.SDT;
+                    vc.HinhThucVanChuyen = "Giao tận nhà";
+                    _context.Vanchuyens.Add(vc);
+                    foreach (var item in list)
+                    {
+                        var it = _context.Sanphams.Find(item.sanpham.MaSp);
+                        var orderDetail = new Chitietdonhang();
+                        orderDetail.MaDonHang = id;
+                        orderDetail.MaSp = item.sanpham.MaSp;
+                        orderDetail.SoLuongMua = item.soluong;
+                        it.SoLuongDaBan += item.soluong;
+                        it.SoLuongTrongKho -= item.soluong;
+                        _context.Chitietdonhangs.Add(orderDetail);
+                    }
+                    await _context.SaveChangesAsync();
+                     HttpContext.Session.Remove(SessionCart);                 
+                    return Json(new
+                    {
+                        status = true
+                    });
+        
+
+                }catch (Exception ex) {
+                    Console.WriteLine(ex);
+                    return Json(new
+                    {
+                        status = false
+                    });
+        
+                }
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

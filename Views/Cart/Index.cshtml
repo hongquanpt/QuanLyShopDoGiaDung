@@ -7,6 +7,7 @@
     string Ten = HttpContextAccessor.HttpContext.Session.GetString("Ten");
     string SDT = HttpContextAccessor.HttpContext.Session.GetString("SDT");
     string DiaChi = HttpContextAccessor.HttpContext.Session.GetString("DiaChi");
+    var tongtien = ViewBag.tongtien;
 }
 
 <div class=" single_top">
@@ -17,13 +18,12 @@
                     <table class="table table-hover">
                          <thead>
                               <tr>
-                                   <td>Mã sản phẩm</td>
-                                   <td>Tên sản phẩm</td>
-                                   @* <td>Ảnh SP</td> *@
-                                   <td>Số lượng</td>
-                                   <td>Đơn giá</td>
-                                   <td>Thành tiền</td>
-                                   <td></td>
+                                   <td style="font-weight: 700;">Mã sản phẩm</td>
+                                   <td style="font-weight: 700;">Tên sản phẩm</td>
+                                   <td style="font-weight: 700;">Ảnh sản phẩm</td>
+                                   <td style="font-weight: 700;">Số lượng</td>
+                                   <td style="font-weight: 700;">Đơn giá</td>
+                                   <td style="font-weight: 700;">Thành tiền</td>
                               </tr>
                          </thead>
                          <tbody>
@@ -32,23 +32,28 @@
                                    <tr>
                                         <td>@item.sanpham.MaSp</td>
                                         <td><a asp-action="ProductDetail" asp-controller="Home"  asp-route-id="@item.sanpham.MaSp">@item.sanpham.TenSp</a></td>
-                                        @* <td><img class="img-responsive" src="~/BigShopee/images/@item.sanpham.Anh1" /></td> *@
-                                        @* <td><input type="number" onkeydown="return false //return value false" min="1" max="@item.sanpham.SoLuongTrongKho" class="txtQuantity" id="quantity" data-id="@item.sanpham.MaSp" value="@item.soluong"/></td> *@
-                                        @* <td><input type="number" min="1" max="@item.sanpham.SoLuongTrongKho" onclick="updateAmount(@item.sanpham.MaSp)" class="txtQuantity" id="quantity" value="@item.soluong"/></td> *@
+                                        <td><img class="img-responsive" style="width: 100px;" src="~/BigShopee/images/@item.sanpham.Anh1" /></td>
                                         <td><input id="input_amout_@item.sanpham.MaSp" type="number" min="1" max="@item.sanpham.SoLuongTrongKho" onchange="updateAmount(@item.sanpham.MaSp)" value="@item.soluong"></td>
 
                                         <td id="gia" data-price="@item.sanpham.GiaTien">@item.sanpham.GiaTien.Value.ToString("N0")</td>
                                         <td id="amount_@item.sanpham.MaSp">@((item.sanpham.GiaTien * item.soluong).Value.ToString("N0"))</td>
-                                        <td><a href="#" data-id="@item.sanpham.MaSp" class="btn-delete">Xoá</a></td>
+                                        @* <td><a style="font-weight: 600;" href="#" data-id="@item.sanpham.MaSp" class="btn-delete">X</a></td> *@
+                                        <td><a style="font-weight: 600;" href="#" onclick="deleteOrderDetail(@item.sanpham.MaSp)">X</a></td>
                                    </tr>
                               }
 
                          </tbody>
                     </table>
-                    <button id="btnContinue" class="btn btn-success">Tiếp tục mua hàng</button>
-                    <button id="btnDeleteAll" class="btn btn-danger">Xoá giỏ hàng</button>
-                    <button class="btn btn-primary" id="btnCheckout">Mua hàng</button>
-                    @* { Html.Reder("Total", "Cart"); } *@
+                    <div style="font-size: 20px; font-weight: 700;" class="pull-right">
+                         Tổng tiền: <span id="lblTotalOrder" name="tongtien">@tongtien.ToString("N0")</span><span> VND</span>
+                    </div>
+                    
+                    <div  >
+                         <button id="btnContinue" class="btn btn-success">Tiếp tục mua hàng</button>
+                         <button onclick="deleteCart()" class="btn btn-danger">Xoá giỏ hàng</button>
+                         <button style=" background-color: #007bff;border-color: #007bff;" class="btn btn-primary" id="btnCheckout" >Mua hàng</button>
+                    </div>
+                    
                }
                else
                {
@@ -63,16 +68,16 @@
                     <div class="contact_right">
                          <h3>NHẬP THÔNG TIN GIAO HÀNG</h3>
                          <div class="contact-form">
-                              <form method="post" action="/Cart/ThanhToan" autocomplete="off">
+                              @* <form method="post" action="/Cart/ThanhToan" autocomplete="off"> *@
                                    <div class="register-top-grid">
                                         @*<h3>NHẬP THÔNG TIN GIAO HÀNG</h3>*@
                                         <div class="mation">
                                              <span>Họ tên <label style="color: red;font-size:14px;">*</label></span>
-                                             <input type="text" style="color:black" id="Ten" name="ten" value="@Ten">
+                                             <input  type="text" style="color:black" id="Ten" name="ten" value="@Ten">
 
 
                                              <span>Số điện thoại <label style="color: red;font-size:14px;">*</label></span>
-                                             <input type="text" style="color:black" id="SDT" name="SDT" value="@SDT">
+                                             <input  type="text" style="color:black" id="SDT" name="SDT" value="@SDT">
 
                                              <span>Địa chỉ  <label style="color: red;font-size:14px;">*</label></span>
                                              <input type="text" style="color:black" id="DiaChi" name="DiaChi" value="@DiaChi">
@@ -81,19 +86,19 @@
                                              <div class="form-group" style="width:90%">
                                                 
                                                   <select class="form-control" id="httt" name="httt">
-                                                       <option value="1">Thanh toán qua VNPay</option>
+                                                       @* <option value="1">Thanh toán qua VNPay</option> *@
                                                        <option value="2">Thanh toán khi nhận hàng</option>
 
                                                   </select>
                                              </div>
                                             
-                                        </div>
+                                        </div>    
                                       
                                    </div>
-                              <button type="submit" class="btn btn-success">Thanh Toán </button>
+                              <button onclick="ThanhToan()" class="btn btn-success">Thanh Toán </button>
                                    <div class="clearfix"> </div>
                                  
-                              </form>
+                         
 
                          </div>
                     </div>
@@ -120,11 +125,112 @@
                success: function (res) {
                     console.log(res)
                     $(`#amount_${ma}`).html(`${res.price.toLocaleString('en-US')}`);
+                    $(`#lblTotalOrder`).html(`${res.tongtien.toLocaleString('en-US')} VNĐ`)
                     
                }
 
           });
      }
+
+     function ThanhToan(){
+          var ten = $('#Ten').val()
+          var sdt = $('#SDT').val()
+          var diachi = $('#DiaChi').val()
+          if(!ten || !sdt || !diachi){
+               console.log("Hãy điền đẩy đủ thông tin")
+          }
+        else {
+          $.ajax({
+               url: '/Cart/ThanhToan',
+               data: {
+                    ten: ten,
+                    SDT: sdt,
+                    DiaChi:diachi
+               },
+               type: 'POST',
+               dataType: 'json',
+               success: function (res) {
+                    if (res.status == true) {
+                   Swal.fire({
+                              position: 'center',
+                              icon: 'success',
+                              title: 'Thanh toán thành công',
+                              confirmButtonText: 'OK',
+                              
+                         }).then((result) => {
+                               if (result.isConfirmed) {
+                                    window.location = '@Url.Action("Index","Home")'
+                               }
+                            
+                         })
+                   
+               
+                    } else {
+                         Swal.fire({
+                              position: 'center',
+                              icon: 'error',
+                              title: 'Thanh toán thất bại',
+                              showConfirmButton: false,
+                              timer: 1500
+                         })
+                    
+                    }
+                    
+               }
+
+          });
+        }
+          
+         
+     }
+
+
+     function deleteOrderDetail (id) {
+         Swal.fire({
+             title: 'Bạn có chắc chắn muốn xóa sản phẩm khỏi giỏ hàng ?',
+            showCancelButton: true,
+            confirmButtonText: 'Xóa',
+            denyButtonText: `Hủy`
+         }).then((result)=> {
+           if(result.isConfirmed){
+                 $.ajax({
+                    data: { id: id },
+                    url: '/Cart/Delete',
+                    dataType: 'json',
+                    type: 'POST',
+                    success: function (res) {
+                         if (res.status == true) {
+                               window.location = '@Url.Action("Index","Home")'
+                         }
+                    }
+               })
+           }
+         })
+     }
+
+     function deleteCart() {
+          Swal.fire({
+                    title: 'Bạn có chắc chắn muốn xóa giỏ hàng ?',
+                   showCancelButton: true,
+                   confirmButtonText: 'Xóa',
+                   denyButtonText: `Hủy`
+                }).then((result)=> {
+                    if(result.isConfirmed){
+                         $.ajax({
+                              url: '/Cart/DeleteAll',
+                              dataType: 'json',
+                              type: 'POST',
+                              success: function (res) {
+                                   if (res.status == true) {
+                                         window.location = '@Url.Action("Index","Cart")'
+                                   }
+                              }
+                         })
+                    }
+                })
+     }
+
+
   
 </script>
 

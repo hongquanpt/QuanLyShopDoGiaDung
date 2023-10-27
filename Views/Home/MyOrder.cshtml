@@ -144,8 +144,8 @@
 
                               </div>
                          </div>
-                         <script>
-                          $("#showtable1").on("click", "#viewbtn1", function () {
+                    <script>
+                      $("#showtable1").on("click", "#viewbtn1", function () {
                            var id = $(this).closest("tr").find("td").eq(0).html();
                            $.ajax({
                              url: "@Url.Action("MyOrderDetail", "Home")",
@@ -156,20 +156,29 @@
                                  }
                             });
                           });
-                               $("#showtable1").on("click", "#HuyDonHang", function () {
+                      $("#showtable1").on("click", "#HuyDonHang", function () {
                            var id = $(this).closest("tr").find("td").eq(0).html();
-                           $.ajax({
-                             url: "@Url.Action("HuyDonHang", "Home")",
-                              data: { ma: id },
-                                success: function (res) {
-                                     if (res.status == true) {
-                                          window.location.href = "/Home/MyOrder";
-                                     }
-                               
-                    /* $("#showmodal").modal('show')*/
-                                 }
-                            });
-                          });
+                           Swal.fire({
+                             title: 'Bạn có chắc chắn muốn hủy đơn không ?',
+                              showCancelButton: true,
+                              confirmButtonText: 'Hủy',
+                              denyButtonText: `Hủy`
+                              }).then((result)=> {
+                                   if(result.isConfirmed){
+                                    $.ajax({
+                                        url: "@Url.Action("HuyDonHang", "Home")",
+                                             data: { ma: id },
+                                             success: function (res) {
+                                                  if (res.status == true) {
+                                                       window.location.href = "/Home/MyOrder";
+                                                  }
+                                             
+                                             }
+                                   });
+                              });
+                                   }
+                              })
+                          
                          </script>
                     </div>
                     <div id="menu1" class="tab-pane fade">

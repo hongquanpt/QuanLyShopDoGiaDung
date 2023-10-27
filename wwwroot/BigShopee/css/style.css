@@ -2153,3 +2153,25 @@ select.in-drop {
 .product-left{
      /* min-height: 930px; */
 }
+
+
+/*slider range  */
+
+#price-range {
+     width: 97%;
+     /* margin: 10px auto; */
+     margin: 10px;
+     }
+
+     #price-values {
+          display: flex;
+          justify-content: space-between;
+          margin-top: 10px;
+          width: 100%;
+          margin: 0 auto;
+     }
+
+     /* Tô màu xanh nước biển cho khoảng giữa các đầu slider */
+     .ui-widget-header {
+     background: #0073e6;
+     }

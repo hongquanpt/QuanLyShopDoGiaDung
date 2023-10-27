@@ -7,6 +7,7 @@ using ShopBanDoGiaDung.Models;
 using System.Diagnostics;
 using QuanLyShopDoGiaDung.Common;
 using QuanLyShopDoGiaDung.DTO;
+using System.Text.Json;
 
 
 namespace ShopBanDoGiaDung.Controllers
@@ -35,32 +36,67 @@ namespace ShopBanDoGiaDung.Controllers
             return View();
         }
 
-        public ActionResult SPHang(int id, string ten,int PageIndex, int PageSize)
+        public ActionResult SPHang(int idHang, string ten,int PageIndex, int PageSize,  int maxPrice, int minPrice, string orderPrice)
         {
             if(PageIndex == 0 || PageSize == 0 ){
                 PageIndex = 1;
                 PageSize = 100;
             }
             ViewBag.tenhang = ten;
-            IQueryable<Sanpham> query = (IQueryable<Sanpham>)_context.Sanphams.Where(s=> s.MaHang == id);
+            IQueryable<Sanpham> query = (IQueryable<Sanpham>)_context.Sanphams;
+            if (maxPrice != 0){
+               query = query.Where(item => item.GiaTien < maxPrice && item.GiaTien > minPrice && item.MaHang == idHang );
+            }
+            else {
+                query = query.Where(s=> s.MaHang == idHang);
+            }
+            if(orderPrice == "tang") {
+                query = query.OrderBy(item => item.GiaTien);
+            }
+            if(orderPrice == "giam") {
+                query = query.OrderByDescending(item => item.GiaTien);
+            }
             List<Sanpham> model = query.ToList();
             var count = query.Count();
              PaginatedList<Sanpham> data = new PaginatedList<Sanpham>(model,count,PageIndex, PageSize );     
             ViewBag.sanpham = data;
+            ViewBag.maxPrice = maxPrice;
+            ViewBag.minPrice = minPrice;
+            ViewBag.orderPrice = orderPrice;
+            ViewBag.tenhang = ten;
+            ViewBag.idHang = idHang;
             return View();
         }
-        public ActionResult SPDanhMuc(int id, string ten, int PageIndex, int PageSize)
+        public ActionResult SPDanhMuc(int idCategory, string ten, int PageIndex, int PageSize,  int maxPrice, int minPrice, string orderPrice)
         {
+
             if(PageIndex == 0 || PageSize == 0 ){
                 PageIndex = 1;
                 PageSize = 100;
             }
-            ViewBag.tendanhmuc = ten;
-            IQueryable<Sanpham> query = (IQueryable<Sanpham>)_context.Sanphams.Where(s=> s.MaDanhMuc == id);
+          
+            IQueryable<Sanpham> query = (IQueryable<Sanpham>)_context.Sanphams;      
+            if (maxPrice != 0){
+               query = query.Where(item => item.GiaTien < maxPrice && item.GiaTien > minPrice && item.MaDanhMuc == idCategory );
+            }
+            else {
+                query = query.Where(s=> s.MaDanhMuc == idCategory);
+            }
+            if(orderPrice == "tang") {
+                query = query.OrderBy(item => item.GiaTien);
+            }
+            if(orderPrice == "giam") {
+                query = query.OrderByDescending(item => item.GiaTien);
+            }
             List<Sanpham> model = query.ToList();
             var count = query.Count();
              PaginatedList<Sanpham> data = new PaginatedList<Sanpham>(model,count,PageIndex, PageSize );     
             ViewBag.sanpham = data;
+            ViewBag.maxPrice = maxPrice;
+            ViewBag.minPrice = minPrice;
+            ViewBag.orderPrice = orderPrice;
+            ViewBag.tendanhmuc = ten;
+            ViewBag.idCategory = idCategory;
             return View();
         }
 
@@ -94,17 +130,31 @@ namespace ShopBanDoGiaDung.Controllers
             return View();
         }
 
-        public ActionResult AllProduct(int PageIndex, int PageSize)
+       [HttpGet]
+        public ActionResult AllProduct(int PageIndex, int PageSize, int maxPrice, int minPrice, string orderPrice)
         {
             if(PageIndex == 0 || PageSize == 0){
                 PageIndex = 1;
                 PageSize=100;
             }
             IQueryable<Sanpham> model = (IQueryable<Sanpham>)_context.Sanphams;
-            var count = model.Count();
+           
+            if (maxPrice != 0){
+               model = model.Where(item => item.GiaTien < maxPrice && item.GiaTien > minPrice);
+            }
+            if(orderPrice == "tang") {
+                model = model.OrderBy(item => item.GiaTien);
+            }
+            if(orderPrice == "giam") {
+                model = model.OrderByDescending(item => item.GiaTien);
+            }
+             var count = model.Count();
             List<Sanpham> dt = model.Skip((PageIndex -1 )* PageSize).Take(PageSize).ToList();
             PaginatedList<Sanpham> data = new PaginatedList<Sanpham>(dt,count,PageIndex, PageSize );     
             ViewBag.sanpham = data;
+            ViewBag.maxPrice = maxPrice;
+            ViewBag.minPrice = minPrice;
+            ViewBag.orderPrice = orderPrice;
             return View();
         }
 
@@ -250,6 +300,33 @@ namespace ShopBanDoGiaDung.Controllers
                      };
             var ds = kq.ToList();
             return PartialView(ds);
+        }
+
+        public async Task<JsonResult> HuyDonHang(int ma)
+        {
+           try{
+             var dh =await _context.Donhangs.FindAsync(ma);
+            if(dh == null) {
+                return Json(
+                    new {
+                        status = true
+                    }
+                );
+            }
+            dh.TinhTrang = 4;
+            await _context.SaveChangesAsync();
+            return Json(new
+            {
+                status = true
+            });
+
+           }catch (Exception ex) {
+            Console.WriteLine(ex);
+              return Json(new
+            {
+                status = false
+            });
+           }
         }
 
 
