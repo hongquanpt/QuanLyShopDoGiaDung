@@ -73,15 +73,16 @@
                                         @*<h3>NHẬP THÔNG TIN GIAO HÀNG</h3>*@
                                         <div class="mation">
                                              <span>Họ tên <label style="color: red;font-size:14px;">*</label></span>
-                                             <input  type="text" style="color:black" id="Ten" name="ten" value="@Ten">
+                                             <input   type="text" style="color:black" id="Ten" name="ten" value="@Ten">
+                                              <p  id="vld-name" style="right:24%;font-size:13px; color: red"></p>
 
 
                                              <span>Số điện thoại <label style="color: red;font-size:14px;">*</label></span>
                                              <input  type="text" style="color:black" id="SDT" name="SDT" value="@SDT">
-
+                                              <p  id="vld-sdt" style="right:24%;font-size:13px; color: red "></p>
                                              <span>Địa chỉ  <label style="color: red;font-size:14px;">*</label></span>
                                              <input type="text" style="color:black" id="DiaChi" name="DiaChi" value="@DiaChi">
-
+                                              <p  id="vld-diachi" style="right:24%;font-size:13px; color: red "></p>
                                              <span>Chọn hình thức thanh toán <label style="color: red;font-size:14px;">*</label></span>
                                              <div class="form-group" style="width:90%">
                                                 
@@ -136,50 +137,66 @@
           var ten = $('#Ten').val()
           var sdt = $('#SDT').val()
           var diachi = $('#DiaChi').val()
-          if(!ten || !sdt || !diachi){
-               console.log("Hãy điền đẩy đủ thông tin")
-          }
-        else {
-          $.ajax({
-               url: '/Cart/ThanhToan',
-               data: {
-                    ten: ten,
-                    SDT: sdt,
-                    DiaChi:diachi
-               },
-               type: 'POST',
-               dataType: 'json',
-               success: function (res) {
-                    if (res.status == true) {
-                   Swal.fire({
-                              position: 'center',
-                              icon: 'success',
-                              title: 'Thanh toán thành công',
-                              confirmButtonText: 'OK',
-                              
-                         }).then((result) => {
-                               if (result.isConfirmed) {
-                                    window.location = '@Url.Action("Index","Home")'
-                               }
-                            
-                         })
-                   
-               
-                    } else {
-                         Swal.fire({
-                              position: 'center',
-                              icon: 'error',
-                              title: 'Thanh toán thất bại',
-                              showConfirmButton: false,
-                              timer: 1500
-                         })
-                    
-                    }
-                    
-               }
 
-          });
-        }
+          if(ten && sdt && diachi){
+               $.ajax({
+                    url: '/Cart/ThanhToan',
+                    data: {
+                         ten: ten,
+                         SDT: sdt,
+                         DiaChi:diachi
+                    },
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function (res) {
+                         if (res.status == true) {
+                    Swal.fire({
+                                   position: 'center',
+                                   icon: 'success',
+                                   title: 'Thanh toán thành công',
+                                   confirmButtonText: 'OK',
+                                   
+                              }).then((result) => {
+                                   if (result.isConfirmed) {
+                                        window.location = '@Url.Action("Index","Home")'
+                                   }
+                              
+                              })
+                    
+                    
+                         } else {
+                              Swal.fire({
+                                   position: 'center',
+                                   icon: 'error',
+                                   title: res.message,
+                                   showConfirmButton: false,
+                                   timer: 1500
+                              })
+                         
+                         }
+                         
+                    }
+
+               });
+          } else {
+               if(!ten){
+                    $('#vld-name').text('Vui lòng nhập họ và tên')
+               }
+               if(!sdt){
+                    $('#vld-sdt').text('Vui lòng nhập số điện thoại')
+               }
+               if(!diachi){
+                    $('#vld-diachi').text('Vui lòng nhập địa chỉ')
+               }
+               Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: "Thanh toán thất bại",
+                    showConfirmButton: false,
+                    timer: 1500
+               })
+               
+          }
           
          
      }
@@ -200,7 +217,7 @@
                     type: 'POST',
                     success: function (res) {
                          if (res.status == true) {
-                               window.location = '@Url.Action("Index","Home")'
+                               window.location = '@Url.Action("Index","Cart")'
                          }
                     }
                })

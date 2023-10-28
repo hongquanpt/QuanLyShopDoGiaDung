@@ -185,6 +185,30 @@ namespace QuanLyShopDoGiaDung.Controllers
         [HttpPost]
         public async Task<JsonResult> ThanhToan(ThongTinThanhToan thanhToan) {
                 try {
+                    if( String.IsNullOrEmpty(thanhToan.ten)) {
+                          return Json(new
+                            {
+                                status = false,
+                                message = "Họ tên người nhận không được bỏ trống"
+                            });
+
+                    }
+                    if( String.IsNullOrEmpty(thanhToan.SDT)) {
+                          return Json(new
+                            {
+                                status = false,
+                                message = "Số điện thoại không được bỏ trống"
+                            });
+
+                    }
+                    if( String.IsNullOrEmpty(thanhToan.DiaChi)) {
+                          return Json(new
+                            {
+                                status = false,
+                                message = "Địa chỉ không được bỏ trống"
+                            });
+
+                    }
                     var order = new Donhang();
                     order.MaTaiKhoan = HttpContext.Session.GetInt32("Ma");
                     order.NgayLap = DateTime.Now; /*Convert.ToDateTime("2/2/2022")*/;

@@ -31,7 +31,7 @@
                          <div class="col-md-3 title-profile">
                               Họ và tên
                          </div>
-                         <div class="col-md-9 text-secondary  text-profile">
+                         <div  class="col-md-9 text-secondary  text-profile">
                               @it[0].Ten
                          </div>
 
@@ -69,7 +69,7 @@
            </div>
       </div>
       <div class="card mb-3 content profile-info">
-           <div class="profile-content">
+           <div class="profile-content">     
                 <h2 class="m-3 pt-3">Thông tin liên hệ</h2>
                 <div  style="padding-bottom: 8px;" class="row">
                      <div class="col-md-3  title-profile">
@@ -97,6 +97,7 @@
            </div>
      </div>
      <button type="submit" id="btn-save" style="background-color: #357ebd;float: right;display: none;"  type="button" class="btn btn-primary">Lưu thay đổi</button>
+     <button onclick="hanldeCancle()"  style="margin-right: 5px;display: none;float: right;" id="btn-cancle"   type="button" class="btn btn-danger">Hủy</button>
      </form>
  </div>
  <script>
@@ -106,43 +107,28 @@
           const input_profiles = document.querySelectorAll(".input-profile");
           const text_profiles = document.querySelectorAll('.text-profile');
           const btn_save = document.getElementById("btn-save");  
+          const btn_cancle = document.getElementById("btn-cancle");
 
-          text_profiles.forEach(text => text.remove() )
+          @* text_profiles.forEach(text => text.remove() ) *@
+          text_profiles.forEach(text => text.style.display = "none")
           input_profiles.forEach(profile => {
                profile.style.display = "block";   
           })
           btn_save.style.display="block";    
+          btn_cancle.style.display= "block";
 
      }
+     function hanldeCancle () {
+          @* const input_profiles = document.querySelectorAll(".input-profile");
+          const text_profiles = document.querySelectorAll('.text-profile');
+          const btn_save = document.getElementById("btn-save");  
+          const btn_cancle = document.getElementById("btn-cancle");
+
+          input_profiles.forEach(profile => profile.style.display="none"  )
+          text_profiles.forEach(text => {
+               tetx.style.display = "block";   
+          })
+          btn_save.style.display="none";    
+          btn_cancle.style.display= "none"; *@
+     }
  </script>
-
-
- @* <div class="row justify-content-md-center">
-               <div class="col col-lg-4" style="font-size:28px;font-weight: 550;">THÔNG TIN CÁ NHÂN</div>
-               <div class="col col-lg-7">
-                    <form action="">
-                         <div class="row">
-                         <div class="col col-lg-7">
-                              <label for="pwd">Tên tài khoản:</label>
-                               <input type="text" class="form-control" id="pwd" name="name" value="@it[0].Ten">
-                         </div>
-                         <div class="col col-lg-7">
-                              <label for="pwd">Ngày sinh:</label>
-                               <input type="date" class="form-control" id="pwd" name="DiaChi" value="@it[0].NgaySinh">
-                         </div>
-                         <div class="col col-lg-7">
-                              <label for="pwd">Số điện thoại:</label>
-                               <input type="text" class="form-control" id="pwd" name="DiaChi" value="@it[0].Sdt">
-                         </div>
-                         <div class="col col-lg-7">
-                              <label for="pwd">Địa chỉ:</label>
-                               <input type="text" class="form-control" id="pwd" name="DiaChi" value="@it[0].DiaChi">
-                         </div>
-                         <div class="col col-lg-7">
-                              <label for="pwd">Email:</label>
-                               <input type="text" class="form-control" id="pwd" name="DiaChi" value="@it[0].Email">
-                         </div>
-                    </div>
-                    </form>
-               </div>
-          </div> *@

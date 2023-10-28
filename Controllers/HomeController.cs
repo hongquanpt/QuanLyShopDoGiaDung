@@ -138,7 +138,6 @@ namespace ShopBanDoGiaDung.Controllers
                 PageSize=100;
             }
             IQueryable<Sanpham> model = (IQueryable<Sanpham>)_context.Sanphams;
-           
             if (maxPrice != 0){
                model = model.Where(item => item.GiaTien < maxPrice && item.GiaTien > minPrice);
             }

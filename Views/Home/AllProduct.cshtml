@@ -9,12 +9,19 @@
     var  max_price = ViewBag.maxPrice;
     var min_price = ViewBag.minPrice;
     var order_price = ViewBag.orderPrice;
+    var search = ViewBag.search;
 }
 
 <div class="shoes-grid">
      <div class="products" style="margin-top: 28px; }">
-          <h5 class="latest-product">TẤT CẢ SẢN PHẨM</h5>
+          @if(String.IsNullOrEmpty(search)) {
+               <h5 class="latest-product">TẤT CẢ SẢN PHẨM: @sp.Count sản phẩm </h5>
+          }else {
+               <h5 class="latest-product">TÌM THẤY @sp.Count sản phẩm </h5>
+          }
+          
      </div>
+     <input hidden id="value-search" value="@search"></input>
      <div   style="margin-top: 90px;display: flex;justify-content: flex-end;margin-right: 30px;">
         
          <div class="slider " style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
@@ -201,10 +208,13 @@
                     if(orderPrice !== "notorder"){
                          stringSapXepGia =  `&orderPrice=${orderPrice}`
                     }
+                    if(search){
+                         stringSearch = `&search=${search}`
+                    }
                     if(maxPrice === 100000000 && minPrice === 0){
                       stringMaMinPrice=''
                     }
-                     window.location = '@Url.Action("AllProduct","Home")' + `?PageIndex=${PageIndex}` + `&PageSize=${PageSize}`+ stringMaMinPrice + stringSapXepGia
+                     window.location = '@Url.Action("AllProduct","Home")' + `?PageIndex=${PageIndex}` + `&PageSize=${PageSize}`+ stringMaMinPrice + stringSapXepGia 
                   
                }
 
