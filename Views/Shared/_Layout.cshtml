@@ -64,13 +64,29 @@
                     <div class="logo">
                         <a asp-controller="Home" asp-action="Index"><img src="~/BigShopee/images/logo.png" alt=" " /></a>
                     </div>
-                    <form method="post" action="/Home/search">
+                    @* <form method="post" action="/Home/Search"> *@
                         <div class="search">
-                            <input type="text" name="search" value="" onfocus="this.value = '';"
+                            <input id="search-name" type="text" name="search" value="" onfocus="this.value = '';"
                                    onblur="if (this.value == '') {this.value = '';}">
-                            <input type="submit" value="TÌM KIẾM">
+                            <input onclick="handleSearch()" type="submit" value="TÌM KIẾM">
                         </div>
-                    </form>
+                        <script>
+                            function handleSearch() {
+                                const search = $("#search-name").val()
+                                $.ajax({
+                                    url: '@Url.Action("Search","Home")',
+                                    type: 'GET',
+                                    success: function (res) { 
+                                        console.log(res)
+                                            window.location = '@Url.Action("Search","Home")' + `?PageIndex=${1}` + `&PageSize=${6}`+ `&search=${search}` 
+                                        
+                                    }
+
+                                });
+                            }
+
+                        </script>
+                    @* </form> *@
                     <div class="clearfix"> </div>
                 </div>
                 <div class="header-bottom-right" >
@@ -89,7 +105,7 @@
                                     <i style="color:#F97E76;"  class="fas fa-user"></i>
                                     Thông tin tài khoản</a>
                                 </li>
-                                <li><a asp-controller="Home" asp-action="MyOrder" >
+                                <li><a asp-controller="Home" asp-action="MyOrder" asp-route-PageIndex="1" asp-route-PageSize="10" >
                                      <i style="color:#F97E76;"  class="fas fa-receipt"></i>
                                     Lịch sử mua hàng</a></li>
                              </ul>

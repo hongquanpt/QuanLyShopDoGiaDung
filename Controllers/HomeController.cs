@@ -24,19 +24,19 @@ namespace ShopBanDoGiaDung.Controllers
         }
 
       /*  [CustomAuthorize("khach")]*/
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var sanpham = (from a in _context.Sanphams
                            orderby a.SoLuongDaBan descending
                            select a).Take(6);
-            var model = sanpham.ToList();
+            var model =await sanpham.ToListAsync();
             ViewBag.sanpham = model;
-            ViewBag.danhmucsp = _context.Danhmucsanphams.ToList();
-            ViewBag.hang = _context.Hangsanxuats.ToList();
+            ViewBag.danhmucsp =await _context.Danhmucsanphams.ToListAsync();
+            ViewBag.hang =await _context.Hangsanxuats.ToListAsync();
             return View();
         }
 
-        public ActionResult SPHang(int idHang, string ten,int PageIndex, int PageSize,  int maxPrice, int minPrice, string orderPrice)
+        public async Task<IActionResult> SPHang(int idHang, string ten,int PageIndex, int PageSize,  int maxPrice, int minPrice, string orderPrice)
         {
             if(PageIndex == 0 || PageSize == 0 ){
                 PageIndex = 1;
@@ -56,8 +56,8 @@ namespace ShopBanDoGiaDung.Controllers
             if(orderPrice == "giam") {
                 query = query.OrderByDescending(item => item.GiaTien);
             }
-            List<Sanpham> model = query.ToList();
-            var count = query.Count();
+            List<Sanpham> model =await query.ToListAsync();
+            var count =await query.CountAsync();
              PaginatedList<Sanpham> data = new PaginatedList<Sanpham>(model,count,PageIndex, PageSize );     
             ViewBag.sanpham = data;
             ViewBag.maxPrice = maxPrice;
@@ -67,7 +67,7 @@ namespace ShopBanDoGiaDung.Controllers
             ViewBag.idHang = idHang;
             return View();
         }
-        public ActionResult SPDanhMuc(int idCategory, string ten, int PageIndex, int PageSize,  int maxPrice, int minPrice, string orderPrice)
+        public async Task<IActionResult> SPDanhMuc(int idCategory, string ten, int PageIndex, int PageSize,  int maxPrice, int minPrice, string orderPrice)
         {
 
             if(PageIndex == 0 || PageSize == 0 ){
@@ -88,8 +88,8 @@ namespace ShopBanDoGiaDung.Controllers
             if(orderPrice == "giam") {
                 query = query.OrderByDescending(item => item.GiaTien);
             }
-            List<Sanpham> model = query.ToList();
-            var count = query.Count();
+            List<Sanpham> model =await query.ToListAsync();
+            var count =await query.CountAsync();
              PaginatedList<Sanpham> data = new PaginatedList<Sanpham>(model,count,PageIndex, PageSize );     
             ViewBag.sanpham = data;
             ViewBag.maxPrice = maxPrice;
@@ -100,7 +100,7 @@ namespace ShopBanDoGiaDung.Controllers
             return View();
         }
 
-         public ActionResult ProductDetail(int id)
+         public async Task<IActionResult> ProductDetail(int id)
         {
 
             var danhgia = from a in _context.Taikhoans
@@ -115,7 +115,7 @@ namespace ShopBanDoGiaDung.Controllers
                               NoiDung = b.NoiDungBinhLuan,
                               ThoiGian = b.NgayDanhGia
                           };
-            var dsdanhgia = danhgia.ToList();
+            var dsdanhgia =await danhgia.ToListAsync();
             int? sum = 0;
             foreach (var item in dsdanhgia)
             {
@@ -131,7 +131,7 @@ namespace ShopBanDoGiaDung.Controllers
         }
 
        [HttpGet]
-        public ActionResult AllProduct(int PageIndex, int PageSize, int maxPrice, int minPrice, string orderPrice)
+        public async Task<ActionResult> AllProduct(int PageIndex, int PageSize, int maxPrice, int minPrice, string orderPrice)
         {
             if(PageIndex == 0 || PageSize == 0){
                 PageIndex = 1;
@@ -147,8 +147,8 @@ namespace ShopBanDoGiaDung.Controllers
             if(orderPrice == "giam") {
                 model = model.OrderByDescending(item => item.GiaTien);
             }
-             var count = model.Count();
-            List<Sanpham> dt = model.Skip((PageIndex -1 )* PageSize).Take(PageSize).ToList();
+             var count =await model.CountAsync();
+            List<Sanpham> dt =await model.Skip((PageIndex -1 )* PageSize).Take(PageSize).ToListAsync();
             PaginatedList<Sanpham> data = new PaginatedList<Sanpham>(dt,count,PageIndex, PageSize );     
             ViewBag.sanpham = data;
             ViewBag.maxPrice = maxPrice;
@@ -157,11 +157,41 @@ namespace ShopBanDoGiaDung.Controllers
             return View();
         }
 
+        public async Task<ActionResult> Search(string search,int PageIndex, int PageSize,  int maxPrice, int minPrice, string orderPrice )
+        {
+             if(PageIndex == 0 || PageSize == 0){
+                PageIndex = 1;
+                PageSize=100;
+            }
+            IQueryable<Sanpham> model = (IQueryable<Sanpham>)_context.Sanphams.Where(s => s.TenSp.Contains(search));
+            if (maxPrice != 0){
+               model = model.Where(item => item.GiaTien < maxPrice && item.GiaTien > minPrice && item.TenSp.Contains(search) );
+            }
+            else {
+                model = model.Where(s => s.TenSp.Contains(search));
+            }
+            if(orderPrice == "tang") {
+                model = model.OrderBy(item => item.GiaTien);
+            }
+            if(orderPrice == "giam") {
+                model = model.OrderByDescending(item => item.GiaTien);
+            }
+            var count = await model.CountAsync();
+            List<Sanpham> dt =await model.Skip((PageIndex -1 )* PageSize).Take(PageSize).ToListAsync();
+            PaginatedList<Sanpham> data = new PaginatedList<Sanpham>(dt,count,PageIndex, PageSize ); 
+            ViewBag.sanpham = data;
+            ViewBag.search = search;
+             ViewBag.maxPrice = maxPrice;
+            ViewBag.minPrice = minPrice;
+            ViewBag.orderPrice = orderPrice;
+            return View();
+        }
 
-        public ActionResult profile()
+
+        public async Task<IActionResult> profile()
         {
             var ma =  HttpContext.Session.GetInt32("Ma");
-            var model = _context.Taikhoans.Where(s => s.MaTaiKhoan == ma).ToList();
+            var model =await _context.Taikhoans.Where(s => s.MaTaiKhoan == ma).ToListAsync();
             ViewBag.taikhoan = model;
             return View();
         }
@@ -187,99 +217,38 @@ namespace ShopBanDoGiaDung.Controllers
         }
 
 
-         public ActionResult MyOrder()
+         public async Task<ActionResult> MyOrder(string typeMenu, int PageIndex, int PageSize)
         {
-            var ma = HttpContext.Session.GetInt32("Ma");
-            var kq = from a in _context.Donhangs
-                     join b in _context.Vanchuyens on a.MaDonHang equals b.MaDonHang
-                     where a.MaTaiKhoan == ma
-                     orderby a.MaDonHang descending
-                     select new MyOrder()
-                     {
-                         MaDonHang = a.MaDonHang,
-                         TongTien = a.TongTien,
-                         NguoiNhan = b.NguoiNhan,
-                         DiaChi = b.DiaChi,
-                         NgayMua = a.NgayLap,
-                         TinhTrang = a.TinhTrang
-                     };
-            var kq1 = from a in _context.Donhangs
-                      join b in _context.Vanchuyens on a.MaDonHang equals b.MaDonHang
-                      where a.MaTaiKhoan == ma && a.TinhTrang == 0
-                      orderby a.MaDonHang descending
-                      select new MyOrder()
-                      {
-                          MaDonHang = a.MaDonHang,
-                          TongTien = a.TongTien,
-                          NguoiNhan = b.NguoiNhan,
-                          DiaChi = b.DiaChi,
-                          NgayMua = a.NgayLap,
-                          TinhTrang = a.TinhTrang
-                      };
-            var kq2 = from a in _context.Donhangs
-                      join b in _context.Vanchuyens on a.MaDonHang equals b.MaDonHang
-                      where a.MaTaiKhoan == ma && a.TinhTrang == 1
-                      orderby a.MaDonHang descending
-                      select new MyOrder()
-                      {
-                          MaDonHang = a.MaDonHang,
-                          TongTien = a.TongTien,
-                          NguoiNhan = b.NguoiNhan,
-                          DiaChi = b.DiaChi,
-                          NgayMua = a.NgayLap,
-                          TinhTrang = a.TinhTrang
-                      };
-            var kq3 = from a in _context.Donhangs
-                      join b in _context.Vanchuyens on a.MaDonHang equals b.MaDonHang
-                      where a.MaTaiKhoan == ma && a.TinhTrang == 2
-                      orderby a.MaDonHang descending
-                      select new MyOrder()
-                      {
-                          MaDonHang = a.MaDonHang,
-                          TongTien = a.TongTien,
-                          NguoiNhan = b.NguoiNhan,
-                          DiaChi = b.DiaChi,
-                          NgayMua = a.NgayLap,
-                          TinhTrang = a.TinhTrang
-                      };
-            var kq4 = from a in _context.Donhangs
-                      join b in _context.Vanchuyens on a.MaDonHang equals b.MaDonHang
-                      where a.MaTaiKhoan == ma && a.TinhTrang == 3
-                      orderby a.MaDonHang descending
-                      select new MyOrder()
-                      {
-                          MaDonHang = a.MaDonHang,
-                          TongTien = a.TongTien,
-                          NguoiNhan = b.NguoiNhan,
-                          DiaChi = b.DiaChi,
-                          NgayMua = a.NgayLap,
-                          TinhTrang = a.TinhTrang
-                      };
-            var kq5 = from a in _context.Donhangs
-                      join b in _context.Vanchuyens on a.MaDonHang equals b.MaDonHang
-                      where a.MaTaiKhoan == ma && a.TinhTrang == 4
-                      orderby a.MaDonHang descending
-                      select new MyOrder()
-                      {
-                          MaDonHang = a.MaDonHang,
-                          TongTien = a.TongTien,
-                          NguoiNhan = b.NguoiNhan,
-                          DiaChi = b.DiaChi,
-                          NgayMua = a.NgayLap,
-                          TinhTrang = a.TinhTrang
-                      };
-            var ds = kq.ToList();
-            var ds1 = kq1.ToList();
-            var ds2 = kq2.ToList();
-            var ds3 = kq3.ToList();
-            var ds4 = kq4.ToList();
-            var ds5 = kq5.ToList();
-            ViewBag.dstatca = ds;
-            ViewBag.dschuathanhtoan = ds1;
-            ViewBag.dschoxacnhan = ds2;
-            ViewBag.dsdangvanchuyen = ds3;
-            ViewBag.dsdahoanthanh = ds4;
-            ViewBag.dsdahuy = ds5;
+           
+           var ma = HttpContext.Session.GetInt32("Ma");
+
+            if(String.IsNullOrEmpty(typeMenu)){
+                typeMenu = "tatca";
+            }
+            if(PageIndex == 0 || PageSize == 0){
+                PageIndex = 1;
+                PageSize=100;
+            }
+            IQueryable<Donhang> query = (IQueryable<Donhang>)_context.Donhangs;
+            query = typeMenu switch
+            {
+                "tatca" => query.Include(item => item.Vanchuyen).Where(a => a.MaTaiKhoan == ma),
+                "chuathanhtoan" => query.Include(item => item.Vanchuyen).Where(a => a.MaTaiKhoan == ma && a.TinhTrang == 0),
+                "choxacnhan" => query.Include(item => item.Vanchuyen).Where(a => a.MaTaiKhoan == ma && a.TinhTrang == 1),
+                "dangvanchuyen" => query.Include(item => item.Vanchuyen).Where(a => a.MaTaiKhoan == ma && a.TinhTrang == 2),
+                "dahoanthanh" => query.Include(item => item.Vanchuyen).Where(a => a.MaTaiKhoan == ma && a.TinhTrang == 3),
+                "dahuy" => query.Include(item => item.Vanchuyen).Where(a => a.MaTaiKhoan == ma && a.TinhTrang == 4),
+                _ => query.Include(item => item.Vanchuyen).Where(a => a.MaTaiKhoan == ma),
+            };
+            List<Donhang> dt = await query.OrderByDescending(item => item.MaDonHang)
+            .Skip((PageIndex -1 )* PageSize).Take(PageSize)
+            .ToListAsync();
+            var count = await query.CountAsync();
+            PaginatedList<Donhang> data = new PaginatedList<Donhang>(dt,count,PageIndex, PageSize );
+            ViewBag.donhang = data;  
+            ViewBag.typeMenu = typeMenu;
+             Console.WriteLine(ViewBag.typeMenu);
+            
             return View();
         }
 
@@ -318,6 +287,26 @@ namespace ShopBanDoGiaDung.Controllers
             {
                 status = true
             });
+
+           }catch (Exception ex) {
+            Console.WriteLine(ex);
+              return Json(new
+            {
+                status = false
+            });
+           }
+        }
+
+        public async Task<JsonResult> DaNhanHang(int ma)
+        {
+            try {
+                var dh =await _context.Donhangs.FindAsync(ma);
+                dh.TinhTrang = 3;
+                await _context.SaveChangesAsync();
+                return Json(new
+                {
+                    status = true
+                });
 
            }catch (Exception ex) {
             Console.WriteLine(ex);

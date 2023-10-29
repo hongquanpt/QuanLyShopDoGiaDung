@@ -1,4 +1,4 @@
-@using Microsoft.AspNetCore.Http;
+﻿@using Microsoft.AspNetCore.Http;
 @inject IHttpContextAccessor HttpContextAccessor
 @{
      @* ViewBag.Title = "AllProduct"; *@
@@ -9,12 +9,14 @@
     var  max_price = ViewBag.maxPrice;
     var min_price = ViewBag.minPrice;
     var order_price = ViewBag.orderPrice;
+    var search = ViewBag.search;
 }
 
 <div class="shoes-grid">
      <div class="products" style="margin-top: 28px; }">
-               <h5 class="latest-product">TẤT CẢ SẢN PHẨM: @sp.Count sản phẩm </h5>       
+               <h5 class="latest-product">TÌM KIẾM:@search , SỐ SẢN PHẨM:@sp.Count sản phẩm  </h5>
      </div>
+     <input hidden id="value-search" value="@search"></input>
      <div   style="margin-top: 90px;display: flex;justify-content: flex-end;margin-right: 30px;">
         
          <div class="slider " style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
@@ -189,11 +191,13 @@
      }
 
      function ChuyenTrang(PageIndex, PageSize) {
+         console.log("check")
           const maxPrice =parseInt( $("#max-price").val()?.replace(/,/g, ''))
           const minPrice =parseInt( $("#min-price").val()?.replace(/,/g, ''))
           const orderPrice = $("#select-order-price").val();
+          const search = $('#value-search').val()
           $.ajax({
-                url: '@Url.Action("AllProduct","Home")',
+                url: '@Url.Action("Search","Home")',
                type: 'GET',
                success: function (res) { 
                     let stringMaMinPrice = `&maxPrice=${maxPrice}`+ `&minPrice=${minPrice}`
@@ -201,10 +205,13 @@
                     if(orderPrice !== "notorder"){
                          stringSapXepGia =  `&orderPrice=${orderPrice}`
                     }
+                    if(search){
+                         stringSearch = `&search=${search}`
+                    }
                     if(maxPrice === 100000000 && minPrice === 0){
                       stringMaMinPrice=''
                     }
-                     window.location = '@Url.Action("AllProduct","Home")' + `?PageIndex=${PageIndex}` + `&PageSize=${PageSize}`+ stringMaMinPrice + stringSapXepGia 
+                     window.location = '@Url.Action("Search","Home")' + `?PageIndex=${PageIndex}` + `&PageSize=${PageSize}`+ stringMaMinPrice + stringSapXepGia + stringSearch
                   
                }
 
