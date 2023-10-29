@@ -20,14 +20,24 @@ namespace ShopBanDoGiaDung.Controllers
         {
             return View();
         }
-       
+
         #region Quản lý
         #region Quản lý tài khoản
-        public IActionResult QuanLyTK()
+        public IActionResult QuanLyTK(int page = 1, int pageSize = 10)
         {
-            var model = obj.Taikhoans.Where(s => s.Quyen == "khach").ToList();
-            ViewBag.ds = model;
-            return View();
+            // Thực hiện truy vấn và phân trang
+            var query = obj.Taikhoans.Where(s => s.Quyen == "khach").OrderBy(s => s.MaTaiKhoan);
+            var model = query.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            // Tính toán thông tin phân trang
+            var totalItemCount = query.Count();
+            var pagedList = new StaticPagedList<Taikhoan>(model, page, pageSize, totalItemCount);
+            ViewBag.PageStartItem = (page - 1) * pageSize + 1;
+            ViewBag.PageEndItem = Math.Min(page * pageSize, totalItemCount);
+            ViewBag.Page = page;
+
+            return View(pagedList);
+           
         }
         public IActionResult XoaTK(int MaTK)
         {
@@ -58,7 +68,7 @@ namespace ShopBanDoGiaDung.Controllers
         public IActionResult QuanLySP(int page = 1, int pageSize = 10)
         {
             // Thực hiện truy vấn và phân trang
-            var query = obj.Sanphams.OrderByDescending(sp => sp.MaSp);
+            var query = obj.Sanphams.OrderBy(sp => sp.MaSp);
             var model = query.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
             // Tính toán thông tin phân trang
@@ -334,7 +344,7 @@ namespace ShopBanDoGiaDung.Controllers
                 });
             }
         }
-        public IActionResult timKiemSanPham(string tenSP, int page = 1, int pageSize = 2)
+        public IActionResult timKiemSanPham(string tenSP, int page = 1, int pageSize = 10)
         {
             if (!string.IsNullOrEmpty(tenSP))
             {
@@ -359,7 +369,7 @@ namespace ShopBanDoGiaDung.Controllers
                 ViewBag.PageEndItem = Math.Min(page * pageSize, totalItemCount);
                 ViewBag.Page = page;
                 ViewBag.SearchTerm = tenSP;
-
+                ViewBag.TotalItemCount = totalItemCount;
                 return View(pagedList);
             }
             else
@@ -374,11 +384,20 @@ namespace ShopBanDoGiaDung.Controllers
 
         #endregion
         #region Quản lý hãng
-        public IActionResult QuanLyHang()
+        public IActionResult QuanLyHang(int page = 1, int pageSize = 10)
         {
-            var model = obj.Hangsanxuats.ToList();
-            ViewBag.ds = model;
-            return View();
+           
+            var query = obj.Hangsanxuats.OrderBy(s => s.MaHang);
+            var model = query.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            // Tính toán thông tin phân trang
+            var totalItemCount = query.Count();
+            var pagedList = new StaticPagedList<Hangsanxuat>(model, page, pageSize, totalItemCount);
+            ViewBag.PageStartItem = (page - 1) * pageSize + 1;
+            ViewBag.PageEndItem = Math.Min(page * pageSize, totalItemCount);
+            ViewBag.Page = page;
+
+            return View(pagedList);
         }
         [HttpPost]
         public IActionResult ThemHang( string tenhang)
@@ -439,11 +458,21 @@ namespace ShopBanDoGiaDung.Controllers
         }
         #endregion
         #region Quản lý danh mục
-        public IActionResult QuanLyDM()
+        public IActionResult QuanLyDM(int page = 1, int pageSize = 10)
         {
-            var model = obj.Danhmucsanphams.ToList();
-            ViewBag.ds= model;
-            return View();
+           
+            var query = obj.Danhmucsanphams.OrderBy(s => s.MaDanhMuc);
+            var model = query.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            // Tính toán thông tin phân trang
+            var totalItemCount = query.Count();
+            var pagedList = new StaticPagedList<Danhmucsanpham>(model, page, pageSize, totalItemCount);
+            ViewBag.PageStartItem = (page - 1) * pageSize + 1;
+            ViewBag.PageEndItem = Math.Min(page * pageSize, totalItemCount);
+            ViewBag.Page = page;
+
+            return View(pagedList);
+
         }
         public IActionResult XoaDM(int madm)
         {           
@@ -501,99 +530,64 @@ namespace ShopBanDoGiaDung.Controllers
         }
         #endregion
         #region Quản lý đơn hàng
-        public IActionResult QuanLyDH()
+        public IActionResult QuanLyDH(int page = 1, int pageSize = 10)
         {
+            // Lấy tất cả đơn hàng và thực hiện kết hợp
+            var allOrders = from a in obj.Donhangs
+                            join b in obj.Vanchuyens on a.MaDonHang equals b.MaDonHang
+                            select new MyOrder()
+                            {
+                                MaDonHang = a.MaDonHang,
+                                TongTien = a.TongTien,
+                                NguoiNhan = b.NguoiNhan,
+                                DiaChi = b.DiaChi,
+                                NgayMua = a.NgayLap,
+                                TinhTrang = a.TinhTrang
+                            };
 
-            var kq = from a in obj.Donhangs
-                     join b in obj.Vanchuyens on a.MaDonHang equals b.MaDonHang
-                     select new MyOrder()
-                     {
-                         MaDonHang = a.MaDonHang,
-                         TongTien = a.TongTien,
-                         NguoiNhan = b.NguoiNhan,
-                         DiaChi = b.DiaChi,
-                         NgayMua = a.NgayLap,
-                         TinhTrang = a.TinhTrang
-                     };
-            var kq1 = from a in obj.Donhangs
-                      join b in obj.Vanchuyens on a.MaDonHang equals b.MaDonHang
-                      where a.TinhTrang == 0
-                      orderby a.MaDonHang descending
-                      select new MyOrder()
-                      {
-                          MaDonHang = a.MaDonHang,
-                          TongTien = a.TongTien,
-                          NguoiNhan = b.NguoiNhan,
-                          DiaChi = b.DiaChi,
-                          NgayMua = a.NgayLap,
-                          TinhTrang = a.TinhTrang
-                      };
-            var kq2 = from a in obj.Donhangs
-                      join b in obj.Vanchuyens on a.MaDonHang equals b.MaDonHang
-                      where a.TinhTrang == 1
-                      orderby a.MaDonHang descending
-                      select new MyOrder()
-                      {
-                          MaDonHang = a.MaDonHang,
-                          TongTien = a.TongTien,
-                          NguoiNhan = b.NguoiNhan,
-                          DiaChi = b.DiaChi,
-                          NgayMua = a.NgayLap,
-                          TinhTrang = a.TinhTrang
-                      };
-            var kq3 = from a in obj.Donhangs
-                      join b in obj.Vanchuyens on a.MaDonHang equals b.MaDonHang
-                      where a.TinhTrang == 2
-                      orderby a.MaDonHang descending
-                      select new MyOrder()
-                      {
-                          MaDonHang = a.MaDonHang,
-                          TongTien = a.TongTien,
-                          NguoiNhan = b.NguoiNhan,
-                          DiaChi = b.DiaChi,
-                          NgayMua = a.NgayLap,
-                          TinhTrang = a.TinhTrang
-                      };
-            var kq4 = from a in obj.Donhangs
-                      join b in obj.Vanchuyens on a.MaDonHang equals b.MaDonHang
-                      where a.TinhTrang == 3
-                      orderby a.MaDonHang descending
-                      select new MyOrder()
-                      {
-                          MaDonHang = a.MaDonHang,
-                          TongTien = a.TongTien,
-                          NguoiNhan = b.NguoiNhan,
-                          DiaChi = b.DiaChi,
-                          NgayMua = a.NgayLap,
-                          TinhTrang = a.TinhTrang
-                      };
-            var kq5 = from a in obj.Donhangs
-                      join b in obj.Vanchuyens on a.MaDonHang equals b.MaDonHang
-                      where a.TinhTrang == 4
-                      orderby a.MaDonHang descending
-                      select new MyOrder()
-                      {
-                          MaDonHang = a.MaDonHang,
-                          TongTien = a.TongTien,
-                          NguoiNhan = b.NguoiNhan,
-                          DiaChi = b.DiaChi,
-                          NgayMua = a.NgayLap,
-                          TinhTrang = a.TinhTrang
-                      };
-            var ds = kq.ToList();
-            var ds1 = kq1.ToList();
-            var ds2 = kq2.ToList();
-            var ds3 = kq3.ToList();
-            var ds4 = kq4.ToList();
-            var ds5 = kq5.ToList();
-            ViewBag.dstatca = ds;
-            ViewBag.dschuathanhtoan = ds1;
-            ViewBag.dschoxacnhan = ds2;
-            ViewBag.dsdangvanchuyen = ds3;
-            ViewBag.dsdahoanthanh = ds4;
-            ViewBag.dsdahuy = ds5;
+            // Tạo danh sách các tình trạng
+            var tinhTrang= allOrders.OrderByDescending(o=>o.MaDonHang).ToList();
+            var tinhTrang0 = allOrders.Where(o => o.TinhTrang == 0).OrderByDescending(o => o.MaDonHang).ToList();
+            var tinhTrang1 = allOrders.Where(o => o.TinhTrang == 1).OrderByDescending(o => o.MaDonHang).ToList();
+            var tinhTrang2 = allOrders.Where(o => o.TinhTrang == 2).OrderByDescending(o => o.MaDonHang).ToList();
+            var tinhTrang3 = allOrders.Where(o => o.TinhTrang == 3).OrderByDescending(o => o.MaDonHang).ToList();
+            var tinhTrang4 = allOrders.Where(o => o.TinhTrang == 4).OrderByDescending(o => o.MaDonHang).ToList();
+
+            // Tạo danh sách phân trang cho từng tình trạng
+            var pagedList = tinhTrang.ToPagedList(page, pageSize);
+            var pagedList0 = tinhTrang0.ToPagedList(page, pageSize);
+            var pagedList1 = tinhTrang1.ToPagedList(page, pageSize);
+            var pagedList2 = tinhTrang2.ToPagedList(page, pageSize);
+            var pagedList3 = tinhTrang3.ToPagedList(page, pageSize);
+            var pagedList4 = tinhTrang4.ToPagedList(page, pageSize);
+
+            ViewBag.pagedList = pagedList;
+            ViewBag.pagedList0 = pagedList0;
+            ViewBag.pagedList1 = pagedList1;
+            ViewBag.pagedList2 = pagedList2;
+            ViewBag.pagedList3 = pagedList3;
+            ViewBag.pagedList4 = pagedList4;
+            ViewBag.PageStartItem = (page - 1) * pageSize + 1;
+            ViewBag.PageEndItem = Math.Min(page * pageSize, pagedList.TotalItemCount);
+            ViewBag.Page = page;
+
+            int totalOrders = obj.Donhangs.Count();
+            int unpaidOrdersCount = obj.Donhangs.Count(o => o.TinhTrang == 0);
+            int pendingOrdersCount = obj.Donhangs.Count(o => o.TinhTrang == 1);
+            int shippingOrdersCount = obj.Donhangs.Count(o => o.TinhTrang == 2);
+            int completedOrdersCount = obj.Donhangs.Count(o => o.TinhTrang == 3);
+            int canceledOrdersCount = obj.Donhangs.Count(o => o.TinhTrang == 4);
+
+            ViewBag.TotalOrdersCount = totalOrders;
+            ViewBag.UnpaidOrdersCount = unpaidOrdersCount;
+            ViewBag.PendingOrdersCount = pendingOrdersCount;
+            ViewBag.ShippingOrdersCount = shippingOrdersCount;
+            ViewBag.CompletedOrdersCount = completedOrdersCount;
+            ViewBag.CanceledOrdersCount = canceledOrdersCount;
             return View();
         }
+
+
         public IActionResult XacNhanDH(int madh)
         {
             var dh = obj.Donhangs.Find(madh);
