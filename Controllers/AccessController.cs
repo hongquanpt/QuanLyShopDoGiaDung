@@ -38,28 +38,25 @@ namespace ShopBanDoGiaDung.Controllers
         }
         public IActionResult Login()
         {
-           /* ClaimsPrincipal claimUser = HttpContext.User;
-            if (claimUser.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Home");
-            }*/
+            ViewBag.prevouisPage = Request.Headers.Referer.ToString();
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> Login(LoginInfo loginInfo)
         {
-            Console.WriteLine(loginInfo.KeepLoggedIn);
+          try {
+              ViewData["action"] = "login";
             var user = await _context.Taikhoans.SingleOrDefaultAsync(c => c.Email == loginInfo.Email);
             if (user == null)
             {
-                ViewData["ValidateMessage"] = "user not found";
+                ViewData["ValidateMessage"] = "Tài khoản không tồn tại";
                 return View();
             }
             var f_password = GetMD5(loginInfo.Password);
             if (user.MatKhau != f_password)
             {
-                ViewData["ValidateMessage"] = "password incorrect";
+                ViewData["ValidateMessage"] = "Mật khẩu không chính xác";
                 return View();
             }
             if (user.MatKhau == f_password)
@@ -85,6 +82,9 @@ namespace ShopBanDoGiaDung.Controllers
                 };
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(claimsIdentity), properties);
+                if(!String.IsNullOrEmpty(loginInfo.previousPage)){
+                    return Redirect(loginInfo.previousPage);
+                }
                 if (user.Quyen == "Admin")
                 {
                     return RedirectToAction("Index", "Admin");
@@ -92,11 +92,19 @@ namespace ShopBanDoGiaDung.Controllers
                 return RedirectToAction("Index", "Home");
             }
             return View();
+
+          }catch(Exception ex){
+              ViewData["ValidateMessage"] = "Đăng nhập thất bại";
+            return View();
+             
+          }
         }
 
         [HttpPost]
         public async Task<IActionResult> Register(RegisterInfo registerInfo)
         {
+           try{
+              ViewData["action"] = "register";
             var user = await _context.Taikhoans.SingleOrDefaultAsync(c => c.Email == registerInfo.Email);
             if (user != null)
             {
@@ -128,7 +136,14 @@ namespace ShopBanDoGiaDung.Controllers
                 };
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(claimsIdentity), properties); 
+            if(!String.IsNullOrEmpty(registerInfo.previousPage)){
+                return Redirect(registerInfo.previousPage);
+            }
             return RedirectToAction("Index", "Home");
+           }catch(Exception ex) {
+            ViewData["ValidateMessage"] = "Đăng ký thất bại";
+              return View();
+           }
         }
 
         public ActionResult Logout()
