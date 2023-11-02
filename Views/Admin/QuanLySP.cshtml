@@ -1,7 +1,13 @@
-﻿@model PagedList.IPagedList<ShopBanDoGiaDung.Models.Sanpham>
+﻿@model PagedList.IPagedList<ShopBanDoGiaDung.Models.SanPhamct>
 @{
-     ViewBag.Title = "QuanLySP";
-     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Title = "QuanLySP";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    var max_price = ViewBag.MaxPrice;
+    var min_price = ViewBag.MinPrice;
+    var order_price = ViewBag.SortOrder;
+    var ten = ViewBag.tenSP;
+    var dsdm = ViewBag.dsdm;
+    var dsh = ViewBag.dsh;
 }
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -11,108 +17,185 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-
-
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Quản lý sản phẩm  </h3>
-                            @using (Html.BeginForm("timKiemSanPham", "Admin"))
-                            {
-                               
-                             
-                                    <div class="input-group input-group-sm">
-                                        <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search" name="tenSP" autocomplete="off" required>
-                                        <div class="input-group-append">
-                                            <button class="btn btn-navbar" type="submit">
-                                                <i class="fas fa-search"></i>
-                                            </button>                                        
+                            <h3 class="card-title">Quản lý sản phẩm</h3>
+                        </div>
+                        <div style=" margin-top: 30px; margin-bottom: 30px;">
+                            <div style=" margin-left: 40px;">
+                                @using (Html.BeginForm("QuanLySP", "Admin"))
+                                {
+                                    <label for="min-price" style="font-size: 20px; margin-right: 10px">Tìm kiếm theo tên sản phẩm:</label>
+                                    <div style=" align-items: center; margin-right: 10px">
+
+                                        <div class="input-group input-group-sm" style="flex: 1; margin-top: 2px; width: 50%;">
+                                            <input class="form-control form-control-navbar" type="search" placeholder="Search" value="@ten" aria-label="Search" name="tenSP" autocomplete="off" required>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-navbar" type="submit">
+                                                    <i class="fas fa-search"></i>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                        
-                            }
+                                }
+                                <button class="btn btn-primary" data-dismiss="modal" id="confirmThem" style="margin-top:30px" onclick="Them()">Tìm kiếm nâng cao</button>
+
+                                <form id="frmThemHang" aria-hidden="true" tabindex="-1" style="display: none;" >
+                                    <div class="card-body">
+                                        <div class="slider" style="width: 23%; height: 10px; margin-top:30px;margin-bottom:20px">
+                                            <label for="min-price" style="font-size: 18px;">Chọn khoảng giá phù hợp:</label>
+                                            <div id="price-range"></div>
+                                            <div></div>
+                                            <div id="price-values">
+                                                <input id="min-price" type="text" disabled value="@min_price.ToString("N0")" style="width: 130px;">
+                                                <input id="max-price" type="text" disabled value="@(max_price != 0 ? max_price.ToString("N0") : "100,000,000")" style="width: 130px;">
+                                            </div>
+                                        </div>
+                                        <div class="phai" style=" margin-top:30px;margin-bottom:20px; margin-top:90px;  ">
+                                            <label for="select-order-price" style="font-size: 18px;">Chọn sắp xếp giá:</label>
+                                            <select id="select-order-price">
+                                                <option value="notorder">Sắp xếp tăng/giảm của giá</option>
+                                                <option value="tang">Giá tăng dần</option>
+                                                <option value="giam">Giá giảm dần</option>
+                                            </select>
+                                            
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="pwd">Hãng:</label>
+                                            <select class="form-control" id="Hang">
+                                                <option value=0>Chọn hãng</option>
+                                                @foreach (var item in dsh)
+                                                {
+                                                    <option value="@item.MaHang">@item.TenHang</option>
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="pwd">Danh mục:</label>
+                                            <select class="form-control" id="DanhMuc">  
+                                                <option value=0>Chọn danh mục</option>
+                                                @foreach (var item in dsdm)
+                                                {
+                                                    <option value="@item.MaDanhMuc">@item.TenDanhMuc</option>
+                                                }
+                                            </select>                                          
+                                        </div>
+                                        
+                                          
+                                            <button type="button" class="btn btn-primary" id="filterButton">Tìm kiếm</button>
+                                            <button type="button" class="btn btn-default" data-dismiss="modal" id="cancel">Hủy bỏ</button>
+                                        
+                                    </div>
+                                </form>
+
+                                
+                            </div>
+                           
                         </div>
-                        
+                     
                         <!-- /.card-header -->
                         <div class="card-body">
                             <table id="example1" class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Mã sản phẩm</th>
+                                  
                                         <th>Tên sản phẩm</th>
                                         <th>Ảnh sản phẩm</th>
+                                        <th>Hãng sản xuất</th>
+                                        <th>Danh mục sản phẩm</th>
                                         <th>Giá bán</th>
                                         <th>Số lượng đã bán</th>
                                         <th>Số lượng còn lại</th>
-                  
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach (var item in Model)
                                     {
                                         <tr>
-                                            <td>@item.MaSp</td>
-                                            <td>@item.TenSp</td>
-                                            <td><img class="img-responsive" style=" max-width: 50%;" src="~/Admin/images/@item.Anh1" /></td>
-                                            <td>@item.GiaTien.Value.ToString("N0")</td>
+                                  
+                                            <td><a href="@Url.Action("ProductDetail", "Home", new { id = item.MaSp })">@item.TenSp</a></td>
+                                            <td><img class="img-responsive" style="max-width: 50%;" src="~/Admin/images/@item.Anh1" /></td>
+                                            <td>@item.Hang</td>
+                                            <td>@item.DanhMuc</td>
+                                            <td>@item.GiaTien?.ToString("N0")</td>
                                             <td>@item.SoLuongDaBan</td>
                                             <td>@item.SoLuongTrongKho</td>
                                             <td>
-                                                <a href="@Url.Action("SuaSP","Admin",new { ma = item.MaSp})" class="btn btn-success" >Edit</a>
-                                    
+                                                <a href="@Url.Action("SuaSP", "Admin", new { ma = item.MaSp })" class="btn btn-success">Edit</a>
                                             </td>
-                                            <td><a class="btn btn-success" title="Delete" data-toggle="modal" onclick="XoaSP(@item.MaSp)">Delete</a></td>
+                                            <td>
+                                                <a class="btn btn-success" title="Delete" data-toggle="modal" onclick="XoaSP(@item.MaSp)">Delete</a>
+                                            </td>
                                         </tr>
                                     }
                                 </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th>Mã sản phẩm</th>
-                                        <th>Tên sản phẩm</th>
-                                        <th>Ảnh sản phẩm</th>
-                                        <th>Giá bán</th>
-                                        <th>Số lượng đã bán</th>
-                                        <th>Số lượng còn lại</th>
-                                 
-                                    </tr>
-                                </tfoot>
+                            
                             </table>
                             <!-- Hiển thị thanh phân trang -->
                             <div class="row">
                                 <div class="col-sm-12 col-md-5">
                                     <div class="dataTables_info" id="example1_info" role="status" aria-live="polite">
-                                        Showing @ViewBag.PageStartItem to @ViewBag.PageEndItem of @Model.TotalItemCount entries
+                                        Danh sách từ @ViewBag.PageStartItem đến @ViewBag.PageEndItem trên tổng số @ViewBag.TotalItemCount sản phẩm
                                     </div>
-                                </div>
-                                <div class="col-sm-12 col-md-7">
-                                    <div class="dataTables_paginate paging_simple_numbers" id="example1_paginate">
-                                        <ul class="pagination">
-                                            @if (Model.HasPreviousPage)
+                                </div>                   
+                                    <ul class="pagination">
+                                 
+                                        @if (Model.HasPreviousPage)
+                                        {
+                                            <li class="page-item">
+                                                <a class="page-link" href="@Url.Action("QuanLySP", new { page = Model.PageNumber - 1 })">Previous</a>
+                                            </li>
+                             
+                                        }
+                                    <li class="page-item">
+                                        <a class="page-link" href="@Url.Action("QuanLySP", new { page = 1 })">1</a>
+                                    </li>
+                                    @if (Model.PageNumber > 3)
+                                    {
+                                        <li class="page-item">
+                                            <span class="page-link">...</span>
+                                        </li>
+                                    }
+                                        @for (int i = Model.PageNumber - 1; i <= Model.PageNumber + 1; i++)
+                                        {
+                                            if (i > 1 && i < Model.PageCount)
                                             {
-                                                <li class="paginate_button page-item" id="example1_previous">
-                                                    <a href="@Url.Action("QuanLySP", new { page = 1 })" aria-controls="example1" data-dt-idx="0" tabindex="0" class="page-link">First</a>
+                                                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                                    <a class="page-link" href="@Url.Action("QuanLySP", new { page = i })">@i</a>
                                                 </li>
                                             }
-                                            @for (int i = 1; i <= Model.PageCount; i++)
-                                            {
-                                                <li class="paginate_button page-item @(i == ViewBag.Page ? "active" : "")">
-                                                    <a href="@Url.Action("QuanLySP", new { page = i })" aria-controls="example1" data-dt-idx="@i" tabindex="0" class="page-link">@i</a>
-                                                </li>
-                                            }
-                                            @if (Model.HasNextPage)
-                                            {
-                                                <li class="paginate_button page-item" id="example1_next">
-                                                    <a href="@Url.Action("QuanLySP", new { page = Model.PageCount })" aria-controls="example1" data-dt-idx="2" tabindex="0" class="page-link">Last</a>
-                                                </li>
-                                            }
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>                         
+                                        }
+                                    @if (Model.PageNumber < Model.PageCount - 1)
+                                    {
+                                    <li class="page-item">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                    }
+                                    @if (Model.PageCount > 1)
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" href="@Url.Action("QuanLySP", new { page = Model.PageCount })">@Model.PageCount</a>
+                                        </li>
+                                    }
+                                   
+                                    @if (Model.HasNextPage)
+                                    {
+                                            
+                                        <li class="page-item">
+                                            <a class="page-link" href="@Url.Action("QuanLySP", new { page = Model.PageNumber + 1 })">Next</a>
+                                        </li>
+                                    }
+                                    </ul>
+                            </div>
                         </div>
-                         <a type="button" class="btn btn-primary" href=" @Url.Action("ThemSP","Admin")" data-dismiss="modal" id="confirmThem">Thêm sản phẩm mới</a>
+                        <form method="post" action="@Url.Action("ThemSP", "Admin")">
+                            <button type="submit" class="btn btn-success">Thêm sản phẩm mới</button>
+                        </form>
+
                         <!-- /.card-body -->
                     </div>
                     <!-- /.card -->
+
                 </div>
                 <!-- /.col -->
             </div>
@@ -122,6 +205,12 @@
     </section>
     <!-- /.content -->
 </div>
+
+<!-- Control Sidebar -->
+<aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+</aside>
+
 <!-- Đoạn mã HTML cho modal xác nhận xóa -->
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -141,6 +230,9 @@
 </div>
 
 <!-- Đoạn mã JavaScript để xử lý sự kiện xóa -->
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script>
     function XoaSP(ma) {
         var masp = parseInt(ma);
@@ -167,17 +259,64 @@
             });
         });
     }
+    function Them() {
+        var form = document.getElementById("frmThemHang");
+        form.setAttribute("aria-hidden", "false");
+        form.setAttribute("tabindex", "0");
+        form.style.display = "block";
+
+        $('#cancel').on('click', function () {
+            form.setAttribute("aria-hidden", "true");
+            form.setAttribute("tabindex", "-1");
+            form.style.display = "none";
+        });
+    }
+  
+    $(document).ready(function () {
+        const minPriceInput = $("#min-price");
+        const maxPriceInput = $("#max-price");
+        const orderPriceSelect = $("#select-order-price");
+        const priceRange = $("#price-range");
+
+        // Initialize the price range slider
+        priceRange.slider({
+            range: true,
+            min: 0,
+            max: 100000000,
+            values: [@min_price, @max_price],
+            slide: function (event, ui) {
+                minPriceInput.val(ui.values[0].toLocaleString('en-US'));
+                maxPriceInput.val(ui.values[1].toLocaleString('en-US'));
+            }
+        });
+
+        // Filter button click event
+        $("#filterButton").click(function () {
+            // Lấy các giá trị từ các phần tử trên trang
+            const maxPriceInput = $("#max-price");
+            const minPriceInput = $("#min-price");
+            const orderPriceSelect = $("#select-order-price");
+            const Hang = $("#Hang").val(); // Lấy giá trị từ dropdown hãng
+            const DanhMuc = $("#DanhMuc").val(); // Lấy giá trị từ dropdown danh mục
+
+            // Chuyển đổi giá trị dạng chuỗi sang số nguyên
+            const maxPrice = parseInt(maxPriceInput.val().replace(/,/g, ''));
+            const minPrice = parseInt(minPriceInput.val().replace(/,/g, ''));
+            const orderPrice = orderPriceSelect.val();
+            const ten = $("input[name='tenSP']").val();
+
+            // Xây dựng URL và điều hướng tới nó
+            const sortOrderParam = orderPrice !== 'notorder' ? `&sortOrder=${orderPrice}` : '';
+            const tendm = DanhMuc !== 0 ? `&tendm=${DanhMuc}` : '';
+            const tenh = Hang !== 0 ? `&tenh=${Hang}` : '';
+
+            // Sử dụng `window.location.href` để chuyển hướng đến URL
+            const url = `@Url.Action("QuanLySP", "Admin")?tenSP=${ten}&tendm=${DanhMuc}&tenh=${Hang}&maxPrice=${maxPrice}&minPrice=${minPrice}${sortOrderParam}`;
+            window.location.href = url;
+        });
+
+    });
 </script>
-
-
-<!-- Control Sidebar -->
-<aside class="control-sidebar control-sidebar-dark">
-    <!-- Control sidebar content goes here -->
-</aside>
-
-<script src="~/Admin/dist/js/adminlte.min.js"></script>
-
-
 
 
 
