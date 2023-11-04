@@ -43,6 +43,7 @@ namespace QuanLyShopDoGiaDung.Controllers
                 }
                 
                 ViewBag.tongtien = tongtien;
+                
                 return View(list);
             }
 
@@ -52,8 +53,12 @@ namespace QuanLyShopDoGiaDung.Controllers
 
             var product = _context.Sanphams.FirstOrDefault(c => c.MaSp == productId);
             var cart = HttpContext.Session.Get(SessionCart);
+            var countCart = HttpContext.Session.GetInt32("countCart");
+            int count = 0;
+            
             if(product.SoLuongTrongKho > 0)
             {
+                
                 if (cart != null)
                 {
                     var json = Encoding.UTF8.GetString(cart);
@@ -76,11 +81,15 @@ namespace QuanLyShopDoGiaDung.Controllers
                         item.sanpham = product;
                         item.soluong = 1;
                         list.Add(item);
+                       
                     }
+                
+                 
                     //Gán vào session
                    var jsonSetSession = JsonSerializer.Serialize(list);
                    var byteArrayCart = Encoding.UTF8.GetBytes(jsonSetSession);
                    HttpContext.Session.Set(SessionCart,byteArrayCart);
+                   count = list.Count;
                 }
                 else
                 {
@@ -94,9 +103,14 @@ namespace QuanLyShopDoGiaDung.Controllers
                      var jsonSetSession = JsonSerializer.Serialize(list);
                       var byteArrayCart = Encoding.UTF8.GetBytes(jsonSetSession);
                     HttpContext.Session.Set(SessionCart,byteArrayCart);
+                    count = 1;
+
+                    
                 }
+                HttpContext.Session.SetInt32("countCart", count);
                 return Json(new
                 {
+                    countCart = count, 
                     status = true
                 });
             }
@@ -104,6 +118,7 @@ namespace QuanLyShopDoGiaDung.Controllers
             {
                 return Json(new
                 {
+                   
                     status = false
                 });
             }          
@@ -126,14 +141,17 @@ namespace QuanLyShopDoGiaDung.Controllers
 
          public JsonResult Delete(long id)
         {
+            var countCart = HttpContext.Session.GetInt32("countCart");
             var cart = HttpContext.Session.Get(SessionCart);
             var json = Encoding.UTF8.GetString(cart);
             var  list = JsonSerializer.Deserialize<List<CartModel>>(json);
             list.RemoveAll(x => x.sanpham.MaSp == id);
             //Gán vào session
+            int count = (int)countCart;
             var jsonSetSession = JsonSerializer.Serialize(list);
             var byteArrayCart = Encoding.UTF8.GetBytes(jsonSetSession);
             HttpContext.Session.Set(SessionCart,byteArrayCart);
+            HttpContext.Session.SetInt32("countCart", count - 1);
             return Json(new
             {
                 status = true
@@ -144,13 +162,18 @@ namespace QuanLyShopDoGiaDung.Controllers
          [HttpPost]
         public JsonResult Update(int productId, int amount)
         {
-
+            var countCart = HttpContext.Session.GetInt32("countCart");
             var cart = HttpContext.Session.Get(SessionCart);
             var json = Encoding.UTF8.GetString(cart);
             var  list = JsonSerializer.Deserialize<List<CartModel>>(json);
             float price = 0;
             float tongtien = 0;
         
+            if(amount <= 0){
+                list.RemoveAll(x => x.sanpham.MaSp == productId);
+                int count = (int)countCart;
+                HttpContext.Session.SetInt32("countCart", count - 1);
+            }
 
             foreach (var item in list)
             {
@@ -170,13 +193,15 @@ namespace QuanLyShopDoGiaDung.Controllers
                 status = true,
                 productId = productId ,
                 price = price,
-                tongtien = tongtien
+                tongtien = tongtien,
+                countCart = list.Count
                 
             });
         }
 
         public JsonResult DeleteAll(){
             HttpContext.Session.Remove(SessionCart);
+            HttpContext.Session.Remove("countCart");
             return Json( new {
                 status = true
             });
@@ -245,7 +270,8 @@ namespace QuanLyShopDoGiaDung.Controllers
                         _context.Chitietdonhangs.Add(orderDetail);
                     }
                     await _context.SaveChangesAsync();
-                     HttpContext.Session.Remove(SessionCart);                 
+                     HttpContext.Session.Remove(SessionCart);      
+                     HttpContext.Session.Remove("countCart");           
                     return Json(new
                     {
                         status = true

@@ -65,14 +65,14 @@
                                    @*<span class="reducedfrom">400$</span>*@
                                    <br /><span>Đã bán @it.SoLuongDaBan</span>                              
                               </div>
-                              @if (sessionvalue != null)
-                              {
+                              @* @if (sessionvalue != null)
+                              { *@
                                    <a class="now-get get-cart" onclick="addItem(@it.MaSp)">THÊM VÀO GIỎ</a>
-                              }
+                              @* }
                               else
                               {
                                    <a  asp-controller="Access" asp-action="Login" class="now-get get-cart" >THÊM VÀO GIỎ</a>
-                              }
+                              } *@
                               <script>
                                    function addItem(ma) {
                                         var productid = parseInt(ma);
@@ -86,6 +86,7 @@
                                              dataType: 'json',
                                              success: function (res) {
                                                   if (res.status == true) {
+                                                      $('#dot-cart').html(res.countCart)
                                                        Swal.fire({
                                                             position: 'center',
                                                             icon: 'success',

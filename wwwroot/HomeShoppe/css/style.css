@@ -91,6 +91,14 @@ body {
 }
 
 /**** Cart ****/
+.dot-cart{
+	position: absolute;
+	width:5px;
+	height: 5px;
+	background-color: red;
+	z-index: 999;
+	/* color: red; */
+}
 .cart{
 	float:right;
 	 position: relative;

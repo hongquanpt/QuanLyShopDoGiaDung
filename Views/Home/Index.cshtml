@@ -158,7 +158,10 @@
                                     type: 'POST',
                                     dataType: 'json',
                                     success: function (res) {
+                                       
+                                
                                         if (res.status == true) {
+                                             $('#dot-cart').html(res.countCart)
                                             Swal.fire({
                                                 position: 'center',
                                                 icon: 'success',
