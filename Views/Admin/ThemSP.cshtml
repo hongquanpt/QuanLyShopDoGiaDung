@@ -2,7 +2,7 @@
     ViewBag.Title = "ThemSP";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
     var ds1 = (List<ShopBanDoGiaDung.Models.Danhmucsanpham>)ViewBag.dsdm;
-    var ds2 = (List<ShopBanDoGiaDung.Models.Hangsanxuat>)ViewBag.dshang;
+    var ds2 = (List<ShopBanDoGiaDung.Models.Hangsanxuat>)ViewBag.dsh;
 }
 
 <div class="content-wrapper">
@@ -175,7 +175,8 @@
                         </select>
                         <div class="invalid-feedback">Vui lòng điền vào trường này.</div>
                     </div>
-                    <button type="submit" class="btn btn-primary">Thêm mới</button>
+                    <button type="submit" class="btn btn-primary" id="Them">Thêm mới</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="cancel">Hủy bỏ</button>
                 </div>
 
             </form>
@@ -184,5 +185,36 @@
 
     </section>
 </div>
+<script>
+    $(document).ready(function () {
+        // Sử dụng sự kiện submit của form
+        $("form").submit(function (e) {
+            e.preventDefault(); // Ngăn form thực hiện hành động mặc định (gửi yêu cầu POST)
+
+            // Lấy dữ liệu từ form
+            var formData = new FormData($(this)[0]);
+
+            $.ajax({
+                url: '@Url.Action("ThemSP", "Admin")', // URL của Controller "ThemSP"
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    // Xử lý kết quả từ Controller (nếu cần)
+
+                    // Chuyển hướng đến trang "QuanLySP"
+                    window.location.href = '@Url.Action("QuanLySP", "Admin")';
+                },
+                error: function (error) {
+                    // Xử lý lỗi nếu có
+                }
+            });
+        });
+        $('#cancel').on('click', function () {
+            window.location.href = '@Url.Action("QuanLySP", "Admin")';
+        });
+    });
+</script>
 
 

@@ -75,33 +75,56 @@
                                 <div class="row">
                                     <div class="col-sm-12 col-md-5">
                                         <div class="dataTables_info" id="example1_info" role="status" aria-live="polite">
-                                            Showing @ViewBag.PageStartItem to @ViewBag.PageEndItem of @Model.TotalItemCount entries
+                                            Danh sách từ @ViewBag.PageStartItem đến @ViewBag.PageEndItem trên tổng số @ViewBag.TotalItemCount tài khoản
                                         </div>
                                     </div>
-                                    <div class="col-sm-12 col-md-7">
-                                        <div class="dataTables_paginate paging_simple_numbers" id="example1_paginate">
-                                            <ul class="pagination">
-                                                @if (Model.HasPreviousPage)
-                                                {
-                                                    <li class="paginate_button page-item" id="example1_previous">
-                                                        <a href="@Url.Action("QuanLyTK", new { page = 1 })" aria-controls="example1" data-dt-idx="0" tabindex="0" class="page-link">First</a>
-                                                    </li>
-                                                }
-                                                @for (int i = 1; i <= Model.PageCount; i++)
-                                                {
-                                                    <li class="paginate_button page-item @(i == ViewBag.Page ? "active" : "")">
-                                                        <a href="@Url.Action("QuanLyTK", new { page = i })" aria-controls="example1" data-dt-idx="@i" tabindex="0" class="page-link">@i</a>
-                                                    </li>
-                                                }
-                                                @if (Model.HasNextPage)
-                                                {
-                                                    <li class="paginate_button page-item" id="example1_next">
-                                                        <a href="@Url.Action("QuanLyTK", new { page = Model.PageCount })" aria-controls="example1" data-dt-idx="2" tabindex="0" class="page-link">Last</a>
-                                                    </li>
-                                                }
-                                            </ul>
-                                        </div>
-                                    </div>
+                                    <ul class="pagination">
+
+                                        @if (Model.HasPreviousPage)
+                                        {
+                                            <li class="page-item">
+                                                <a class="page-link" href="@Url.Action("QuanLyTK", new { page = Model.PageNumber - 1 })">Previous</a>
+                                            </li>
+
+                                        }
+                                        <li class="page-item">
+                                            <a class="page-link" href="@Url.Action("QuanLyTK", new { page = 1 })">1</a>
+                                        </li>
+                                        @if (Model.PageNumber > 3)
+                                        {
+                                            <li class="page-item">
+                                                <span class="page-link">...</span>
+                                            </li>
+                                        }
+                                        @for (int i = Model.PageNumber - 1; i <= Model.PageNumber + 1; i++)
+                                        {
+                                            if (i > 1 && i < Model.PageCount)
+                                            {
+                                                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                                    <a class="page-link" href="@Url.Action("QuanLyTK", new { page = i })">@i</a>
+                                                </li>
+                                            }
+                                        }
+                                        @if (Model.PageNumber < Model.PageCount - 1)
+                                        {
+                                            <li class="page-item">
+                                                <span class="page-link">...</span>
+                                            </li>
+                                        }
+                                        @if (Model.PageCount > 1)
+                                        {
+                                            <li class="page-item">
+                                                <a class="page-link" href="@Url.Action("QuanLyTK", new { page = Model.PageCount })">@Model.PageCount</a>
+                                            </li>
+                                        }
+                                        @if (Model.HasNextPage)
+                                        {
+
+                                            <li class="page-item">
+                                                <a class="page-link" href="@Url.Action("QuanLyTK", new { page = Model.PageNumber + 1 })">Next</a>
+                                            </li>
+                                        }
+                                    </ul>
                                 </div>
                             </div>
                             <!-- /.card-body -->

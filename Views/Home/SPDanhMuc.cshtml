@@ -1,16 +1,16 @@
-﻿@using Microsoft.AspNetCore.Http;
+﻿﻿@using Microsoft.AspNetCore.Http;
 @model QuanLyShopDoGiaDung.Common.PaginatedList<ShopBanDoGiaDung.Models.Sanpham>
 @inject IHttpContextAccessor HttpContextAccessor
 @{
-     ViewBag.Title = "SPDanhMuc";
-     Layout = "~/Views/Shared/_Layout.cshtml";
-     var sp = (QuanLyShopDoGiaDung.Common.PaginatedList<ShopBanDoGiaDung.Models.Sanpham>)ViewBag.sanpham;
-     var ten = ViewBag.tendanhmuc;
-     int id = ViewBag.idCategory;
-     string sessionvalue = HttpContextAccessor.HttpContext.Session.GetString("email");
-     var  max_price = ViewBag.maxPrice;
-     var min_price = ViewBag.minPrice;
-     var order_price = ViewBag.orderPrice;
+    ViewBag.Title = "SPDanhMuc";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var sp = (QuanLyShopDoGiaDung.Common.PaginatedList<ShopBanDoGiaDung.Models.Sanpham>)ViewBag.sanpham;
+    var ten = ViewBag.tendanhmuc;
+    int id = ViewBag.idCategory;
+    string sessionvalue = HttpContextAccessor.HttpContext.Session.GetString("email");
+    var max_price = ViewBag.maxPrice;
+    var min_price = ViewBag.minPrice;
+    var order_price = ViewBag.orderPrice;
 }
 
 <div class="shoes-grid">
@@ -114,127 +114,128 @@
                          </div>
                          
                     </div>
-               </div>
-          }
-          <div class="clearfix"> </div>
-           @* @await Html.PartialAsync("_Pagination",sp) *@
-        <nav style="float: right; margin-right: 29px;" aria-label="Page navigation example">
-          <ul class="pagination justify-content-end">
-               @if (sp.CanPrevious)
-               {
-                    <li class="page-item">
-                         <a class="page-link" tabindex="-1"  onclick="ChuyenTrang(@(sp.PageIndex -1 ),6)" >Previous</a>
-                    </li>
-               }
-               else
-               {
-                    <li class="page-item disabled">
-                         <a class="page-link" tabindex="-1">Previous</a>
-                    </li>
-               }
-               
-               @if (sp.PageIndex > 3)
-               {
-                    <li class="page-item">
-                         <a class="page-link"   onclick="ChuyenTrang(1,6)">1</a>
-                    </li>
-                    <li class="page-item disabled">
-                         <a class="page-link" tabindex="-1">...</a>
-                    </li>
-               }
 
-               @for (var i = Math.Max(1, sp.PageIndex - 2); i <= Math.Min(sp.TotalPage, sp.PageIndex + 2); i++)
-               {
+                </div>
+            </div>
+        }
+        <div class="clearfix"> </div>
+        @* @await Html.PartialAsync("_Pagination",sp) *@
+        <nav style="float: right; margin-right: 29px;" aria-label="Page navigation example">
+            <ul class="pagination justify-content-end">
+                @if (sp.CanPrevious)
+                {
+                    <li class="page-item">
+                        <a class="page-link" tabindex="-1" onclick="ChuyenTrang(@(sp.PageIndex -1 ),6)">Previous</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item disabled">
+                        <a class="page-link" tabindex="-1">Previous</a>
+                    </li>
+                }
+
+                @if (sp.PageIndex > 3)
+                {
+                    <li class="page-item">
+                        <a class="page-link" onclick="ChuyenTrang(1,6)">1</a>
+                    </li>
+                    <li class="page-item disabled">
+                        <a class="page-link" tabindex="-1">...</a>
+                    </li>
+                }
+
+                @for (var i = Math.Max(1, sp.PageIndex - 2); i <= Math.Min(sp.TotalPage, sp.PageIndex + 2); i++)
+                {
                     if (sp.PageIndex == i)
                     {
-                         <li class="page-item"><a style="background-color: #1DBAA5;" class="page-link"   onclick="ChuyenTrang(@i,6)">@i</a></li>
+                        <li class="page-item"><a style="background-color: #1DBAA5;" class="page-link" onclick="ChuyenTrang(@i,6)">@i</a></li>
                     }
                     else
                     {
-                         <li class="page-item"><a class="page-link"  onclick="ChuyenTrang(@i,6)" >@i</a></li>
+                        <li class="page-item"><a class="page-link" onclick="ChuyenTrang(@i,6)">@i</a></li>
                     }
-               }
+                }
 
-               @if (sp.PageIndex < sp.TotalPage - 2)
-               {
+                @if (sp.PageIndex < sp.TotalPage - 2)
+                {
                     <li class="page-item disabled">
-                         <a class="page-link" tabindex="-1">...</a>
+                        <a class="page-link" tabindex="-1">...</a>
                     </li>
                     <li class="page-item">
-                         <a class="page-link"  onclick="ChuyenTrang(@sp.TotalPage,6)">@sp.TotalPage</a>
+                        <a class="page-link" onclick="ChuyenTrang(@sp.TotalPage,6)">@sp.TotalPage</a>
                     </li>
-               }
+                }
 
-               @if (sp.CanNext)
-               {
+                @if (sp.CanNext)
+                {
                     <li class="page-item">
-                         <a class="page-link" aria-disabled="@sp.CanNext"  onclick="ChuyenTrang(@(sp.PageIndex + 1),6)">Next</a>
+                        <a class="page-link" aria-disabled="@sp.CanNext" onclick="ChuyenTrang(@(sp.PageIndex + 1),6)">Next</a>
                     </li>
-               }
-               else
-               {
+                }
+                else
+                {
                     <li class="page-item disabled">
-                         <a class="page-link">Next</a>
+                        <a class="page-link">Next</a>
                     </li>
-               }
-          </ul>
-      </nav>
-     </div>
+                }
+            </ul>
+        </nav>
+    </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script>
-     function formatcurrency(cur) {
-          return new Intl.NumberFormat('vi-vn', { style: 'currency', currency: 'vnd' }).format(cur);
-     }
-     const moneylist = document.querySelectorAll(".actual")
-     for (let i = 0; i < moneylist.length; i++) {
-          moneylist[i].innerHTML = formatcurrency(Number(moneylist[i].innerHTML))
-     }
+    function formatcurrency(cur) {
+        return new Intl.NumberFormat('vi-vn', { style: 'currency', currency: 'vnd' }).format(cur);
+    }
+    const moneylist = document.querySelectorAll(".actual")
+    for (let i = 0; i < moneylist.length; i++) {
+        moneylist[i].innerHTML = formatcurrency(Number(moneylist[i].innerHTML))
+    }
 
-     function ChuyenTrang(PageIndex, PageSize) {
-          const maxPrice =parseInt( $("#max-price").val()?.replace(/,/g, ''))
-          const minPrice =parseInt( $("#min-price").val()?.replace(/,/g, ''))
-          const orderPrice = $("#select-order-price").val();
-          var id = "@id" 
-          const ten = $("#value-name").val()
-          $.ajax({
-                url: '@Url.Action("SPDanhMuc","Home")',
-               type: 'GET',
-               success: function (res) { 
-                    let stringMaMinPrice =`&maxPrice=${maxPrice}`+ `&minPrice=${minPrice}`
-                    let stringSapXepGia = ''
-                    if(orderPrice !== 'notorder'){
-                         stringSapXepGia =  `&orderPrice=${orderPrice}`
-                    }
-                    if(maxPrice === 100000000 && minPrice === 0){
-                      stringMaMinPrice=''
-                    }
-                     window.location = '@Url.Action("SPDanhMuc","Home")' +`?idCategory=${parseInt(id)}`+ `&ten=${ten}`+ `&PageIndex=${PageIndex}` + `&PageSize=${PageSize}`+ stringMaMinPrice + stringSapXepGia
-                  
-               }
+    function ChuyenTrang(PageIndex, PageSize) {
+        const maxPrice = parseInt($("#max-price").val()?.replace(/,/g, ''))
+        const minPrice = parseInt($("#min-price").val()?.replace(/,/g, ''))
+        const orderPrice = $("#select-order-price").val();
+        var id = "@id"
+        const ten = $("#value-name").val()
+        $.ajax({
+            url: '@Url.Action("SPDanhMuc","Home")',
+            type: 'GET',
+            success: function (res) {
+                let stringMaMinPrice = `&maxPrice=${maxPrice}` + `&minPrice=${minPrice}`
+                let stringSapXepGia = ''
+                if (orderPrice !== 'notorder') {
+                    stringSapXepGia = `&orderPrice=${orderPrice}`
+                }
+                if (maxPrice === 100000000 && minPrice === 0) {
+                    stringMaMinPrice = ''
+                }
+                window.location = '@Url.Action("SPDanhMuc","Home")' + `?idCategory=${parseInt(id)}` + `&ten=${ten}` + `&PageIndex=${PageIndex}` + `&PageSize=${PageSize}` + stringMaMinPrice + stringSapXepGia
 
-          });
+            }
 
-     }
+        });
 
-     $(document).ready(function() {
-          var min = "@min_price"
-          var max = "@max_price"
-        
-          if(parseInt(max) === 0)  max = 100000000
+    }
 
-          $("#price-range").slider({
-               range: true,
-               min: 0,
-               max: 100000000,
-               values: [min, max],
-               slide: function(event, ui) {
-               $("#min-price").val(ui.values[0].toLocaleString('en-US'));
-               $("#max-price").val(ui.values[1].toLocaleString('en-US'));
-               }
-          });
-      });
+    $(document).ready(function () {
+        var min = "@min_price"
+        var max = "@max_price"
+
+        if (parseInt(max) === 0) max = 100000000
+
+        $("#price-range").slider({
+            range: true,
+            min: 0,
+            max: 100000000,
+            values: [min, max],
+            slide: function (event, ui) {
+                $("#min-price").val(ui.values[0].toLocaleString('en-US'));
+                $("#max-price").val(ui.values[1].toLocaleString('en-US'));
+            }
+        });
+    });
 </script>
-
