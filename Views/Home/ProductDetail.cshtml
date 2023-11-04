@@ -164,14 +164,14 @@
                }
           <div class="cart-b">
                <div class="left-n">@sp.GiaTien</div>
-               @if (sessionvalue != null)
-               {
+               @* @if (sessionvalue != null)
+               { *@
                     <a class="now-get get-cart-in" id="btnAdd" @*data-id="@sp.MaSP"*@ onclick="addItem(@sp.MaSp)" href="#">THÊM VÀO GIỎ</a>
-               }
+               @* }
                else
                {
-                    <a class="now-get get-cart-in" href="@Url.Action("Login", "Home")">THÊM VÀO GIỎ</a>
-               }
+                    <a class="now-get get-cart-in" href="@Url.Action("Login", "Access")">THÊM VÀO GIỎ</a>
+               } *@
                <script>
                     function addItem(ma) {
                          var productid = parseInt(ma);
@@ -185,6 +185,8 @@
                               dataType: 'json',
                               success: function (res) {
                                    if (res.status == true) {
+                                         $('#dot-cart').html(res.countCart)
+                                       
                                         Swal.fire({
                                              position: 'center',
                                              icon: 'success',
@@ -212,27 +214,10 @@
           </div>
                <h6>Đã bán : <span style="color:red">@sp.SoLuongDaBan</span> sản phẩm ,còn  <span style="color:red">@sp.SoLuongTrongKho</span>  sản phẩm </h6>
                <p>      @sp.MoTa.</p>
-               @*<div class="share">
-                         <h5>Share Product :</h5>
-                         <ul class="share_nav">
-                              <li><a href="#"><img src="~/Assets/BigShopee/images/facebook.png" title="facebook"></a></li>
-                              <li><a href="#"><img src="~/Assets/BigShopee/images/twitter.png" title="Twiiter"></a></li>
-                              <li><a href="#"><img src="~/Assets/BigShopee/images/rss.png" title="Rss"></a></li>
-                              <li><a href="#"><img src="~/Assets/BigShopee/images/gpluse.png" title="Google+"></a></li>
-                         </ul>
-                    </div>*@
-
 
           </div>
           <div class="clearfix"> </div>
      </div>
-     @*<ul id="flexiselDemo1">
-               <li><img src="~/Assets/BigShopee/images/pi.jpg" /><div class="grid-flex"><a href="#">Bloch</a><p>Rs 850</p></div></li>
-               <li><img src="~/Assets/BigShopee/images/pi1.jpg" /><div class="grid-flex"><a href="#">Capzio</a><p>Rs 850</p></div></li>
-               <li><img src="~/Assets/BigShopee/images/pi2.jpg" /><div class="grid-flex"><a href="#">Zumba</a><p>Rs 850</p></div></li>
-               <li><img src="~/Assets/BigShopee/images/pi3.jpg" /><div class="grid-flex"><a href="#">Bloch</a><p>Rs 850</p></div></li>
-               <li><img src="~/Assets/BigShopee/images/pi4.jpg" /><div class="grid-flex"><a href="#">Capzio</a><p>Rs 850</p></div></li>
-          </ul>*@
      <script type="text/javascript">
           $(window).load(function () {
                $("#flexiselDemo1").flexisel({
@@ -264,205 +249,16 @@
      <div class="product_desc">
           <div id="horizontalTab" style="display: block; width: 100%; margin: 0px;">
                <ul class="resp-tabs-list">
-                    @*<li class="resp-tab-item resp-tab-active" aria-controls="tab_item-0" role="tab">Thông số kỹ thuật</li>*@
                     <li class="resp-tab-item" aria-controls="tab_item-2" role="tab">Đánh giá</li>
-                    @*<li class="resp-tab-item" aria-controls="tab_item-2" role="tab">Product Reviews</li>*@
                     <div class="clear"></div>
                </ul>
                <div class="resp-tabs-container">
-                    @*<h2 class="resp-accordion " role="tab" aria-controls="tab_item-1"><span class="resp-arrow"></span>Thông tin sản phẩm</h2><div class="product-desc resp-tab-content resp-tab-content-active" aria-labelledby="tab_item-0" style="display:block">
-                         <p>Lorem Ipsum is simply dummy text of the <span>printing and typesetting industry</span>. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
-                         <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, <span>when an unknown printer took a galley of type and scrambled</span> it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.<span> It has survived not only five centuries</span>, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
-                         <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
-                    </div>*@
-
-                    @*<h2 class="resp-accordion" role="tab" aria-controls="tab_item-1"><span class="resp-arrow"></span>product Tags</h2><div class="product-tags resp-tab-content" aria-labelledby="tab_item-1">
-                              <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
-                              <h4>Add Your Tags:</h4>
-                              <div class="input-box">
-                                   <input type="text" value="">
-                              </div>
-                              <div class="button"><span><a href="#">Add Tags</a></span></div>
-                         </div>*@
 
                     <h2 class="resp-accordion" role="tab" aria-controls="tab_item-2"><span class="resp-arrow"></span>Đánh giá</h2>
                     <div class="review resp-tab-content resp-tab-active" aria-labelledby="tab_item-2">
 
-                         @*<h4>Lorem ipsum Review by <a href="#">Finibus Bonorum</a></h4>
-                              <ul>
-                                   <li>Price :<a href="#"><img src="images/price-rating.png" alt=""></a></li>
-                                   <li>Value :<a href="#"><img src="images/value-rating.png" alt=""></a></li>
-                                   <li>Quality :<a href="#"><img src="images/quality-rating.png" alt=""></a></li>
-                              </ul>
-                              <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type
-                              and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>*@
-                         <!--<div class="row mb-4">
-                         <h5 class="mb-4">Tất cả đánh giá</h5>-->
-                         <!-- Rating info -->
-                         <!--<div class="col-md-4 mb-3 mb-md-0">
-                         <div class="text-center">-->
-                         <!-- Info -->
-                         <!--<h2 class="mb-0">4.5</h2>-->
-                         <!-- Star -->
-                         <!--<ul class="list-inline mb-0">
-                                        <li class="list-inline-item me-0"><i class="fas fa-star text-warning"></i></li>
-                                        <li class="list-inline-item me-0"><i class="fas fa-star text-warning"></i></li>
-                                        <li class="list-inline-item me-0"><i class="fas fa-star text-warning"></i></li>
-                                        <li class="list-inline-item me-0"><i class="fas fa-star text-warning"></i></li>
-                                        <li class="list-inline-item me-0"><i class="fas fa-star-half-alt text-warning"></i></li>
-                                   </ul>
-                                   <p class="mb-0">(Dựa trên đánh giá trong ngày)</p>
-                              </div>
-                         </div>-->
-                         <!-- Progress-bar and star -->
-                         <!--<div class="col-md-8">
-                         <div class="row align-items-center text-center">-->
-                         <!-- Progress bar and Rating -->
-                         <!--<div class="col-6 col-sm-8">-->
-                         <!-- Progress item -->
-                         <!--<div class="progress progress-sm bg-warning bg-opacity-15">
-                                   <div class="progress-bar bg-warning" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                                   </div>
-                              </div>
-                         </div>
-
-                         <div class="col-6 col-sm-4">-->
-                         <!-- Star item -->
-                         <!--<ul class="list-inline mb-0">
-                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
-                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
-                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
-                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
-                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
-                              </ul>
-                         </div>-->
-                         <!-- Progress bar and Rating -->
-                         <!--<div class="col-6 col-sm-8">-->
-                         <!-- Progress item -->
-                         <!--<div class="progress progress-sm bg-warning bg-opacity-15">
-                                   <div class="progress-bar bg-warning" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">
-                                   </div>
-                              </div>
-                         </div>
-
-                         <div class="col-6 col-sm-4">-->
-                         <!-- Star item -->
-                         <!--<ul class="list-inline mb-0">
-                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
-                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
-                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
-                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
-                                   <li class="list-inline-item me-0 small"><i class="far fa-star text-warning"></i></li>
-                              </ul>
-                         </div>-->
-                         <!-- Progress bar and Rating -->
-                         <!--<div class="col-6 col-sm-8">-->
-                         <!-- Progress item -->
-                         <!--<div class="progress progress-sm bg-warning bg-opacity-15">
-                                   <div class="progress-bar bg-warning" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
-                                   </div>
-                              </div>
-                         </div>
-
-                         <div class="col-6 col-sm-4">-->
-                         <!-- Star item -->
-                         <!--<ul class="list-inline mb-0">
-                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
-                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
-                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
-                                   <li class="list-inline-item me-0 small"><i class="far fa-star text-warning"></i></li>
-                                   <li class="list-inline-item me-0 small"><i class="far fa-star text-warning"></i></li>
-                              </ul>
-                         </div>-->
-                         <!-- Progress bar and Rating -->
-                         <!--<div class="col-6 col-sm-8">-->
-                         <!-- Progress item -->
-                         <!--<div class="progress progress-sm bg-warning bg-opacity-15">
-                                   <div class="progress-bar bg-warning" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">
-                                   </div>
-                              </div>
-                         </div>
-
-                         <div class="col-6 col-sm-4">-->
-                         <!-- Star item -->
-                         <!--<ul class="list-inline mb-0">
-                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
-                                   <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
-                                   <li class="list-inline-item me-0 small"><i class="far fa-star text-warning"></i></li>
-                                   <li class="list-inline-item me-0 small"><i class="far fa-star text-warning"></i></li>
-                                   <li class="list-inline-item me-0 small"><i class="far fa-star text-warning"></i></li>
-                              </ul>
-                         </div>-->
-                         <!-- Progress bar and Rating -->
-                         <!--<div class="col-6 col-sm-8">-->
-                         <!-- Progress item -->
-                         <!--<div class="progress progress-sm bg-warning bg-opacity-15">
-                                   <div class="progress-bar bg-warning" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                                   </div>
-                              </div>
-                         </div>
-
-                         <div class="col-6 col-sm-4">-->
-                         <!-- Star item -->
-                         <!--<ul class="list-inline mb-0">
-                                                  <li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
-                                                  <li class="list-inline-item me-0 small"><i class="far fa-star text-warning"></i></li>
-                                                  <li class="list-inline-item me-0 small"><i class="far fa-star text-warning"></i></li>
-                                                  <li class="list-inline-item me-0 small"><i class="far fa-star text-warning"></i></li>
-                                                  <li class="list-inline-item me-0 small"><i class="far fa-star text-warning"></i></li>
-                                             </ul>
-                                        </div>
-                                   </div>
-                              </div>
-                         </div>-->
                          <div class="your-review">
-                              <!--<h3>Hãy cho chúng tôi biết cảm nhận của bạn khi sử dụng sản phẩm</h3>-->
-                              @*<p>Write Your Own Review?</p>*@
-
-                              @*<div>
-                                        <span><label>Nickname<span class="red">*</span></label></span>
-                                        <span><input type="text" value=""></span>
-                                   </div>*@
-                              <!--<div>
-                                   <span><label>Đánh giá với tên @sessionvalue<span class="red">*</span></label></span>-->
-                                   @*<span><input type="text" value=""></span>*@
-                              <!--</div>-->
                               <link rel='stylesheet prefetch' href='https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css'>
-                              @*<form method="post" action="/Home/Comment">
-                                   <div>
-                                        <div class="stars" style=" margin-left: 306px;">
-                                             <input class="star star-5" id="star-5" type="radio" value="5" name="DanhGia" />
-                                             <label class="star star-5" for="star-5"></label>
-                                             <input class="star star-4" id="star-4" type="radio" value="4" name="DanhGia" />
-                                             <label class="star star-4" for="star-4"></label>
-                                             <input class="star star-3" id="star-3" type="radio" value="3" name="DanhGia" />
-                                             <label class="star star-3" for="star-3"></label>
-                                             <input class="star star-2" id="star-2" type="radio" value="2" name="DanhGia" />
-                                             <label class="star star-2" for="star-2"></label>
-                                             <input class="star star-1" id="star-1" type="radio" value="1" name="DanhGia" />
-                                             <label class="star star-1" for="star-1"></label>
-                                        </div>
-                                        <div>
-                                             <span><label>Bình luận của bạn<span class="red">*</span></label></span>
-                                             <span><input type="text" name="NoiDungBinhLuan" placeholder="Nhập đánh giá của bạn tại đây" style="width: 63%; height: 44px;"></span>
-                                             <span style="display:none"><input type="number" name="MaTaiKhoan" value="@Session["Ma"]"></span>
-                                             <span style="display:none"><input type="number" name="MaSP" value="@sp.MaSP"></span>
-                                             @if (Session["Ten"] == null)
-                                             {
-
-
-                                                  <span style="margin-top:20px"><input type="submit" disabled="disabled" class="btn btn-success" value="BÌNH LUẬN" style="line-height: 27px;"></span>
-                                             }
-                                             else
-                                             {
-                                                  <span style="margin-top:20px"><input type="submit" class="btn btn-success" value="BÌNH LUẬN" style="line-height: 27px;"></span>
-                                             }
-
-
-                                        </div>
-                                   </div>
-
-                              </form>*@
                               <div id="div_allcomment">
                                    <h3>Tất cả đánh giá (@dg.Count đánh giá)</h3>
                                    @foreach (var itemcomment in dg)
@@ -532,20 +328,7 @@
                                                             </div>
 
                                                        </div>
-                                                       <!--<div id="commmentreply-itemcomment.ID" class="bg-light p-2 collapse">
-                                                       <div class="d-flex flex-row align-items-start">-->
-                                                       @*<img class="avatar-img rounded-circle" src="/assets/client/images/avatar/09.jpg" alt="avatar" width="40">*@
-                                                       <!--<textarea class="form-control" id="txtCommentMsg_itemcomment.ID" placeholder="Viết nhận xét tại đây" rows="3"></textarea>
-
-                                                            </div>
-                                                            <div class="mt-2 text-right">
-                                                                 <a class="abcdefghkj" data-productid="itemcomment.ProductID" data-userid="ViewBag.UserID" data-parentid="itemcomment.ID" data-commentmsg="txtCommentMsg_itemcomment.ID">
-                                                                      <input type="submit" class="btn btn-primary mb-0" value="Gửi bình luận" />
-                                                                 </a>
-                                                            </div>
-                                                       </div>-->
-                                                       <!-- Reply button -->
-                                                       <!--{Html.RenderAction("_ChildComment", "Product", new { parentid = itemcomment.ID, productid = itemcomment.ProductID });}-->
+                                                     
                                                   </div>
 
                                              </div>
@@ -560,10 +343,7 @@
                     </div>
                </div>
           </div>
-          @*<div class="toogle">
-                    <h3 class="m_3">Product Details</h3>
-                    <p class="m_text">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum.</p>
-               </div>*@
+         
           <script src="~/BigShopee/js/jquery.etalage.min.js"></script>
           <script>
                jQuery(document).ready(function ($) {

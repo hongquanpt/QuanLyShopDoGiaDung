@@ -3,7 +3,8 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     string sessionvalue = HttpContextAccessor.HttpContext.Session.GetString("email");
-
+    var countCart = HttpContextAccessor.HttpContext.Session.GetInt32("countCart");
+    
 }
 <!DOCTYPE html>
 <html>
@@ -21,6 +22,7 @@
 
     <link rel="stylesheet" href="~/BigShopee/css/etalage.css" type="text/css" media="all" />
     <link href="~/BigShopee/css/style.css" rel="stylesheet" type="text/css" media="all" />
+
     <!--//theme-style-->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
@@ -112,14 +114,49 @@
                          </div>
                       
                     }
-                    @if (sessionvalue != null)
-                    {
-                        <div class="cart"><a asp-controller="Cart" asp-action="Index" ><span> </span>GIỎ HÀNG</a></div>
-                    }
+                    @* @if (sessionvalue != null)
+                    { *@
+                     <style>
+                        #dot-cart{
+                           bottom: 16px;
+                            right: 0 ;
+                            bottom:12px ;
+                            position: absolute;
+                            border-radius: 50%;
+                            z-index: 999;
+                            font-weight: 700;
+                            @* background-color: red ; *@
+                        }
+                     </style>
+                       
+                        <div style="position: relative;" class="cart">
+                            <a asp-controller="Cart" asp-action="Index" ><span> </span>GIỎ HÀNG    
+                            </a>
+                             @if(countCart != null){
+                                   <div style="color: red;" id="dot-cart">
+                                       @countCart
+                                   </div>
+                             }else {
+                                <div style="color: red;" id="dot-cart">
+                                       
+                                </div>
+                             }
+                           
+                                                            @* <div id="dot-cart"></div> *@
+                            @* @if(soluongcart > 99)  {
+                                 <div id="dot-cart">99+</div>
+                            }else {
+                                <div id="dot-cart">@soluongcart</div>
+                            } *@
+                            
+                             
+                        </div>
+                       
+                    @* }
                     else
                     {
                         <div class="cart"><a asp-controller="Access" asp-action="Login" ><span> </span>GIỎ HÀNG</a></div>
-                    }
+                    } *@
 
                     @if (sessionvalue == null)
                         {

@@ -29,7 +29,7 @@
                          <tbody>
                               @foreach (var item in Model)
                               {
-                                   <tr>
+                                   <tr id="orderdetail_@item.sanpham.MaSp">
                                         <td>@item.sanpham.MaSp</td>
                                         <td><a asp-action="ProductDetail" asp-controller="Home"  asp-route-id="@item.sanpham.MaSp">@item.sanpham.TenSp</a></td>
                                         <td><img class="img-responsive" style="width: 100px;" src="~/BigShopee/images/@item.sanpham.Anh1" /></td>
@@ -114,7 +114,9 @@
        function updateAmount(ma) {
           var amount = $(`#input_amout_${ma}`).val() 
           var productid = parseInt(ma);
-
+          if(amount <= 0) {
+               $(`#orderdetail_${productid}`).remove()
+          }
           $.ajax({
                url: '/Cart/Update',
                data: {
@@ -125,6 +127,9 @@
                dataType: 'json',
                success: function (res) {
                     console.log(res)
+                    if(res.countCart) {
+                         $('#dot-cart').html(res.countCart)
+                    }
                     $(`#amount_${ma}`).html(`${res.price.toLocaleString('en-US')}`);
                     $(`#lblTotalOrder`).html(`${res.tongtien.toLocaleString('en-US')} VNĐ`)
                     
@@ -137,7 +142,7 @@
           var ten = $('#Ten').val()
           var sdt = $('#SDT').val()
           var diachi = $('#DiaChi').val()
-
+          
           if(ten && sdt && diachi){
                $.ajax({
                     url: '/Cart/ThanhToan',

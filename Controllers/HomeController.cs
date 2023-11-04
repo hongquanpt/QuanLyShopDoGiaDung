@@ -45,7 +45,7 @@ namespace ShopBanDoGiaDung.Controllers
             ViewBag.tenhang = ten;
             IQueryable<Sanpham> query = (IQueryable<Sanpham>)_context.Sanphams;
             if (maxPrice != 0){
-               query = query.Where(item => item.GiaTien < maxPrice && item.GiaTien > minPrice && item.MaHang == idHang );
+               query = query.Where(item => item.GiaTien < maxPrice && item.GiaTien > minPrice && item.MaHang == idHang )    ;
             }
             else {
                 query = query.Where(s=> s.MaHang == idHang);

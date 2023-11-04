@@ -14,117 +14,105 @@
 }
 
 <div class="shoes-grid">
-    <div class="products" style="margin-top: 28px;}">
-        <h5 class="latest-product text-uppercase">@ten: @sp.Count <span class="text-lowercase">sản phẩm</span></h5>
-        @*<a class="view-all" href="@Url.Action("AllProduct","Home")">Tất cả sản phẩm<span> </span></a>*@
-    </div>
-    <input hidden id="value-name" value="@ten"></input>
-    <div style="margin-top: 90px;display: flex;justify-content: flex-end;margin-right: 30px;">
+     <div class="products" style="margin-top: 28px;}">
+          <h5 class="latest-product text-uppercase">@ten: @sp.Count <span class="text-lowercase">sản phẩm</span></h5>
+          @*<a class="view-all" href="@Url.Action("AllProduct","Home")">Tất cả sản phẩm<span> </span></a>*@
+     </div>
+     <input hidden id="value-name" value="@ten"></input>
+     <div   style="margin-top: 90px;display: flex;justify-content: flex-end;margin-right: 30px;">
+        
+         <div class="slider " style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
+               <label for="min-price" style="align-self: flex-start;">Chọn khoảng giá phù hợp: </label>
+               <div id="price-range"></div>
+               <div id="price-values">
+                    <input  id="min-price" type="text" disabled value="@min_price.ToString("N0")" >
+                    <input id="max-price" type="text" disabled value="@(max_price != 0 ? max_price.ToString("N0") : "100,000,000")" >
+               </div>
+         </div>
+          <div  style="display: flex; flex-direction:column;margin-left: 30px;margin-top: 21px;">
+               <select  id="select-order-price" style="margin-bottom: 15px;" >
+                    @if(order_price == "notorder") {
+                         <option selected value="notorder">Sắp xếp tăng/giảm của giá</option>
+                    }else  { <option selected value="notorder">Sắp xếp tăng/giảm của giá</option>}
+                     @if(order_price == "tang") {
+                         <option selected value="tang">Giá tăng dân</option>
+                    }else  { <option value="tang">Giá tăng dân</option>}
+                     @if(order_price == "giam") {
+                         <option selected value="giam">Giá giảm dần</option>
+                    }else  { <option value="giam">Giá giảm dần</option>}
+               </select>
+               <button onclick="ChuyenTrang(1,6)">
+                   <div style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel-fill" viewBox="0 0 16 16">
+                         <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z"/>
+                         </svg>
+                         <span style="margin-left: 4px;">Lọc</span>
+                   </div>
+               </button>
+          </div>
+     </div>
+     <div class="product-left">
+          @foreach (var it in sp.Data)
+          {
+               <div class="col-md-4 chain-grid">
+                    <a href="@Url.Action("ProductDetail","Home", new { id = it.MaSp})"><img class="img-responsive chain" src="~/BigShopee/images/@it.Anh1" alt=" "></a>
+                    <span class="star"> </span>
+                    <div class="grid-chain-bottom">
+                         <h6><a href="@Url.Action("ProductDetail","Home", new { id = it.MaSp})">@it.TenSp</a></h6>
+                         <div class="star-price">
+                              <div class="dolor-grid">
+                                   <span class="actual">@it.GiaTien</span>
+                                   <br /><span>Đã bán @it.SoLuongDaBan</span>
+                              
+                              </div>
+                              @* @if (sessionvalue != null)
+                              { *@
+                                   <a class="now-get get-cart" onclick="addItem(@it.MaSp)">THÊM VÀO GIỎ</a>
+                              @* }
+                              else
+                              {
+                                   <a class="now-get get-cart" href="@Url.Action("Login", "Access")">THÊM VÀO GIỎ</a>
+                              } *@
+                              <script>
+                                   function addItem(ma) {
+                                        var productid = parseInt(ma);
 
-        <div class="slider " style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
-            <label for="min-price" style="align-self: flex-start;">Chọn khoảng giá phù hợp: </label>
-            <div id="price-range"></div>
-            <div id="price-values">
-                <input id="min-price" type="text" disabled value="@min_price.ToString("N0")">
-                <input id="max-price" type="text" disabled value="@(max_price != 0 ? max_price.ToString("N0") : "100,000,000")">
-            </div>
-        </div>
-        <div style="display: flex; flex-direction:column;margin-left: 30px;margin-top: 21px;">
-            <select id="select-order-price" style="margin-bottom: 15px;">
-                @if (order_price == "notorder")
-                {
-                    <option selected value="notorder">Sắp xếp tăng/giảm của giá</option>
-                }
-                else
-                {
-                    <option selected value="notorder">Sắp xếp tăng/giảm của giá</option>
-                }
-                @if (order_price == "tang")
-                {
-                    <option selected value="tang">Giá tăng dân</option>
-                }
-                else
-                {
-                    <option value="tang">Giá tăng dân</option>
-                }
-                @if (order_price == "giam")
-                {
-                    <option selected value="giam">Giá giảm dần</option>
-                }
-                else
-                {
-                    <option value="giam">Giá giảm dần</option>
-                }
-            </select>
-            <button onclick="ChuyenTrang(1,6)">
-                <div style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel-fill" viewBox="0 0 16 16">
-                        <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z" />
-                    </svg>
-                    <span style="margin-left: 4px;">Lọc</span>
-                </div>
-            </button>
-        </div>
-    </div>
-    <div class="product-left">
-        @foreach (var it in sp.Data)
-        {
-            <div class="col-md-4 chain-grid">
-                <a href="@Url.Action("ProductDetail","Home", new { id = it.MaSp})"><img class="img-responsive chain" src="~/BigShopee/images/@it.Anh1" alt=" "></a>
-                <span class="star"> </span>
-                <div class="grid-chain-bottom">
-                    <h6><a href="@Url.Action("ProductDetail","Home", new { id = it.MaSp})">@it.TenSp</a></h6>
-                    <div class="star-price">
-                        <div class="dolor-grid">
-                            <span class="actual">@it.GiaTien</span>
-                            <br /><span>Đã bán @it.SoLuongDaBan</span>
+                                        $.ajax({
+                                             url: '/Cart/AddItem',
+                                             data: {
+                                                  productId: productid
+                                             },
+                                             type: 'POST',
+                                             dataType: 'json',
+                                             success: function (res) {
+                                                  if (res.status == true) {
+                                                     $('#dot-cart').html(res.countCart)
+                                                       Swal.fire({
+                                                            position: 'center',
+                                                            icon: 'success',
+                                                            title: 'Thêm sản phẩm vào giỏ hàng thành công',
+                                                            showConfirmButton: false,
+                                                            timer: 1500
+                                                       })
 
-                        </div>
-                        @if (sessionvalue != null)
-                        {
-                            <a class="now-get get-cart" onclick="addItem(@it.MaSp)">THÊM VÀO GIỎ</a>
-                        }
-                        else
-                        {
-                            <a class="now-get get-cart" href="@Url.Action("Login", "Access")">THÊM VÀO GIỎ</a>
-                        }
-                        <script>
-                            function addItem(ma) {
-                                var productid = parseInt(ma);
+                                                  }
+                                                  else {
+                                                       Swal.fire({
+                                                            position: 'center',
+                                                            icon: 'error',
+                                                            title: 'Xin lỗi, sản phẩm bạn vừa chọn đang tạm hết hàng',
+                                                            showConfirmButton: false,
+                                                            timer: 700
+                                                       })
+                                                  }
+                                             }
 
-                                $.ajax({
-                                    url: '/Cart/AddItem',
-                                    data: {
-                                        productId: productid
-                                    },
-                                    type: 'POST',
-                                    dataType: 'json',
-                                    success: function (res) {
-                                        if (res.status == true) {
-                                            Swal.fire({
-                                                position: 'center',
-                                                icon: 'success',
-                                                title: 'Thêm sản phẩm vào giỏ hàng thành công',
-                                                showConfirmButton: false,
-                                                timer: 1500
-                                            })
-
-                                        }
-                                        else {
-                                            Swal.fire({
-                                                position: 'center',
-                                                icon: 'error',
-                                                title: 'Xin lỗi, sản phẩm bạn vừa chọn đang tạm hết hàng',
-                                                showConfirmButton: false,
-                                                timer: 700
-                                            })
-                                        }
-                                    }
-
-                                });
-                            }
-                        </script>
-                        <div class="clearfix"> </div>
+                                        });
+                                   }
+                              </script>
+                              <div class="clearfix"> </div>
+                         </div>
+                         
                     </div>
 
                 </div>
