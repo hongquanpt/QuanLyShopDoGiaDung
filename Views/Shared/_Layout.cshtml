@@ -1,10 +1,12 @@
-﻿
+﻿@using ShopBanDoGiaDung.authorize
 @using Microsoft.AspNetCore.Http;
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     string sessionvalue = HttpContextAccessor.HttpContext.Session.GetString("email");
     var countCart = HttpContextAccessor.HttpContext.Session.GetInt32("countCart");
-    
+    List<AccountRole> data = HttpContextAccessor.HttpContext.Session.GetJson<List<AccountRole>>("QuyenTK") ?? new List<AccountRole>();
+    int soquyen = data.Where(c => c.MaA == 1).Count();
+
 }
 <!DOCTYPE html>
 <html>
@@ -176,6 +178,15 @@
                             </button>
                             <i  style="font-size:18px;color:#F97E76; cursor: pointer;" class="fas fa-sign-out-alt" onclick="handleLogout()"></i>
                           </div>
+                        <div>
+                            <a style="border:none; background-color:transparent; font-size:16px; margin-right:5px" href="@Url.Action("Index", "Admin")" @if (soquyen == 6 && data.Where(c => c.MaA == 3).FirstOrDefault().MaQ == 7)
+                            {
+                                <text>style="display: none;"</text>
+                            }>
+                               VỀ TRANG ADMIN
+                            </a>
+                            <i style="font-size:18px;color:#F97E76; cursor: pointer;" class="fas fa-sign-out-alt" onclick="handleLogout()"></i>
+                        </div>
 
                         }
                     </ul>

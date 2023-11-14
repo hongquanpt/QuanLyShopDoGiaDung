@@ -5,9 +5,12 @@ using ShopBanDoGiaDung.Models;
 using Microsoft.AspNetCore.Hosting;
 using System.Linq;
 using System.Drawing.Printing;
-using PagedList;
+using X.PagedList;
 using System.Drawing;
 using Microsoft.IdentityModel.Tokens;
+using System.Text.Json;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using ShopBanDoGiaDung.authorize;
 
 namespace ShopBanDoGiaDung.Controllers
 
@@ -15,32 +18,184 @@ namespace ShopBanDoGiaDung.Controllers
     public class AdminController : Controller
     {
         private readonly OnlineShopContext obj;
-        public AdminController (OnlineShopContext obj)
+        public AdminController(OnlineShopContext obj)
         {
             this.obj = obj;
         }
         public IActionResult Index()
         {
+            var sanpham = obj.Sanphams.ToList();
+            ViewBag.sanpham = sanpham;
             return View();
         }
-
+       
         #region Quản lý
-        #region Quản lý tài khoản
-        public IActionResult QuanLyTK(int page = 1, int pageSize = 10)
+        #region Quản lý quyền hạn
+        public IActionResult QuanLyQH(int page = 1, int pageSize = 10)
         {
-            // Thực hiện truy vấn và phân trang
-            var query = obj.Taikhoans.Where(s => s.Quyen == "khach").OrderBy(s => s.MaTaiKhoan);
-            var model = query.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            var query = from cv in obj.ChucVus
+                        join qcv in obj.CvQAs on cv.MaCv equals qcv.MaCv
+                        join q in obj.Quyens on qcv.MaQ equals q.MaQ
+                        join a in obj.ActionTs on qcv.MaA equals a.MaA
+                        select new ChucVuQuyen
+                        {
+                            MaCv = cv.MaCv,
+                            MaQ= q.MaQ,
+                            TenCV=cv.Ten,
+                            TenQ=q.Ten,
+                            ActionName=q.ActionName,
+                            ControllerName=q.ControllerName,
+                            MaA=qcv.MaA,
+                            TenA=a.TenA
+                        };
+            List<ChucVuQuyen> roles = query.ToList();
 
+            HttpContext.Session.SetJson("HD", roles);
+            var quyen = obj.Quyens.ToList();
+            ViewBag.quyen = quyen;
+            var chucvu = obj.ChucVus.ToList();
+            ViewBag.chucvu = chucvu;
+            
+            var A= obj.ActionTs.ToList();
+            ViewBag.A = A;
+            var model = chucvu.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             // Tính toán thông tin phân trang
-            var totalItemCount = query.Count();
-            var pagedList = new StaticPagedList<Taikhoan>(model, page, pageSize, totalItemCount);
+            var totalItemCount = chucvu.Count();
+            var pagedList = new StaticPagedList<ChucVu>(model, page, pageSize, totalItemCount);
             ViewBag.PageStartItem = (page - 1) * pageSize + 1;
             ViewBag.PageEndItem = Math.Min(page * pageSize, totalItemCount);
             ViewBag.Page = page;
+            ViewBag.TotalItemCount = totalItemCount;
+            return View(pagedList);
+
+        }
+        [HttpPost]
+        public IActionResult SuaQH(int macv, int maa, int maq, string newValue)
+        {
+            Console.WriteLine($"Received macv: {macv}, maq: {maq}, maa: {maa}, newValue: {newValue}");
+
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    
+
+                    var tk = obj.CvQAs.FirstOrDefault(c => c.MaA == maa && c.MaQ == maq && c.MaCv == macv);
+
+                    if (tk != null)
+                    {
+                        // Xóa đối tượng cũ
+                        obj.CvQAs.Remove(tk);
+                        obj.SaveChanges();
+
+                        // Thêm đối tượng mới
+                        var newCvQA = new CvQA
+                        {
+                            MaA = Convert.ToInt32(newValue), // hoặc là giá trị mới của MaA
+                            MaQ = maq,
+                            MaCv = macv
+                            // Thêm các thuộc tính khác nếu cần
+                        };
+
+                        obj.CvQAs.Add(newCvQA);
+                        obj.SaveChanges();
+
+                        return Json(new { success = true, message = "Update successful" });
+                    }
+
+
+                    else
+                    {
+                        // Trả về JSON hoặc một thông báo lỗi tùy thuộc vào yêu cầu của bạn
+                        return Json(new { success = false, message = "Record not found" });
+                    }
+                }
+                else
+                {
+                    // Trả về JSON hoặc một thông báo lỗi về dữ liệu đầu vào không hợp lệ
+                    return Json(new { success = false, message = "Invalid input data" });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in SuaQH: {ex.Message}");
+                // Xử lý lỗi nếu có
+                return Json(new { success = false, message = "Error updating record" });
+            }
+
+        }
+
+        #endregion
+        #region Quản lý tài khoản
+        public IActionResult QuanLyTK(int matk, string tenctk, string tendc, string sdt, string email, int chvu, int page = 1, int pageSize = 10)
+        {
+
+            // Thực hiện truy vấn và phân trang
+            var query = from tk in obj.Taikhoans
+                        join cv in obj.ChucVus on tk.MaCv equals cv.MaCv
+                        select new TaiKhoanChucVu
+                        {
+                            MaTaiKhoan = tk.MaTaiKhoan,
+                            Ten = tk.Ten,
+                            Sdt = tk.Sdt,
+                            DiaChi = tk.DiaChi,
+                            NgaySinh = tk.NgaySinh,
+                            MatKhau = tk.MatKhau,
+                            TenChucVu = cv.Ten,
+                            Email= tk.Email,
+                            MaCV=cv.MaCv
+                        };
+            var chucvu= obj.ChucVus.ToList();
+            ViewBag.chucvu=chucvu;
+            if (!string.IsNullOrEmpty(tenctk))
+            {
+                query = query.Where(dm => dm.Ten.Contains(tenctk)); // hoặc OrderByDescending(dm => dm.MaDanhMuc)
+            }
+            if (!string.IsNullOrEmpty(tendc))
+            {
+                query = query.Where(dm => dm.DiaChi.Contains(tendc)); // hoặc OrderByDescending(dm => dm.MaDanhMuc)
+            }
+            if (!string.IsNullOrEmpty(sdt))
+            {
+                query = query.Where(dm => dm.Sdt.Contains(sdt)); // hoặc OrderByDescending(dm => dm.MaDanhMuc)
+            }
+            if (!string.IsNullOrEmpty(email))
+            {
+                query = query.Where(dm => dm.Email.Contains(email)); // hoặc OrderByDescending(dm => dm.MaDanhMuc)
+            }
+            if (matk != 0)
+            {
+                query = query.Where(item => item.MaTaiKhoan == matk);
+            }
+            if (chvu != 0)
+            {
+                query = query.Where(item => item.MaCV == chvu);
+            }
+            var model = query.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            // Tính toán thông tin phân trang
+            var totalItemCount = query.Count();
+            var pagedList = new StaticPagedList<TaiKhoanChucVu>(model, page, pageSize, totalItemCount);
+            ViewBag.PageStartItem = (page - 1) * pageSize + 1;
+            ViewBag.PageEndItem = Math.Min(page * pageSize, totalItemCount);
+            ViewBag.Page = page;
+            ViewBag.TotalItemCount = totalItemCount;
+            ViewBag.tenctk = tenctk;
+            ViewBag.tendc = tendc;
+            ViewBag.sdt = sdt;
+            ViewBag.chvu = chvu;
+            ViewBag.matk=matk;
+            ViewBag.chvu = chvu;
 
             return View(pagedList);
-           
+
+        }
+        public IActionResult SuaCV(int matk, int macv)
+        {
+            var tk = obj.Taikhoans.Find(matk);
+            if(tk!=null)
+            tk.MaCv = macv;
+            obj.SaveChanges();
+            return RedirectToAction("QuanLyTK","Admin");
         }
         public IActionResult XoaTK(int MaTK)
         {
@@ -68,10 +223,10 @@ namespace ShopBanDoGiaDung.Controllers
 
         #endregion
         #region Quản lý sản phẩm
-        public IActionResult QuanLySP(string tenSP,int tenh, int tendm, decimal minPrice, decimal maxPrice, string sortOrder, int page = 1, int pageSize = 5)
+        public IActionResult QuanLySP(string tenSP, int tenh, int tendm, int slc, int ban, decimal minPrice, decimal maxPrice, string sortOrder, int page = 1, int pageSize = 5)
         {
             var dsdm = obj.Danhmucsanphams.ToList();
-            var dsh= obj.Hangsanxuats.ToList();
+            var dsh = obj.Hangsanxuats.ToList();
             ViewBag.dsdm = dsdm;
             ViewBag.dsh = dsh;
             if (!string.IsNullOrEmpty(tenSP))
@@ -82,34 +237,34 @@ namespace ShopBanDoGiaDung.Controllers
                             where sp.TenSp.Contains(tenSP)
                             select new SanPhamct()
                             {
-                                MaSp= sp.MaSp,
-                                TenSp=sp.TenSp,
-                                MoTa= sp.MoTa,
-                                Anh1=sp.Anh1,
-                                Anh2=sp.Anh2,
-                                Anh3=sp.Anh3,
-                                Anh4=sp.Anh4,
-                                Anh5=sp.Anh5,
-                                Anh6=sp.Anh6,
-                                SoLuongDaBan= sp.SoLuongDaBan,
-                                SoLuongTrongKho=sp.SoLuongTrongKho,
-                                GiaTien=sp.GiaTien,
-                                Hang= h.TenHang,
-                                DanhMuc= dm.TenDanhMuc,
-                                MaH= h.MaHang,
-                                MaDM=dm.MaDanhMuc,
+                                MaSp = sp.MaSp,
+                                TenSp = sp.TenSp,
+                                MoTa = sp.MoTa,
+                                Anh1 = sp.Anh1,
+                                Anh2 = sp.Anh2,
+                                Anh3 = sp.Anh3,
+                                Anh4 = sp.Anh4,
+                                Anh5 = sp.Anh5,
+                                Anh6 = sp.Anh6,
+                                SoLuongDaBan = sp.SoLuongDaBan,
+                                SoLuongTrongKho = sp.SoLuongTrongKho,
+                                GiaTien = sp.GiaTien,
+                                Hang = h.TenHang,
+                                DanhMuc = dm.TenDanhMuc,
+                                MaH = h.MaHang,
+                                MaDM = dm.MaDanhMuc,
                             };
 
                 // Áp dụng bộ lọc theo giá
                 if (maxPrice != 0)
                 {
-                    query = query.Where(item => item.GiaTien < maxPrice && item.GiaTien > minPrice );              
+                    query = query.Where(item => item.GiaTien < maxPrice && item.GiaTien > minPrice);
                 }
-                if (tenh!=0)
+                if (tenh != 0)
                 {
                     query = query.Where(item => item.MaH == tenh);
                 }
-                if (tendm!= 0)
+                if (tendm != 0)
                 {
                     query = query.Where(item => item.MaDM == tendm);
                 }
@@ -120,18 +275,20 @@ namespace ShopBanDoGiaDung.Controllers
                 if (sortOrder == "giam")
                 {
                     query = query.OrderByDescending(item => item.GiaTien);
-                }               
-
+                }
+                if (slc != 0)
+                {
+                    query = query.Where(item => item.SoLuongTrongKho < slc);
+                }
+                if (ban != 0)
+                {
+                    query = query.Where(item => item.SoLuongDaBan > ban);
+                }
                 // Thực hiện phân trang
                 var totalItemCount = query.Count();
                 var model = query.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
-                if (model.Count == 0)
-                {
-                    // Nếu không tìm thấy kết quả, điều hướng đến trang thông báo
-                    return RedirectToAction("ThongBaoRong", "Admin");
-                }
-
+               
                 var pagedList = new StaticPagedList<SanPhamct>(model, page, pageSize, totalItemCount);
 
                 // Truyền dữ liệu phân trang, kết quả tìm kiếm và các thông tin tùy chọn vào view
@@ -143,14 +300,18 @@ namespace ShopBanDoGiaDung.Controllers
                 ViewBag.MaxPrice = maxPrice;
                 ViewBag.SortOrder = sortOrder;
                 ViewBag.TotalItemCount = totalItemCount;
-                ViewBag.tenSP=tenSP;
+                ViewBag.tenSP = tenSP;
+                ViewBag.tenh = tenh;
+                ViewBag.tendm = tendm;
+                ViewBag.slc = slc;
+                ViewBag.ban = ban;
                 return View(pagedList);
             }
             else
             {
                 var query = from sp in obj.Sanphams
                             join h in obj.Hangsanxuats on sp.MaHang equals h.MaHang
-                            join dm in obj.Danhmucsanphams on sp.MaDanhMuc equals dm.MaDanhMuc                          
+                            join dm in obj.Danhmucsanphams on sp.MaDanhMuc equals dm.MaDanhMuc
                             select new SanPhamct()
                             {
                                 MaSp = sp.MaSp,
@@ -174,7 +335,7 @@ namespace ShopBanDoGiaDung.Controllers
                 if (maxPrice != 0)
                 {
                     query = query.Where(item => item.GiaTien < maxPrice && item.GiaTien > minPrice);
-                    
+
                 }
                 if (tenh != 0)
                 {
@@ -186,22 +347,26 @@ namespace ShopBanDoGiaDung.Controllers
                 }
                 if (sortOrder == "tang")
                 {
-                   query = query.OrderBy(item => item.GiaTien);
+                    query = query.OrderBy(item => item.GiaTien);
                 }
                 if (sortOrder == "giam")
                 {
-                  query =query.OrderByDescending(item => item.GiaTien);
+                    query = query.OrderByDescending(item => item.GiaTien);
+                }
+                if (slc != 0)
+                {
+                    query = query.Where(item => item.SoLuongTrongKho < slc);
+                }
+                if (ban != 0)
+                {
+                    query = query.Where(item => item.SoLuongDaBan > ban);
                 }
                 // Thực hiện truy vấn và phân trang
                 var totalItemCount = query.Count();
                 var model = query.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-                if (model.Count == 0)
-                {
-                    // Nếu không tìm thấy kết quả, điều hướng đến trang thông báo
-                    return RedirectToAction("ThongBaoRong", "Admin");
-                }
-                // Tính toán thông tin phân trang
                
+                // Tính toán thông tin phân trang
+
                 var pagedList = new StaticPagedList<SanPhamct>(model, page, pageSize, totalItemCount);
                 ViewBag.PageStartItem = (page - 1) * pageSize + 1;
                 ViewBag.PageEndItem = Math.Min(page * pageSize, totalItemCount);
@@ -210,11 +375,15 @@ namespace ShopBanDoGiaDung.Controllers
                 ViewBag.MaxPrice = maxPrice;
                 ViewBag.SortOrder = sortOrder;
                 ViewBag.TotalItemCount = totalItemCount;
+                ViewBag.tenh = tenh;
+                ViewBag.tendm = tendm;
+                ViewBag.slc = slc;
+                ViewBag.ban = ban;
                 return View(pagedList);
             }
         }
         [HttpPost]
-        public ActionResult ThemSP(string TenSP,string MoTa,long GiaTien,int SoLuongTrongKho, IFormFile image1, IFormFile image2, IFormFile image3, IFormFile image4, IFormFile image5, IFormFile image6, string DanhMuc, string Hang)
+        public ActionResult ThemSP(string TenSP, string MoTa, long GiaTien, int SoLuongTrongKho, IFormFile image1, IFormFile image2, IFormFile image3, IFormFile image4, IFormFile image5, IFormFile image6, string DanhMuc, string Hang)
         {
             var dsdm = obj.Danhmucsanphams.ToList();
             var dsh = obj.Hangsanxuats.ToList();
@@ -342,18 +511,19 @@ namespace ShopBanDoGiaDung.Controllers
                     status = false,
                     message = "Không tìm thấy sản phẩm"
                 });
-            }            
+            }
         }
-        public IActionResult SuaSP(int ma) {
+        public IActionResult SuaSP(int ma)
+        {
             var sp = obj.Sanphams.Find(ma);
             var dshang = obj.Hangsanxuats.ToList();
             var dsdm = obj.Danhmucsanphams.ToList();
             ViewBag.sp = sp;
-            if(sp != null)
+            if (sp != null)
             {
                 var dm = obj.Danhmucsanphams.Find(sp.MaDanhMuc);
                 var hang = obj.Hangsanxuats.Find(sp.MaHang);
-                if(dm != null && hang!=null)
+                if (dm != null && hang != null)
                 {
                     ViewBag.tendm = dm.TenDanhMuc;
                     ViewBag.tenhang = hang.TenHang;
@@ -372,7 +542,7 @@ namespace ShopBanDoGiaDung.Controllers
                 }
 
             }
-             else
+            else
             {
                 // Xử lý trường hợp tk là null (nếu cần)
                 return Json(new
@@ -382,12 +552,12 @@ namespace ShopBanDoGiaDung.Controllers
                 });
             }
         }
-       
+
         [HttpPost]
         public async Task<IActionResult> SuaSP(Models.Sanpham sp, IFormFile image1, IFormFile image2, IFormFile image3, IFormFile image4, IFormFile image5, IFormFile image6, string DanhMuc, string Hang)
         {
             var spmoi = obj.Sanphams.Find(sp.MaSp);
-            if(spmoi != null)
+            if (spmoi != null)
             {
                 spmoi.TenSp = sp.TenSp;
                 spmoi.MoTa = sp.MoTa;
@@ -506,7 +676,7 @@ namespace ShopBanDoGiaDung.Controllers
                    return RedirectToAction("ThongBaoRong", "Admin");
                }
            }*/
-        
+
         public IActionResult ThongBaoRong()
         {
             return View();
@@ -514,10 +684,20 @@ namespace ShopBanDoGiaDung.Controllers
 
         #endregion
         #region Quản lý hãng
-        public IActionResult QuanLyHang(int page = 1, int pageSize = 10)
+        public IActionResult QuanLyHang(string tenhang, int mahang,int page = 1, int pageSize = 10)
         {
-           
-            var query = obj.Hangsanxuats.OrderBy(s => s.MaHang);
+
+            var query = obj.Hangsanxuats.AsQueryable(); // Chuyển đổi sang IQueryable
+            if (!string.IsNullOrEmpty(tenhang))
+            {
+                query = query.Where(dm => dm.TenHang.Contains(tenhang)); // hoặc OrderByDescending(dm => dm.MaDanhMuc)
+            }
+
+            if (mahang != 0)
+            {
+                query = query.Where(item => item.MaHang == mahang);
+            }
+
             var model = query.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
             // Tính toán thông tin phân trang
@@ -526,25 +706,27 @@ namespace ShopBanDoGiaDung.Controllers
             ViewBag.PageStartItem = (page - 1) * pageSize + 1;
             ViewBag.PageEndItem = Math.Min(page * pageSize, totalItemCount);
             ViewBag.Page = page;
+            ViewBag.th = tenhang;
+            ViewBag.mahang = mahang;
 
             return View(pagedList);
         }
         [HttpPost]
-        public IActionResult ThemHang( string tenhang)
+        public IActionResult ThemHang(string tenhang)
         {
-            Models.Hangsanxuat hsx= new Models.Hangsanxuat();
+            Models.Hangsanxuat hsx = new Models.Hangsanxuat();
             hsx.TenHang = tenhang;
             obj.Hangsanxuats.Add(hsx);
             obj.SaveChanges();
-            return Json(new 
-            { 
-                status = true 
+            return Json(new
+            {
+                status = true
             });
         }
         public IActionResult XoaHang(int matk)
-        {         
+        {
             var hsx = obj.Hangsanxuats.Find(matk);
-            if(hsx != null)
+            if (hsx != null)
             {
                 obj.Hangsanxuats.Remove(hsx);
                 obj.SaveChanges();
@@ -560,16 +742,18 @@ namespace ShopBanDoGiaDung.Controllers
                     status = false
                 });
             }
-           
+
         }
-        public IActionResult SuaHang(int id) { 
-            var model= obj.Hangsanxuats.Find(id);
+        public IActionResult SuaHang(int id)
+        {
+            var model = obj.Hangsanxuats.Find(id);
             return View(model);
         }
         [HttpPost]
-        public IActionResult SuaHang(int id, string name) {
+        public IActionResult SuaHang(int id, string name)
+        {
             var hsx = obj.Hangsanxuats.Find(id);
-            if(hsx != null)
+            if (hsx != null)
             {
                 hsx.TenHang = name;
                 obj.SaveChanges();
@@ -588,10 +772,19 @@ namespace ShopBanDoGiaDung.Controllers
         }
         #endregion
         #region Quản lý danh mục
-        public IActionResult QuanLyDM(int page = 1, int pageSize = 10)
+        public IActionResult QuanLyDM( string tendm, int madm, int page = 1, int pageSize = 10)
         {
-           
-            var query = obj.Danhmucsanphams.OrderBy(s => s.MaDanhMuc);
+            var query = obj.Danhmucsanphams.AsQueryable(); // Chuyển đổi sang IQueryable
+            if (!string.IsNullOrEmpty(tendm))
+            {
+                query = query.Where(dm => dm.TenDanhMuc.Contains(tendm)); // hoặc OrderByDescending(dm => dm.MaDanhMuc)
+            }
+
+            if (madm != 0)
+            {
+                query = query.Where(item => item.MaDanhMuc == madm);
+            }
+
             var model = query.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
             // Tính toán thông tin phân trang
@@ -600,13 +793,14 @@ namespace ShopBanDoGiaDung.Controllers
             ViewBag.PageStartItem = (page - 1) * pageSize + 1;
             ViewBag.PageEndItem = Math.Min(page * pageSize, totalItemCount);
             ViewBag.Page = page;
+            ViewBag.tdm = tendm;
+            ViewBag.madm = madm;
 
             return View(pagedList);
-
         }
         public IActionResult XoaDM(int madm)
-        {           
-           var hsx = obj.Danhmucsanphams.Find(madm);
+        {
+            var hsx = obj.Danhmucsanphams.Find(madm);
             if (hsx != null)
             {
                 obj.Danhmucsanphams.Remove(hsx);
@@ -632,7 +826,7 @@ namespace ShopBanDoGiaDung.Controllers
             obj.SaveChanges();
             return Json(new
             {
-                status= true
+                status = true
             });
         }
         public IActionResult SuaDM(int id)
@@ -644,7 +838,7 @@ namespace ShopBanDoGiaDung.Controllers
         public IActionResult SuaDM(int id, string name)
         {
             var dm = obj.Danhmucsanphams.Find(id);
-            if(dm != null)
+            if (dm != null)
             {
                 dm.TenDanhMuc = name;
                 obj.SaveChanges();
@@ -660,7 +854,7 @@ namespace ShopBanDoGiaDung.Controllers
         }
         #endregion
         #region Quản lý đơn hàng
-        public IActionResult QuanLyDH(int page = 1, int pageSize = 5)
+        public IActionResult QuanLyDH(string tennn, int madh, string dc, decimal minPrice, decimal maxPrice, int page = 1, int pageSize = 5)
         {
             // Lấy tất cả đơn hàng và thực hiện kết hợp
             var allOrders = from a in obj.Donhangs
@@ -676,7 +870,7 @@ namespace ShopBanDoGiaDung.Controllers
                             };
 
             // Tạo danh sách các tình trạng
-            var tinhTrang= allOrders.OrderByDescending(o=>o.MaDonHang).ToList();
+            var tinhTrang = allOrders.OrderByDescending(o => o.MaDonHang).ToList();
             var tinhTrang0 = allOrders.Where(o => o.TinhTrang == 0).OrderByDescending(o => o.MaDonHang).ToList();
             var tinhTrang1 = allOrders.Where(o => o.TinhTrang == 1).OrderByDescending(o => o.MaDonHang).ToList();
             var tinhTrang2 = allOrders.Where(o => o.TinhTrang == 2).OrderByDescending(o => o.MaDonHang).ToList();
@@ -714,6 +908,12 @@ namespace ShopBanDoGiaDung.Controllers
             ViewBag.ShippingOrdersCount = shippingOrdersCount;
             ViewBag.CompletedOrdersCount = completedOrdersCount;
             ViewBag.CanceledOrdersCount = canceledOrdersCount;
+
+            ViewBag.madh = madh;
+            ViewBag.tennn = tennn;
+            ViewBag.dc = dc;
+            ViewBag.MinPrice = minPrice;
+            ViewBag.MaxPrice = maxPrice;
             return View();
         }
 
@@ -721,7 +921,7 @@ namespace ShopBanDoGiaDung.Controllers
         public IActionResult XacNhanDH(int madh)
         {
             var dh = obj.Donhangs.Find(madh);
-            if (dh != null) 
+            if (dh != null)
             {
                 dh.TinhTrang = 2;
                 obj.SaveChanges();
@@ -737,14 +937,34 @@ namespace ShopBanDoGiaDung.Controllers
                     status = false
                 });
             }
-            
+
         }
         public IActionResult VanChuyenDH(int madh)
         {
-            var dh=obj.Donhangs.Find( madh);
+            var dh = obj.Donhangs.Find(madh);
             if (dh != null)
             {
                 dh.TinhTrang = 3;
+                obj.SaveChanges();
+                return Json(new
+                {
+                    status = true
+                });
+            }
+            else
+            {
+                return Json(new
+                {
+                    status = false
+                });
+            }
+        }
+        public IActionResult HuyDH(int madh)
+        {
+            var dh = obj.Donhangs.Find(madh);
+            if (dh != null)
+            {
+                dh.TinhTrang = 4;
                 obj.SaveChanges();
                 return Json(new
                 {
@@ -786,7 +1006,7 @@ namespace ShopBanDoGiaDung.Controllers
             return View();
         }
         [HttpPost]
-       public IActionResult TKDoanhthu(int year)
+        public IActionResult TKDoanhthu(int year)
         {
             var ds = obj.Donhangs.Where(s => s.NgayLap != null && s.NgayLap.Value.Year.ToString().Equals(year.ToString())).ToList();
             var list = new List<ThongKeDoanhThu>();
@@ -842,7 +1062,7 @@ namespace ShopBanDoGiaDung.Controllers
             list.Add(tk3);
             foreach (var item in ds)
             {
-              
+
                 if (item.NgayLap.HasValue && item.NgayLap.Value.Month.ToString() == "4")
                 {
                     sum4 += item.TongTien;

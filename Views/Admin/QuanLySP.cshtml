@@ -1,4 +1,8 @@
-﻿@model PagedList.IPagedList<ShopBanDoGiaDung.Models.SanPhamct>
+﻿@model X.PagedList.IPagedList<ShopBanDoGiaDung.Models.SanPhamct>
+@using System.Text.Json
+@using ShopBanDoGiaDung.authorize
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewBag.Title = "QuanLySP";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
@@ -8,7 +12,91 @@
     var ten = ViewBag.tenSP;
     var dsdm = ViewBag.dsdm;
     var dsh = ViewBag.dsh;
+    var tenh = ViewBag.tenh;
+    var ban = ViewBag.ban;
+    var slc = ViewBag.slc;
+    var tendm = ViewBag.tendm;
+    var chucvu = (List<ShopBanDoGiaDung.Models.ChucVu>)ViewBag.chucvu;
+    List<AccountRole> data = HttpContextAccessor.HttpContext.Session.GetJson<List<AccountRole>>("QuyenTK") ?? new List<AccountRole>();
+    var qh = data.FirstOrDefault(c => c.ActionName == "QuanLySP");
+
 }
+@if (qh.MaA == 1)
+{
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Full Screen Alert</title>
+        <style>
+            body {
+                margin: 0;
+                font-family: Arial, sans-serif;
+            }
+
+            .fullscreen-alert {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                align-items: center;
+                justify-content: center;
+                color: #fff;
+                text-align: center;
+                z-index: 1000;
+            }
+
+            .alert-content {
+                background-color: #343a40;
+                padding: 20px;
+                border-radius: 8px;
+            }
+
+            .close-btn {
+                cursor: pointer;
+                color: #fff;
+                font-size: 20px;
+                position: absolute;
+                top: 10px;
+                right: 10px;
+            }
+        </style>
+    </head>
+    <body>
+
+        <div class="fullscreen-alert" id="fullscreenAlert">
+            <div class="alert-content">
+                <span class="close-btn" onclick="closeFullscreenAlert()">&times;</span>
+                <h1>Truy cập thất bại</h1>
+                <p>Bạn không có quyền truy cập trang này. Vui lòng liên hệ với chúng tôi để nhận hỗ trợ </p>
+            </div>
+        </div>
+
+        <script>
+            function showFullscreenAlert() {
+                document.getElementById('fullscreenAlert').style.display = 'flex';
+            }
+
+            function closeFullscreenAlert() {
+                document.getElementById('fullscreenAlert').style.display = 'none';
+            }
+
+            // Gọi hàm này khi trang web được tải
+            document.addEventListener('DOMContentLoaded', function () {
+                showFullscreenAlert();
+            });
+        </script>
+
+    </body>
+    </html>
+
+
+}
+else { }
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -40,7 +128,7 @@
                                 }
                                 <button class="btn btn-primary" data-dismiss="modal" id="confirmThem" style="margin-top:30px" onclick="Them()">Tìm kiếm nâng cao</button>
 
-                                <form id="frmThemHang" aria-hidden="true" tabindex="-1" style="display: none;" >
+                                <form id="frmThemHang" aria-hidden="true" tabindex="-1" style="display: none;">
                                     <div class="card-body">
                                         <div class="slider" style="width: 23%; height: 10px; margin-top:30px;margin-bottom:20px">
                                             <label for="min-price" style="font-size: 18px;">Chọn khoảng giá phù hợp:</label>
@@ -58,47 +146,61 @@
                                                 <option value="tang">Giá tăng dần</option>
                                                 <option value="giam">Giá giảm dần</option>
                                             </select>
-                                            
+
                                         </div>
-                                        <div class="form-group">
-                                            <label for="pwd">Hãng:</label>
-                                            <select class="form-control" id="Hang">
-                                                <option value=0>Chọn hãng</option>
-                                                @foreach (var item in dsh)
-                                                {
-                                                    <option value="@item.MaHang">@item.TenHang</option>
-                                                }
-                                            </select>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="Hang">Hãng:</label>
+                                                    <select class="form-control" id="Hang">
+                                                        <option value=0>Chọn hãng</option>
+                                                        @foreach (var item in dsh)
+                                                        {
+                                                            <option value="@item.MaHang">@item.TenHang</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="slc">Sản phẩm còn trong kho dưới:</label>
+                                                    <input type="number" value="@(slc!=0?slc:null)" class="form-control" placeholder="Nhập số lượng sản phẩm" name="slc" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="DanhMuc">Danh mục:</label>
+                                                    <select class="form-control" id="DanhMuc">
+                                                        <option value=0>Chọn danh mục</option>
+                                                        @foreach (var item in dsdm)
+                                                        {
+                                                            <option value="@item.MaDanhMuc">@item.TenDanhMuc</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="ban">Sản phẩm đã bán trên:</label>
+                                                    <input type="number" value="@(ban!=0? ban:null)" class="form-control" placeholder="Nhập số lượng sản phẩm" name="ban" required>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="pwd">Danh mục:</label>
-                                            <select class="form-control" id="DanhMuc">  
-                                                <option value=0>Chọn danh mục</option>
-                                                @foreach (var item in dsdm)
-                                                {
-                                                    <option value="@item.MaDanhMuc">@item.TenDanhMuc</option>
-                                                }
-                                            </select>                                          
-                                        </div>
-                                        
-                                          
-                                            <button type="button" class="btn btn-primary" id="filterButton">Tìm kiếm</button>
-                                            <button type="button" class="btn btn-default" data-dismiss="modal" id="cancel">Hủy bỏ</button>
-                                        
+
+
+                                        <button type="button" class="btn btn-primary" id="filterButton">Tìm kiếm</button>
+                                        <button type="button" class="btn btn-default" data-dismiss="modal" id="cancel">Hủy bỏ</button>
+
                                     </div>
                                 </form>
 
-                                
+
                             </div>
-                           
+
                         </div>
-                     
+
                         <!-- /.card-header -->
                         <div class="card-body">
                             <table id="example1" class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
-                                  
+
                                         <th>Tên sản phẩm</th>
                                         <th>Ảnh sản phẩm</th>
                                         <th>Hãng sản xuất</th>
@@ -112,7 +214,7 @@
                                     @foreach (var item in Model)
                                     {
                                         <tr>
-                                  
+
                                             <td><a href="@Url.Action("ProductDetail", "Home", new { id = item.MaSp })">@item.TenSp</a></td>
                                             <td><img class="img-responsive" style="max-width: 50%;" src="~/Admin/images/@item.Anh1" /></td>
                                             <td>@item.Hang</td>
@@ -120,16 +222,20 @@
                                             <td>@item.GiaTien?.ToString("N0")</td>
                                             <td>@item.SoLuongDaBan</td>
                                             <td>@item.SoLuongTrongKho</td>
-                                            <td>
-                                                <a href="@Url.Action("SuaSP", "Admin", new { ma = item.MaSp })" class="btn btn-success">Edit</a>
-                                            </td>
-                                            <td>
-                                                <a class="btn btn-success" title="Delete" data-toggle="modal" onclick="XoaSP(@item.MaSp)">Delete</a>
-                                            </td>
+                                            @if (qh.MaA != 2)
+                                            {
+                                                <td>
+                                                    <a href="@Url.Action("SuaSP", "Admin", new { ma = item.MaSp })" class="btn btn-success">Edit</a>
+                                                </td>
+                                                <td>
+                                                    <a class="btn btn-success" title="Delete" data-toggle="modal" onclick="XoaSP(@item.MaSp)">Delete</a>
+                                                </td>
+                                            }
+                                           
                                         </tr>
                                     }
                                 </tbody>
-                            
+
                             </table>
                             <!-- Hiển thị thanh phân trang -->
                             <div class="row">
@@ -137,18 +243,18 @@
                                     <div class="dataTables_info" id="example1_info" role="status" aria-live="polite">
                                         Danh sách từ @ViewBag.PageStartItem đến @ViewBag.PageEndItem trên tổng số @ViewBag.TotalItemCount sản phẩm
                                     </div>
-                                </div>                   
-                                    <ul class="pagination">
-                                 
-                                        @if (Model.HasPreviousPage)
-                                        {
-                                            <li class="page-item">
-                                                <a class="page-link" href="@Url.Action("QuanLySP", new { page = Model.PageNumber - 1 })">Previous</a>
-                                            </li>
-                             
-                                        }
-                                    <li class="page-item">
-                                        <a class="page-link" href="@Url.Action("QuanLySP", new { page = 1 })">1</a>
+                                </div>
+                                <ul class="pagination">
+
+                                    @if (Model.HasPreviousPage)
+                                    {
+                                        <li class="page-item ">
+                                            <a class="page-link" href="@Url.Action("QuanLySP", new {tenSP=ten, tenh=tenh,tendm=tendm,slc=slc, ban=ban,minPrice=min_price,maxPrice=max_price, sortOrder=order_price, page = Model.PageNumber - 1 })">Previous</a>
+                                        </li>
+
+                                    }
+                                    <li class="page-item @(1 == Model.PageNumber ? "active" : "")">
+                                        <a class="page-link" href="@Url.Action("QuanLySP", new {tenSP=ten, tenh=tenh,tendm=tendm,slc=slc, ban=ban,minPrice=min_price,maxPrice=max_price, sortOrder=order_price, page = 1 })">1</a>
                                     </li>
                                     @if (Model.PageNumber > 3)
                                     {
@@ -156,40 +262,43 @@
                                             <span class="page-link">...</span>
                                         </li>
                                     }
-                                        @for (int i = Model.PageNumber - 1; i <= Model.PageNumber + 1; i++)
+                                    @for (int i = Model.PageNumber - 1; i <= Model.PageNumber + 1; i++)
+                                    {
+                                        if (i > 1 && i < Model.PageCount)
                                         {
-                                            if (i > 1 && i < Model.PageCount)
-                                            {
-                                                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                                                    <a class="page-link" href="@Url.Action("QuanLySP", new { page = i })">@i</a>
-                                                </li>
-                                            }
+                                            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                                <a class="page-link" href="@Url.Action("QuanLySP", new {tenSP=ten, tenh=tenh,tendm=tendm,slc=slc, ban=ban,minPrice=min_price,maxPrice=max_price, sortOrder=order_price, page = i })">@i</a>
+                                            </li>
                                         }
+                                    }
                                     @if (Model.PageNumber < Model.PageCount - 1)
                                     {
-                                    <li class="page-item">
-                                        <span class="page-link">...</span>
-                                    </li>
+                                        <li class="page-item">
+                                            <span class="page-link">...</span>
+                                        </li>
                                     }
                                     @if (Model.PageCount > 1)
                                     {
-                                        <li class="page-item">
-                                            <a class="page-link" href="@Url.Action("QuanLySP", new { page = Model.PageCount })">@Model.PageCount</a>
+                                        <li class="page-item @(Model.PageCount == Model.PageNumber ? "active" : "")">
+                                            <a class="page-link" href="@Url.Action("QuanLySP", new {tenSP=ten, tenh=tenh,tendm=tendm,slc=slc, ban=ban,minPrice=min_price,maxPrice=max_price, sortOrder=order_price, page = Model.PageCount })">@Model.PageCount</a>
                                         </li>
                                     }
-                                   
+
                                     @if (Model.HasNextPage)
                                     {
-                                            
+
                                         <li class="page-item">
-                                            <a class="page-link" href="@Url.Action("QuanLySP", new { page = Model.PageNumber + 1 })">Next</a>
+                                            <a class="page-link" href="@Url.Action("QuanLySP", new { tenSP=ten, tenh=tenh,tendm=tendm,slc=slc, ban=ban,minPrice=min_price,maxPrice=max_price, sortOrder=order_price,page = Model.PageNumber + 1 })">Next</a>
                                         </li>
                                     }
-                                    </ul>
+                                </ul>
                             </div>
                         </div>
                         <form method="post" action="@Url.Action("ThemSP", "Admin")">
-                            <button type="submit" class="btn btn-success">Thêm sản phẩm mới</button>
+                            <button type="submit" class="btn btn-success" @if (qh.MaA == 2)
+                            {
+                                <text>style="display: none;"</text>
+                            }>Thêm sản phẩm mới</button>
                         </form>
 
                         <!-- /.card-body -->
@@ -271,7 +380,7 @@
             form.style.display = "none";
         });
     }
-  
+
     $(document).ready(function () {
         const minPriceInput = $("#min-price");
         const maxPriceInput = $("#max-price");
@@ -304,6 +413,8 @@
             const minPrice = parseInt(minPriceInput.val().replace(/,/g, ''));
             const orderPrice = orderPriceSelect.val();
             const ten = $("input[name='tenSP']").val();
+            const slc = $("input[name='slc']").val();
+            const ban = $("input[name='ban']").val();
 
             // Xây dựng URL và điều hướng tới nó
             const sortOrderParam = orderPrice !== 'notorder' ? `&sortOrder=${orderPrice}` : '';
@@ -311,7 +422,7 @@
             const tenh = Hang !== 0 ? `&tenh=${Hang}` : '';
 
             // Sử dụng `window.location.href` để chuyển hướng đến URL
-            const url = `@Url.Action("QuanLySP", "Admin")?tenSP=${ten}&tendm=${DanhMuc}&tenh=${Hang}&maxPrice=${maxPrice}&minPrice=${minPrice}${sortOrderParam}`;
+            const url = `@Url.Action("QuanLySP", "Admin")?tenSP=${ten}&tendm=${DanhMuc}&slc=${slc}&ban=${ban}&tenh=${Hang}&maxPrice=${maxPrice}&minPrice=${minPrice}${sortOrderParam}`;
             window.location.href = url;
         });
 
