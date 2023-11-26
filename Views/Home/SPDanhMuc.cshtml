@@ -53,7 +53,7 @@
      </div>
      <div class="product-left">
           @foreach (var it in sp.Data)
-          {
+    {
             <div>
                <div class="col-md-4 chain-grid">
                     <a href="@Url.Action("ProductDetail","Home", new { id = it.MaSp})"><img class="img-responsive chain" src="~/BigShopee/images/@it.Anh1" alt=" "></a>
@@ -183,7 +183,7 @@
             </ul>
         </nav>
     </div>
-</div>
+}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
