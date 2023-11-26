@@ -23,6 +23,8 @@
     <link rel="stylesheet" href="~/BigShopee/css/etalage.css" type="text/css" media="all" />
     <link href="~/BigShopee/css/style.css" rel="stylesheet" type="text/css" media="all" />
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
     <!--//theme-style-->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
@@ -67,11 +69,50 @@
                         <a asp-controller="Home" asp-action="Index"><img src="~/BigShopee/images/logo.png" alt=" " /></a>
                     </div>
                     @* <form method="post" action="/Home/Search"> *@
-                        <div class="search">
+                        <div class="search" style="display: flex;justify-content: center;align-items: center;">
                             <input id="search-name" type="text" name="search" value="" onfocus="this.value = '';"
                                    onblur="if (this.value == '') {this.value = '';}">
-                            <input onclick="handleSearch()" type="submit" value="TÌM KIẾM">
+                             <style>
+                                 .icon-filter{
+                                    cursor: pointer;
+                                 }
+                                 .them-tim-kiem:hover {
+                                    color: blue;
+                                 }
+                            </style>
+                            <input onclick="handleSearch()" type="submit" value="TÌM KIẾM">              
+                                     <div style="margin-left: 5px;padding-right: 4px;" id="them-tim-kiem" class="dropdown">
+                                        <div   class="account dropdown-toggle" data-toggle="dropdown">                      
+                                            <i style="cursor: pointer;" class="fas fa-filter"></i>
+                                        </div>
+                                        <ul class="dropdown-menu">
+                                            <li><a asp-controller="Home" asp-action="profile" >
+                                                <i style="color:#F97E76;"  class="fas fa-user"></i>
+                                                Thông tin tài khoản</a>
+                                            </li>
+                                            <li><a asp-controller="Home" asp-action="MyOrder" asp-route-PageIndex="1" asp-route-PageSize="10" >
+                                                <i style="color:#F97E76;"  class="fas fa-receipt"></i>
+                                                Lịch sử mua hàng</a></li>
+                                        </ul>
+                                    </div>
+                            </input>
+                           
+                            @* <div style="margin-left: 5px;" id="them-tim-kiem" class="dropdown">
+                                <div   class="account dropdown-toggle" data-toggle="dropdown">                      
+                                    <i style="cursor: pointer;" class="fas fa-filter"></i>
+                                </div>
+                                <ul class="dropdown-menu">
+                                    <li><a asp-controller="Home" asp-action="profile" >
+                                        <i style="color:#F97E76;"  class="fas fa-user"></i>
+                                        Thông tin tài khoản</a>
+                                    </li>
+                                    <li><a asp-controller="Home" asp-action="MyOrder" asp-route-PageIndex="1" asp-route-PageSize="10" >
+                                        <i style="color:#F97E76;"  class="fas fa-receipt"></i>
+                                        Lịch sử mua hàng</a></li>
+                                </ul>
+                            </div> *@
                         </div>
+                         
                         <script>
                             function handleSearch() {
                                 const search = $("#search-name").val()
@@ -91,6 +132,7 @@
                     @* </form> *@
                     <div class="clearfix"> </div>
                 </div>
+                
                 <div class="header-bottom-right" >
                     @if (sessionvalue == null)
                     {

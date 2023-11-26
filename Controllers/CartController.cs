@@ -162,13 +162,17 @@ namespace QuanLyShopDoGiaDung.Controllers
          [HttpPost]
         public JsonResult Update(int productId, int amount)
         {
+           var product = _context.Sanphams.FirstOrDefault(c => c.MaSp == productId);
             var countCart = HttpContext.Session.GetInt32("countCart");
             var cart = HttpContext.Session.Get(SessionCart);
             var json = Encoding.UTF8.GetString(cart);
             var  list = JsonSerializer.Deserialize<List<CartModel>>(json);
             float price = 0;
             float tongtien = 0;
-        
+            string kiemtrahethang = "";
+            if(amount > product.SoLuongTrongKho) {
+                kiemtrahethang = "hethang";
+            }
             if(amount <= 0){
                 list.RemoveAll(x => x.sanpham.MaSp == productId);
                 int count = (int)countCart;
@@ -194,7 +198,8 @@ namespace QuanLyShopDoGiaDung.Controllers
                 productId = productId ,
                 price = price,
                 tongtien = tongtien,
-                countCart = list.Count
+                countCart = list.Count,
+                kiemtrahethang = kiemtrahethang
                 
             });
         }

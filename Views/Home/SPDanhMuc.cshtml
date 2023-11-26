@@ -54,6 +54,7 @@
      <div class="product-left">
           @foreach (var it in sp.Data)
           {
+            <div>
                <div class="col-md-4 chain-grid">
                     <a href="@Url.Action("ProductDetail","Home", new { id = it.MaSp})"><img class="img-responsive chain" src="~/BigShopee/images/@it.Anh1" alt=" "></a>
                     <span class="star"> </span>
