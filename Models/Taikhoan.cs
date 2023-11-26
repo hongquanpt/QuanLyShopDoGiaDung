@@ -19,9 +19,11 @@ public partial class Taikhoan
 
     public string? MatKhau { get; set; }
 
-    public string? Quyen { get; set; }
+    public int? MaCv { get; set; }
 
     public virtual ICollection<Donhang> Donhangs { get; set; } = new List<Donhang>();
 
     public virtual ICollection<GioHang> GioHangs { get; set; } = new List<GioHang>();
+
+    public virtual ChucVu? MaCvNavigation { get; set; }
 }

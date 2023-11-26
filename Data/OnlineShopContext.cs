@@ -16,9 +16,15 @@ public partial class OnlineShopContext : DbContext
     {
     }
 
+    public virtual DbSet<ActionT> ActionTs { get; set; }
+
     public virtual DbSet<Chitietdonhang> Chitietdonhangs { get; set; }
 
     public virtual DbSet<Chitietsanpham> Chitietsanphams { get; set; }
+
+    public virtual DbSet<ChucVu> ChucVus { get; set; }
+
+    public virtual DbSet<CvQA> CvQAs { get; set; }
 
     public virtual DbSet<Danhgiasanpham> Danhgiasanphams { get; set; }
 
@@ -32,6 +38,8 @@ public partial class OnlineShopContext : DbContext
 
     public virtual DbSet<MigrationHistory> MigrationHistories { get; set; }
 
+    public virtual DbSet<Quyen> Quyens { get; set; }
+
     public virtual DbSet<Sanpham> Sanphams { get; set; }
 
     public virtual DbSet<Taikhoan> Taikhoans { get; set; }
@@ -40,9 +48,18 @@ public partial class OnlineShopContext : DbContext
 
      protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Data Source=HN-TreanT;Initial Catalog=OnlineShop;Integrated Security=True;Persist Security Info=False;Pooling=False;Encrypt=False;App=EntityFramework");
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ActionT>(entity =>
+        {
+            entity.HasKey(e => e.MaA).HasName("PK_Action");
+
+            entity.ToTable("ActionT");
+
+            entity.Property(e => e.MaA).ValueGeneratedNever();
+            entity.Property(e => e.TenA).HasMaxLength(100);
+        });
+
         modelBuilder.Entity<Chitietdonhang>(entity =>
         {
             entity.HasKey(e => new { e.MaDonHang, e.MaSp });
@@ -81,6 +98,41 @@ public partial class OnlineShopContext : DbContext
             entity.HasOne(d => d.MaSpNavigation).WithOne(p => p.Chitietsanpham)
                 .HasForeignKey<Chitietsanpham>(d => d.MaSp)
                 .HasConstraintName("FK_SANPHAM_CHITIETSANPHAM");
+        });
+
+        modelBuilder.Entity<ChucVu>(entity =>
+        {
+            entity.HasKey(e => e.MaCv);
+
+            entity.ToTable("ChucVu");
+
+            entity.Property(e => e.MaCv).HasColumnName("MaCV");
+            entity.Property(e => e.Ten).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<CvQA>(entity =>
+        {
+            entity.HasKey(e => new { e.MaA, e.MaCv, e.MaQ });
+
+            entity.ToTable("CV_Q_A");
+
+            entity.Property(e => e.MaCv).HasColumnName("MaCV");
+            entity.Property(e => e.Ten).HasMaxLength(50);
+
+            entity.HasOne(d => d.MaANavigation).WithMany(p => p.CvQAs)
+                .HasForeignKey(d => d.MaA)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CV_Q_A_ActionT");
+
+            entity.HasOne(d => d.MaCvNavigation).WithMany(p => p.CvQAs)
+                .HasForeignKey(d => d.MaCv)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CV_Q_A_ChucVu");
+
+            entity.HasOne(d => d.MaQNavigation).WithMany(p => p.CvQAs)
+                .HasForeignKey(d => d.MaQ)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CV_Q_A_Quyen");
         });
 
         modelBuilder.Entity<Danhgiasanpham>(entity =>
@@ -163,6 +215,18 @@ public partial class OnlineShopContext : DbContext
             entity.Property(e => e.ProductVersion).HasMaxLength(32);
         });
 
+        modelBuilder.Entity<Quyen>(entity =>
+        {
+            entity.HasKey(e => e.MaQ);
+
+            entity.ToTable("Quyen");
+
+            entity.Property(e => e.MaQ).ValueGeneratedNever();
+            entity.Property(e => e.ActionName).HasMaxLength(200);
+            entity.Property(e => e.ControllerName).HasMaxLength(200);
+            entity.Property(e => e.Ten).HasMaxLength(200);
+        });
+
         modelBuilder.Entity<Sanpham>(entity =>
         {
             entity.HasKey(e => e.MaSp);
@@ -199,14 +263,18 @@ public partial class OnlineShopContext : DbContext
 
             entity.Property(e => e.DiaChi).HasMaxLength(50);
             entity.Property(e => e.Email).HasMaxLength(20);
+            entity.Property(e => e.MaCv).HasColumnName("MaCV");
             entity.Property(e => e.MatKhau).HasMaxLength(100);
             entity.Property(e => e.NgaySinh).HasColumnType("date");
-            entity.Property(e => e.Quyen).HasMaxLength(10);
             entity.Property(e => e.Sdt)
                 .HasMaxLength(15)
                 .IsFixedLength()
                 .HasColumnName("SDT");
             entity.Property(e => e.Ten).HasMaxLength(30);
+
+            entity.HasOne(d => d.MaCvNavigation).WithMany(p => p.Taikhoans)
+                .HasForeignKey(d => d.MaCv)
+                .HasConstraintName("FK_TAIKHOAN_ChucVu");
         });
 
         modelBuilder.Entity<Vanchuyen>(entity =>

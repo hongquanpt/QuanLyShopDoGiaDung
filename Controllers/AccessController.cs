@@ -9,6 +9,7 @@ using System.Text;
 using ShopBanDoGiaDung.Common;
 using QuanLyShopDoGiaDung.Common;
 using ShopBanDoGiaDung.Models;
+using ShopBanDoGiaDung.authorize;
 
 namespace ShopBanDoGiaDung.Controllers
 {
@@ -67,12 +68,38 @@ namespace ShopBanDoGiaDung.Controllers
                       new Claim("OtherProperties","Example Role")
 
                   };
+                List<Donhang> dg = new List<Donhang>();
+                dg = _context.Donhangs.Where(c => c.TinhTrang == 1).ToList();
+                int sl = dg.Count();
+                HttpContext.Session.SetInt32("so", sl);
+                HttpContext.Session.SetJson("dg", dg);
                 //lu thogn tin vao session
                 HttpContext.Session.SetString("email", loginInfo.Email);
                 HttpContext.Session.SetInt32("Ma", user.MaTaiKhoan);
-                HttpContext.Session.SetString("role", user.Quyen);
+                //HttpContext.Session.SetString("role", user.Quyen);
                 HttpContext.Session.SetString("SDT", user.Sdt);
                 HttpContext.Session.SetString("DiaChi", user.DiaChi);
+                var data = from tk in _context.Taikhoans
+                            join cv in _context.ChucVus on tk.MaCv equals cv.MaCv
+                            join qcv in _context.CvQAs on cv.MaCv equals qcv.MaCv
+                            join q in _context.Quyens on qcv.MaQ equals q.MaQ
+                            join a in _context.ActionTs on qcv.MaA equals a.MaA
+                            where (tk.Email == loginInfo.Email)
+                            select new AccountRole
+                            {
+                                MaTaiKhoan = tk.MaTaiKhoan,
+                                MaQ = q.MaQ,
+                                MaCv = cv.MaCv,
+                                TenCV = cv.Ten,
+                                TenQ = q.Ten,
+                                ControllerName = q.ControllerName,
+                                ActionName = q.ActionName,
+                                MaA = a.MaA,
+                                TenA = a.TenA,
+                            };
+                List<AccountRole> roles = data.ToList();
+
+                HttpContext.Session.SetJson("QuyenTK", roles);
 
                 ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 AuthenticationProperties properties = new AuthenticationProperties()
@@ -85,12 +112,19 @@ namespace ShopBanDoGiaDung.Controllers
                 if(!String.IsNullOrEmpty(loginInfo.previousPage)){
                     return Redirect(loginInfo.previousPage);
                 }
-                if (user.Quyen == "Admin")
+
+                    int soquyen = data.Where(c=>c.MaA==1).Count();
+
+                    Console.WriteLine($"Received soquyen: {soquyen}");
+                    if (soquyen == 6 && data.Where(c=>c.MaA==3).FirstOrDefault().MaQ == 7)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                else
                 {
                     return RedirectToAction("Index", "Admin");
                 }
-                return RedirectToAction("Index", "Home");
-            }
+                }
             return View();
 
           }catch(Exception ex){
@@ -116,7 +150,7 @@ namespace ShopBanDoGiaDung.Controllers
                 Ten= registerInfo.Ten ,
                 Email = registerInfo.Email,
                 MatKhau = registerInfo.Password,
-                Quyen = "khach"
+              //  Quyen = "khach"
             };
             _context.Taikhoans.Add(newTk);
             await _context.SaveChangesAsync(); 
@@ -150,7 +184,7 @@ namespace ShopBanDoGiaDung.Controllers
         {
            
             HttpContext.Session.Clear();
-            return RedirectToAction("Login");
+            return RedirectToAction("Login","Access");
         }
 
     }

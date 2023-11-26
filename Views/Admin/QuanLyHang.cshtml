@@ -1,178 +1,306 @@
-﻿@model PagedList.IPagedList<ShopBanDoGiaDung.Models.Hangsanxuat>
+﻿@model X.PagedList.IPagedList<ShopBanDoGiaDung.Models.Hangsanxuat>
+@using System.Text.Json
+@using ShopBanDoGiaDung.authorize
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
 @{
-    ViewBag.Title = "QuanLyHang";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    var chucvu = (List<ShopBanDoGiaDung.Models.ChucVu>)ViewBag.chucvu;
+    List<AccountRole> data = HttpContextAccessor.HttpContext.Session.GetJson<List<AccountRole>>("QuyenTK") ?? new List<AccountRole>();
+    var qh = data.FirstOrDefault(c => c.ActionName == "QuanLyHang");
+    var tenhang = ViewBag.th;
+    var mahang = ViewBag.mahang;
+
 }
+@if (qh.MaA == 1)
+{
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Full Screen Alert</title>
+        <style>
+            body {
+                margin: 0;
+                font-family: Arial, sans-serif;
+            }
 
-<div>
+            .fullscreen-alert {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                align-items: center;
+                justify-content: center;
+                color: #fff;
+                text-align: center;
+                z-index: 1000;
+            }
 
-    <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <!-- Main content -->
-        <section class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12">
+            .alert-content {
+                background-color: #343a40;
+                padding: 20px;
+                border-radius: 8px;
+            }
+
+            .close-btn {
+                cursor: pointer;
+                color: #fff;
+                font-size: 20px;
+                position: absolute;
+                top: 10px;
+                right: 10px;
+            }
+        </style>
+    </head>
+    <body>
+
+        <div class="fullscreen-alert" id="fullscreenAlert">
+            <div class="alert-content">
+                <span class="close-btn" onclick="closeFullscreenAlert()">&times;</span>
+                <h1>Truy cập thất bại</h1>
+                <p>Bạn không có quyền truy cập trang này. Vui lòng liên hệ với chúng tôi để nhận hỗ trợ </p>
+            </div>
+        </div>
+
+        <script>
+            function showFullscreenAlert() {
+                document.getElementById('fullscreenAlert').style.display = 'flex';
+            }
+
+            function closeFullscreenAlert() {
+                document.getElementById('fullscreenAlert').style.display = 'none';
+            }
+
+            // Gọi hàm này khi trang web được tải
+            document.addEventListener('DOMContentLoaded', function () {
+                showFullscreenAlert();
+            });
+        </script>
+
+    </body>
+    </html>
 
 
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Quản lý tài hãng</h3>
-                            </div>
-                         
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                <table id="example1" class="table table-bordered table-striped"> 
-                                    <thead>
-                                        <tr>
-                                            <th>Mã hãng</th>
-                                            <th>Tên hãng</th>                                          
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (var item in Model)
-                                        {
-                                            <tr>
-                                                <td>@item.MaHang</td>
-                                                <td>@item.TenHang</td>
-                                                <td><a href="@Url.Action("SuaHang","Admin",new { id = item.MaHang})" class="btn btn-success">Edit</a></td>
-                                                <td><a href="#" class="btn btn-success" onclick="XoaHang(@item.MaHang)">Delete</a></td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <th>Mã hãng</th>
-                                            <th>Tên hãng</th>                                            
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                                <div class="row">
-                                    <div class="col-sm-12 col-md-5">
-                                        <div class="dataTables_info" id="example1_info" role="status" aria-live="polite">
-                                            Danh sách từ @ViewBag.PageStartItem đến @ViewBag.PageEndItem trên tổng số @ViewBag.TotalItemCount hãng
+}
+else
+{
+
+    <div>
+
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            <!-- Main content -->
+            <section class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Quản lý hãng sản xuất</h3>
+                                </div>
+                                <div style=" margin-top: 1px; margin-bottom: 1px;">
+                                    <div style=" margin-left: 40px;">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-4 mb-0">
+                                                    
+                                                        <div class="form-group">
+                                                            <label for="tendm">Tìm kiếm theo tên hãng:    </label>
+                                                        <input  type="text" value="@tenhang" class="form-control" placeholder="Nhập tên hãng " name="tenhang" required>
+                                                        </div>
+
+                                                </div>
+                                                <div class="col-md-4 mb-0">
+                                                    <div class="form-group">
+                                                        <label for="madm">Tìm kiếm theo mã hãng:    </label>
+                                                        <input  type="number" value="@(mahang!=0? mahang:null)" class="form-control" placeholder="Nhập mã hãng " name="mahang" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-0">
+                                                    <div class="form-group">
+                                                        <label></label>
+                                                        <button  style="width:100px; margin-top:30px" type="button" class="btn btn-primary" id="filterButton">Tìm kiếm</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                           
                                         </div>
                                     </div>
-                                    <ul class="pagination">
 
-                                        @if (Model.HasPreviousPage)
-                                        {
-                                            <li class="page-item">
-                                                <a class="page-link" href="@Url.Action("QuanLyHang", new { page = Model.PageNumber - 1 })">Previous</a>
-                                            </li>
-
-                                        }
-                                        <li class="page-item">
-                                            <a class="page-link" href="@Url.Action("QuanLyHang", new { page = 1 })">1</a>
-                                        </li>
-                                        @if (Model.PageNumber > 3)
-                                        {
-                                            <li class="page-item">
-                                                <span class="page-link">...</span>
-                                            </li>
-                                        }
-                                        @for (int i = Model.PageNumber - 1; i <= Model.PageNumber + 1; i++)
-                                        {
-                                            if (i > 1 && i < Model.PageCount)
+                                </div>
+                                <!-- /.card-header -->
+                                <div class="card-body">
+                                    <table id="example1" class="table table-bordered table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Mã hãng</th>
+                                                <th>Tên hãng</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model)
                                             {
-                                                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                                                    <a class="page-link" href="@Url.Action("QuanLyHang", new { page = i })">@i</a>
+                                                <tr>
+                                                    <td>@item.MaHang</td>
+                                                    <td>@item.TenHang</td>
+                                                    @if (qh.MaA != 2)
+                                                    {
+                                                        <td><a href="@Url.Action("SuaHang","Admin",new { id = item.MaHang})" class="btn btn-success">Edit</a></td>
+                                                        <td><a href="#" class="btn btn-success" onclick="XoaHang(@item.MaHang)">Delete</a></td>
+                                                    }
+                                                   
+                                                </tr>
+                                            }
+                                        </tbody>                                      
+                                    </table>
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-5">
+                                            <div class="dataTables_info" id="example1_info" role="status" aria-live="polite">
+                                                Danh sách từ @ViewBag.PageStartItem đến @ViewBag.PageEndItem trên tổng số @ViewBag.TotalItemCount hãng
+                                            </div>
+                                        </div>
+                                        <ul class="pagination">
+
+                                            @if (Model.HasPreviousPage)
+                                            {
+                                                <li class="page-item">
+                                                    <a class="page-link" href="@Url.Action("QuanLyHang", new { page = Model.PageNumber - 1 })">Previous</a>
+                                                </li>
+
+                                            }
+                                            <li class="page-item  @(1 == Model.PageNumber ? "active" : "")">
+                                                <a class="page-link" href="@Url.Action("QuanLyHang", new { page = 1 })">1</a>
+                                            </li>
+                                            @if (Model.PageNumber > 3)
+                                            {
+                                                <li class="page-item">
+                                                    <span class="page-link">...</span>
                                                 </li>
                                             }
-                                        }
-                                        @if (Model.PageNumber < Model.PageCount - 1)
-                                        {
-                                            <li class="page-item">
-                                                <span class="page-link">...</span>
-                                            </li>
-                                        }
-                                        @if (Model.PageCount > 1)
-                                        {
-                                            <li class="page-item">
-                                                <a class="page-link" href="@Url.Action("QuanLyHang", new { page = Model.PageCount })">@Model.PageCount</a>
-                                            </li>
-                                        }
-                                        @if (Model.HasNextPage)
-                                        {
+                                            @for (int i = Model.PageNumber - 1; i <= Model.PageNumber + 1; i++)
+                                            {
+                                                if (i > 1 && i < Model.PageCount)
+                                                {
+                                                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                                        <a class="page-link" href="@Url.Action("QuanLyHang", new { page = i })">@i</a>
+                                                    </li>
+                                                }
+                                            }
+                                            @if (Model.PageNumber < Model.PageCount - 1)
+                                            {
+                                                <li class="page-item">
+                                                    <span class="page-link">...</span>
+                                                </li>
+                                            }
+                                            @if (Model.PageCount > 1)
+                                            {
+                                                <li class="page-item  @(Model.PageCount == Model.PageNumber ? "active" : "")">
+                                                    <a class="page-link" href="@Url.Action("QuanLyHang", new { page = Model.PageCount })">@Model.PageCount</a>
+                                                </li>
+                                            }
+                                            @if (Model.HasNextPage)
+                                            {
 
-                                            <li class="page-item">
-                                                <a class="page-link" href="@Url.Action("QuanLyHang", new { page = Model.PageNumber + 1 })">Next</a>
-                                            </li>
-                                        }
-                                    </ul>
+                                                <li class="page-item">
+                                                    <a class="page-link" href="@Url.Action("QuanLyHang", new { page = Model.PageNumber + 1 })">Next</a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                                <!-- /.card-body -->
+                                <div class="card-footer">
+                                    <button class="btn btn-primary" data-dismiss="modal" id="confirmThem" onclick="Them()" @if (qh.MaA == 2)
+                                    {
+                                        <text>style="display: none;"</text>
+                                    }>Thêm hãng mới</button>
+                                    @*<a href="#" class="btn btn-secondary" style="display: none;"><i class="material-icons">&#xE24D;</i> <span>Xuất Excel</span></a>*@
                                 </div>
                             </div>
-                            <!-- /.card-body -->
-                            <div class="card-footer">
-                                <button class="btn btn-primary"  data-dismiss="modal" id="confirmThem" onclick="Them()">Thêm hãng mới</button>
-                                @*<a href="#" class="btn btn-secondary" style="display: none;"><i class="material-icons">&#xE24D;</i> <span>Xuất Excel</span></a>*@
-                            </div>
+                            <!-- /.card -->
                         </div>
-                        <!-- /.card -->
+                        <!-- /.col -->
                     </div>
-                    <!-- /.col -->
+                    <!-- /.row -->
                 </div>
-                <!-- /.row -->
-            </div>
-            <!-- /.container-fluid -->
-        </section>
-        <!-- /.content -->
-        <form id="frmThemHang" method="post" aria-hidden="true" tabindex="-1" role="dialog" style="display: none;" enctype="multipart/form-data">
-            <div class="card-body">
-                <div class="form-group">
-                    <label for="exampleInputPassword1">Nhập tên hãng</label>
-                    <input type="text" class="form-control" id="tenhang" placeholder="Nhập tên hãng mới tại đây">
+                <!-- /.container-fluid -->
+            </section>
+            <!-- /.content -->
+            <form id="frmThemHang" method="post" aria-hidden="true" tabindex="-1" role="dialog" style="display: none;" enctype="multipart/form-data">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Nhập tên hãng</label>
+                        <input type="text" class="form-control" id="tenhang" placeholder="Nhập tên hãng mới tại đây">
+                    </div>
+                    <div class="card-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" id="confirm">Thêm hãng</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" id="cancel">Hủy bỏ</button>
+                    </div>
                 </div>
-                <div class="card-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="confirm" >Thêm hãng</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal" id="cancel">Hủy bỏ</button>
-                </div>
-            </div>
-        </form>
-       
-    </div>
-</div>
+            </form>
 
-<script>
-    function Them() {
-        var form = document.getElementById("frmThemHang");
-        form.setAttribute("aria-hidden", "false");
-        form.setAttribute("tabindex", "0");
-        form.style.display = "block";
-        $('#confirm').on('click', function () {
-            var tenhang = $('#tenhang').val().toString();
-            if (tenhang.trim() === "") {
-                // Kiểm tra nếu trường TenHang rỗng
-                alert("Bạn chưa nhập tên hãng.");
-            } else {
-                // Nếu trường TenHang không rỗng, tiến hành gửi yêu cầu AJAX
-                $.ajax({
-                    url: '/Admin/ThemHang',
-                    data: {
-                        tenhang: tenhang
-                    },
-                    type: 'POST',
-                    dataType: 'json',
-                    success: function (res) {
-                        if (res.status == true) {
-                            // Đóng modal sau khi xóa thành công
-                            form.setAttribute("aria-hidden", "true");
-                            form.setAttribute("tabindex", "-1");
-                            form.style.display = "none";
-                            window.location = '@Url.Action("QuanLyHang","Admin")';
+        </div>
+    </div>
+
+    <script>
+        function Them() {
+            var form = document.getElementById("frmThemHang");
+            form.setAttribute("aria-hidden", "false");
+            form.setAttribute("tabindex", "0");
+            form.style.display = "block";
+            $('#confirm').on('click', function () {
+                var tenhang = $('#tenhang').val().toString();
+                if (tenhang.trim() === "") {
+                    // Kiểm tra nếu trường TenHang rỗng
+                    alert("Bạn chưa nhập tên hãng.");
+                } else {
+                    // Nếu trường TenHang không rỗng, tiến hành gửi yêu cầu AJAX
+                    $.ajax({
+                        url: '/Admin/ThemHang',
+                        data: {
+                            tenhang: tenhang
+                        },
+                        type: 'POST',
+                        dataType: 'json',
+                        success: function (res) {
+                            if (res.status == true) {
+                                // Đóng modal sau khi xóa thành công
+                                form.setAttribute("aria-hidden", "true");
+                                form.setAttribute("tabindex", "-1");
+                                form.style.display = "none";
+                                window.location = '@Url.Action("QuanLyHang","Admin")';
+                            }
                         }
-                    }
-                });
-            }
+                    });
+                }
+            });
+            $('#cancel').on('click', function () {
+                form.setAttribute("aria-hidden", "true");
+                form.setAttribute("tabindex", "-1");
+                form.style.display = "none";
+            });
+        }
+        $("#filterButton").click(function () {
+            // Lấy các giá trị từ các phần tử trên trang
+            const tenhang = $("input[name='tenhang']").val();
+            const mahang = $("input[name='mahang']").val();
+
+            // Tạo đường dẫn đến action QuanLyDM trong controller
+            const url = '@Url.Action("QuanLyHang", "Admin")' + `?tenhang=${tenhang}&madm=${mahang}`;
+
+            // Chuyển hướng đến URL tạo ra
+            window.location.href = url;
         });
-        $('#cancel').on('click', function () {
-            form.setAttribute("aria-hidden", "true");
-            form.setAttribute("tabindex", "-1");
-            form.style.display = "none";
-        });
-    }
-</script>
+    </script>
 
     <!-- Đoạn mã HTML cho modal xác nhận xóa -->
     <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
@@ -220,13 +348,15 @@
             });
         }
     </script>
-   
-<!-- /.card -->
-<!-- Control Sidebar -->
+
+    <!-- /.card -->
+    <!-- Control Sidebar -->
     <aside class="control-sidebar control-sidebar-dark">
         <!-- Control sidebar content goes here -->
     </aside>
 
-<script src="~/Admin/dist/js/adminlte.min.js"></script>
+    <script src="~/Admin/dist/js/adminlte.min.js"></script>
+}
+
 
 
