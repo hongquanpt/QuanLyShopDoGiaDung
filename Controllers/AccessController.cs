@@ -72,7 +72,7 @@ namespace ShopBanDoGiaDung.Controllers
                 dg = _context.Donhangs.Where(c => c.TinhTrang == 1).ToList();
                 int sl = dg.Count();
                 HttpContext.Session.SetInt32("so", sl);
-                HttpContext.Session.SetJson("dg", dg);
+               
                 //lu thogn tin vao session
                 HttpContext.Session.SetString("email", loginInfo.Email);
                 HttpContext.Session.SetInt32("Ma", user.MaTaiKhoan);
