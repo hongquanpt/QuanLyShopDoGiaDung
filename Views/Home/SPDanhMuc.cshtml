@@ -1,9 +1,8 @@
 ﻿﻿@using Microsoft.AspNetCore.Http;
-@model QuanLyShopDoGiaDung.Common.PaginatedList<ShopBanDoGiaDung.Models.Sanpham>
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewBag.Title = "SPDanhMuc";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    @* Layout = "~/Views/Shared/_Layout.cshtml"; *@
     var sp = (QuanLyShopDoGiaDung.Common.PaginatedList<ShopBanDoGiaDung.Models.Sanpham>)ViewBag.sanpham;
     var ten = ViewBag.tendanhmuc;
     int id = ViewBag.idCategory;
@@ -15,7 +14,7 @@
 
 <div class="shoes-grid">
      <div class="products" style="margin-top: 28px;}">
-          <h5 class="latest-product text-uppercase">@ten: @sp.Count <span class="text-lowercase">sản phẩm</span></h5>
+          <h5 class="latest-product text-uppercase">@ten: @sp.Count sản phẩm</h5>
           @*<a class="view-all" href="@Url.Action("AllProduct","Home")">Tất cả sản phẩm<span> </span></a>*@
      </div>
      <input hidden id="value-name" value="@ten"></input>
@@ -53,8 +52,7 @@
      </div>
      <div class="product-left">
           @foreach (var it in sp.Data)
-    {
-            <div>
+          {
                <div class="col-md-4 chain-grid">
                     <a href="@Url.Action("ProductDetail","Home", new { id = it.MaSp})"><img class="img-responsive chain" src="~/BigShopee/images/@it.Anh1" alt=" "></a>
                     <span class="star"> </span>
@@ -118,7 +116,7 @@
 
                 </div>
             
-        }
+           }
         <div class="clearfix"> </div>
         @* @await Html.PartialAsync("_Pagination",sp) *@
         <nav style="float: right; margin-right: 29px;" aria-label="Page navigation example">
@@ -183,7 +181,7 @@
             </ul>
         </nav>
     </div>
-}
+</div> 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">

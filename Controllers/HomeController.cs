@@ -157,6 +157,48 @@ namespace ShopBanDoGiaDung.Controllers
             return View();
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> AllProduct2(int PageIndex, int PageSize,string idHangs, string idCategories, string maxPrice, string minPrice, string search)
+        {   
+
+            IQueryable<Sanpham> model = (IQueryable<Sanpham>)_context.Sanphams;
+             
+            if(!String.IsNullOrEmpty(search)) {
+                model = model.Where((item) => item.TenSp.Contains(search));
+            }
+            if (!String.IsNullOrEmpty(idHangs)) {
+                 int[] arrayIdHang = Array.ConvertAll(idHangs.Split(","), int.Parse);
+                 model = model.Where((item) => arrayIdHang.Contains(item.MaHang??0));
+            }
+
+            if(!String.IsNullOrEmpty(idCategories)) {
+                int[] arrayCategory = Array.ConvertAll(idCategories.Split(","), int.Parse);
+                model  = model.Where((item) => arrayCategory.Contains((item.MaDanhMuc??0)));
+            }
+            if(!String.IsNullOrEmpty(maxPrice)) {
+                int priceMax = Convert.ToInt32(maxPrice);
+                model = model.Where((item) => item.GiaTien < priceMax);
+            }
+             if(!String.IsNullOrEmpty(minPrice)) {
+                int priceMin = Convert.ToInt32(minPrice);
+                model = model.Where((item) => item.GiaTien > priceMin);
+            }
+
+            
+            List<Sanpham> dt =await model.Skip((PageIndex -1 )* PageSize).Take(PageSize).ToListAsync();
+           
+             var count =await model.CountAsync();
+            PaginatedList<Sanpham> data = new PaginatedList<Sanpham>(dt,count,PageIndex, PageSize );   
+              ViewBag.sanpham = data;  
+              ViewBag.idHangs = idHangs;
+              ViewBag.idCategories = idCategories;
+              ViewBag.maxPrice = maxPrice;
+              ViewBag.minPrice = minPrice;
+              ViewBag.search = search;
+            return View();
+        }
+
         public async Task<ActionResult> Search(string search,int PageIndex, int PageSize,  int maxPrice, int minPrice, string orderPrice )
         {
              if(PageIndex == 0 || PageSize == 0){

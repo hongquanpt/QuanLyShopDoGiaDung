@@ -2,7 +2,7 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewBag.Title = "SPHang";
-    //Layout = "~/Views/Shared/_Layout.cshtml";
+    @* Layout = "~/Views/Shared/_Layout.cshtml"; *@
     var sp = (QuanLyShopDoGiaDung.Common.PaginatedList<ShopBanDoGiaDung.Models.Sanpham>)ViewBag.sanpham;
     string ten = ViewBag.tenhang;
     int id = ViewBag.idHang;

@@ -6,6 +6,9 @@
     var countCart = HttpContextAccessor.HttpContext.Session.GetInt32("countCart");
     List<AccountRole> data = HttpContextAccessor.HttpContext.Session.GetJson<List<AccountRole>>("QuyenTK") ?? new List<AccountRole>();
     int soquyen = data.Where(c => c.MaA == 1).Count();
+    var qh = data.FirstOrDefault(c => c.ActionName == "QuanLyDM");
+    var ten = ViewBag.tendanhmuc; 
+    var search = ViewBag.search;
 
 }
 <!DOCTYPE html>
@@ -17,7 +20,6 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
     <link href="~/BigShopee/css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
     <link href="~/BigShopee/js/jquery.min.js" rel="stylesheet" type="text/css" media="all" />
     <!--theme-style-->
@@ -72,7 +74,7 @@
                     </div>
                     @* <form method="post" action="/Home/Search"> *@
                         <div class="search" style="display: flex;justify-content: center;align-items: center;">
-                            <input id="search-name" type="text" name="search" value="" onfocus="this.value = '';"
+                            <input id="search-name" type="text" name="search" value="@search" onfocus="this.value = '';"
                                    onblur="if (this.value == '') {this.value = '';}">
                              <style>
                                  .icon-filter{
@@ -82,49 +84,45 @@
                                     color: blue;
                                  }
                             </style>
-                            <input onclick="handleSearch()" type="submit" value="TÌM KIẾM">              
-                                     <div style="margin-left: 5px;padding-right: 4px;" id="them-tim-kiem" class="dropdown">
-                                        <div   class="account dropdown-toggle" data-toggle="dropdown">                      
-                                            <i style="cursor: pointer;" class="fas fa-filter"></i>
-                                        </div>
-                                        <ul class="dropdown-menu">
-                                            <li><a asp-controller="Home" asp-action="profile" >
-                                                <i style="color:#F97E76;"  class="fas fa-user"></i>
-                                                Thông tin tài khoản</a>
-                                            </li>
-                                            <li><a asp-controller="Home" asp-action="MyOrder" asp-route-PageIndex="1" asp-route-PageSize="10" >
-                                                <i style="color:#F97E76;"  class="fas fa-receipt"></i>
-                                                Lịch sử mua hàng</a></li>
-                                        </ul>
-                                    </div>
-                            </input>
-                           
-                            @* <div style="margin-left: 5px;" id="them-tim-kiem" class="dropdown">
-                                <div   class="account dropdown-toggle" data-toggle="dropdown">                      
-                                    <i style="cursor: pointer;" class="fas fa-filter"></i>
-                                </div>
-                                <ul class="dropdown-menu">
-                                    <li><a asp-controller="Home" asp-action="profile" >
-                                        <i style="color:#F97E76;"  class="fas fa-user"></i>
-                                        Thông tin tài khoản</a>
-                                    </li>
-                                    <li><a asp-controller="Home" asp-action="MyOrder" asp-route-PageIndex="1" asp-route-PageSize="10" >
-                                        <i style="color:#F97E76;"  class="fas fa-receipt"></i>
-                                        Lịch sử mua hàng</a></li>
-                                </ul>
-                            </div> *@
+                            <input onclick="handleSearch()" type="submit" value="TÌM KIẾM"></input>
+                
                         </div>
                          
                         <script>
                             function handleSearch() {
+                                console.log("check ok")
                                 const search = $("#search-name").val()
+                                const lst_id_hangs = $("#lst_id_hangs").val()
+                                const lst_id_category = $("#lst_id_category").val()
+                                const maxPrice = $("#max_price_search").val()
+                                const minPrice = $("#min_price_search").val()
                                 $.ajax({
-                                    url: '@Url.Action("Search","Home")',
+                                        url: '@Url.Action("AllProduct2","Home")',
                                     type: 'GET',
-                                    success: function (res) { 
-                                        console.log(res)
-                                            window.location = '@Url.Action("Search","Home")' + `?PageIndex=${1}` + `&PageSize=${6}`+ `&search=${search}` 
-                                        
+                                    success: function (res) {
+                                            let stringMaxPrice = ""
+                                            let stringMinPrice = ""
+                                            if(maxPrice) {
+                                                stringMaxPrice = `&maxPrice=${maxPrice}`
+                                            }
+                                            if(minPrice) {
+                                                stringMinPrice = `&minPrice=${minPrice}`
+                                            }
+                                            let stringLstIdhang = ""
+                                            if (lst_id_hangs && lst_id_hangs !== "") {
+                                                stringLstIdhang = `&idHangs=${lst_id_hangs}`
+                                            }
+
+                                            let stringCategory = ""
+                                            if (lst_id_category && lst_id_category !== "") {
+                                                stringCategory = `&idCategories=${lst_id_category}`
+                                            }
+                                            let stringSearch = ""
+                                            if (search) {
+                                                stringSearch = `&search=${search}`
+                                            }
+                                            window.location = '@Url.Action("AllProduct2","Home")' + `?PageIndex=${1}` + `&PageSize=${6}` + stringLstIdhang + stringCategory +
+                                             stringMaxPrice + stringMinPrice + stringSearch
                                     }
 
                                 });
@@ -220,7 +218,7 @@
                             </button>
                             <i  style="font-size:18px;color:#F97E76; cursor: pointer;" class="fas fa-sign-out-alt" onclick="handleLogout()"></i>
                           </div>
-                        <div>
+                        @* <div>
                             <a style="border:none; background-color:transparent; font-size:16px; margin-right:5px" href="@Url.Action("Index", "Admin")" @if (soquyen == 6 && data.Where(c => c.MaA == 3).FirstOrDefault().MaQ == 7)
                             {
                                 <text>style="display: none;"</text>
@@ -228,7 +226,7 @@
                                VỀ TRANG ADMIN
                             </a>
                             <i style="font-size:18px;color:#F97E76; cursor: pointer;" class="fas fa-sign-out-alt" onclick="handleLogout()"></i>
-                        </div>
+                        </div> *@
 
                         }
                     </ul>
@@ -242,13 +240,12 @@
     <!---->
     <div class="container">
 
+        
         @RenderBody()
         <div class="sub-cate">
             @await Component.InvokeAsync("DanhMuc")
             @await Component.InvokeAsync("Hang")
-
-     
-
+            @await Component.InvokeAsync("TimKiemKhac")
         </div>
         <div class="clearfix"> </div>
     </div>
@@ -325,5 +322,6 @@
         })
     }
 </script>
+
 
 </html>

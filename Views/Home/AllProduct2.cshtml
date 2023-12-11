@@ -1,4 +1,4 @@
-@using Microsoft.AspNetCore.Http;
+﻿@using Microsoft.AspNetCore.Http;
 @inject IHttpContextAccessor HttpContextAccessor
 @{
      @* ViewBag.Title = "AllProduct"; *@
@@ -9,17 +9,21 @@
     var  max_price = ViewBag.maxPrice;
     var min_price = ViewBag.minPrice;
     var order_price = ViewBag.orderPrice;
-    
+    var idHangs = ViewBag.idHangs;
+     var idCategories = ViewBag.idCategories;
+
 }
 
 <div class="shoes-grid">
      <div class="products" style="margin-top: 28px; }">
-               <h5 class="latest-product">TẤT CẢ SẢN PHẨM: @sp.Count sản phẩm </h5>       
+               <h5 class="latest-product">TẤT CẢ SẢN PHẨM: @sp.Count sản phẩm </h5> 
      </div>
      <div   style="margin-top: 90px;display: flex;justify-content: flex-end;margin-right: 30px;">
-        
+          @* input hidden value *@
+          <input hidden id="lst_id_hangs" type="text" value="@idHangs">
+          <input hidden id="lst_id_category" type="text" value="@idCategories">
          
-          <div  style="display: flex; flex-direction:column;margin-left: 30px;margin-top: 21px;">
+          @* <div  style="display: flex; flex-direction:column;margin-left: 30px;margin-top: 21px;">
                <select  id="select-order-price" style="margin-bottom: 15px;" >
                     @if(order_price == "notorder") {
                          <option selected value="notorder">Sắp xếp tăng/giảm của giá</option>
@@ -31,15 +35,7 @@
                          <option selected value="giam">Giá giảm dần</option>
                     }else  { <option value="giam">Giá giảm dần</option>}
                </select>
-               <button onclick="ChuyenTrang(1,6)">
-                   <div style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
-                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel-fill" viewBox="0 0 16 16">
-                         <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z"/>
-                         </svg>
-                         <span style="margin-left: 4px;">Lọc</span>
-                   </div>
-               </button>
-          </div>
+          </div> *@
      </div>
 
      <div  class="product-left">
@@ -182,23 +178,38 @@
      }
 
      function ChuyenTrang(PageIndex, PageSize) {
-          const maxPrice =parseInt( $("#max-price").val()?.replace(/,/g, ''))
-          const minPrice =parseInt( $("#min-price").val()?.replace(/,/g, ''))
-          const orderPrice = $("#select-order-price").val();
+          const lst_id_hangs = $("#lst_id_hangs").val()
+          const lst_id_category = $("#lst_id_category").val()
+          const maxPrice = $("#max_price_search").val()
+          const minPrice = $("#min_price_search").val()
+          const search = $("#search-name").val()
           $.ajax({
-                url: '@Url.Action("AllProduct","Home")',
+                url: '@Url.Action("AllProduct2","Home")',
                type: 'GET',
-               success: function (res) { 
-                    let stringMaMinPrice = `&maxPrice=${maxPrice}`+ `&minPrice=${minPrice}`
-                    let stringSapXepGia =''
-                    if(orderPrice !== "notorder"){
-                         stringSapXepGia =  `&orderPrice=${orderPrice}`
+               success: function (res) {
+                     let stringMaxPrice = ""
+                    let stringMinPrice = ""
+                    if(maxPrice) {
+                         stringMaxPrice = `&maxPrice=${maxPrice}`
                     }
-                    if(maxPrice === 100000000 && minPrice === 0){
-                      stringMaMinPrice=''
+                    if(minPrice) {
+                         stringMinPrice = `&minPrice=${minPrice}`
                     }
-                     window.location = '@Url.Action("AllProduct","Home")' + `?PageIndex=${PageIndex}` + `&PageSize=${PageSize}`+ stringMaMinPrice + stringSapXepGia 
-                  
+                     let stringLstIdhang = ""
+                     if (lst_id_hangs && lst_id_hangs !== "") {
+                        stringLstIdhang = `&idHangs=${lst_id_hangs}`
+                     }
+
+                     let stringCategory = ""
+                     if (lst_id_category && lst_id_category !== "") {
+                         stringCategory = `&idCategories=${lst_id_category}`
+                     }
+                     let stringSearch = ""
+                    if (search) {
+                         stringSearch = `&search=${search}`
+                    }
+                     window.location = '@Url.Action("AllProduct2","Home")' + `?PageIndex=${PageIndex}` + `&PageSize=${PageSize}` + stringLstIdhang + stringCategory + 
+                     stringMaxPrice + stringMinPrice + stringSearch
                }
 
           });
