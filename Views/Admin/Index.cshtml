@@ -62,7 +62,7 @@
                                     dataType: 'json',
                                     success: function (res) {
                                         if (res.status == true) {
-                                            /* console.log(res.data);*/
+                                            console.log(res.data);
                                             tkbyyear(res.data);
                                         }
                                     }
@@ -76,6 +76,7 @@
 
                             });
                             function destroyChart() {
+                                console.log(lsdata1);
                                 destroyChart(); // Hủy biểu đồ cũ
                                 var existingChart = Chart.getChart("myAreaChart");
                                 if (existingChart) {
@@ -84,13 +85,24 @@
                             }
 
                             function tkbyyear(lsdata1) {
+                                console.log(lsdata1);
                                 var lslabel = [];
                                 var lsdata = [];
-                                $.each(lsdata1, function (index, item) {
-                                    lslabel.push(item.Thang);
-                                    lsdata.push(item.DoanhThu);
+                                if (lsdata1 && Array.isArray(lsdata1)) {
+                                    $.each(lsdata1, function (index, item) {
+                                        if (item && item.thang !== undefined && item.doanhThu !== undefined) {
+                                            console.log("item.Thang:", item.thang);
+                                            console.log("item.DoanhThu:", item.doanhThu);
 
-                                });
+                                            lslabel.push(item.thang);
+                                            lsdata.push(item.doanhThu);
+                                        } else {
+                                            console.log("Invalid item format at index", index);
+                                        }
+                                    });
+                                } else {
+                                    console.log("lsdata1 is undefined or not an array.");
+                                }
                                 console.log(lslabel);
                                 console.log(lsdata);
 

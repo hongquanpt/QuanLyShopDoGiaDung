@@ -1209,6 +1209,7 @@ namespace ShopBanDoGiaDung.Controllers
 
             return Json(new
             {
+
                 status = true,
                 data = list
             });
