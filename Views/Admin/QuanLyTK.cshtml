@@ -14,6 +14,7 @@
     var email= ViewBag.email;
     var chvu= ViewBag.chvu;
     var matk = ViewBag.matk;
+    var ngaysinh = ViewBag.ngaysinh;
 }
 @if (qh.MaA == 1)
 {
@@ -106,59 +107,42 @@ else
 
                             <div class="card">
                                 <div class="card-header">
-                                    <h3 class="card-title">Quản lý tài khoản khách hàng</h3>
+                                    <label class="card-title">Quản lý tài khoản khách hàng</label>
                                 </div>
-                                <div style=" margin-top: 30px; margin-bottom: 30px;">
-                                    <div style=" margin-left: 40px;">
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="tendm">Tìm kiếm theo tên chủ tài khoản:    </label>
-                                                        <input  type="text" value="@tenctk" class="form-control" placeholder="Nhập tên chủ tài khoản " name="tenctk" required>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="madm">Tìm kiếm theo mã tài khoản:    </label>
-                                                        <input  type="number" value="@(matk!=0?matk:null)" class="form-control" placeholder="Nhập mã mã tài khoản " name="matk" required>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="ChucVu">Chức vụ:</label>
-                                                        <select class="form-control" id="ChucVu">
-                                                            <option value=0>Chọn chức vụ</option>
-                                                            @foreach (var item in chucvu)
-                                                            {
-                                                                <option value="@item.MaCv">@item.Ten</option>
-                                                            }
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="tendm">Tìm kiếm theo địa chỉ:    </label>
-                                                        <input  type="text" value="@tendc" class="form-control" placeholder="Nhập địa chỉ " name="tendc" required>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="madm">Tìm kiếm theo số điện thoại:    </label>
-                                                        <input  type="text" value="@sdt" class="form-control" placeholder="Nhập số điện thoại " name="sdt" required>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="tendm">Tìm kiếm theo email:    </label>
-                                                        <input type="text" value="" class="form-control" placeholder="Nhập địa chỉ email " name="email" required>
-                                                    </div>
-                                                </div>
-                                               
-                                            </div>
-
-                                            <button style="margin-top:20px;margin-left:85%" type="button" class="btn btn-primary" id="filterButton">Tìm kiếm</button>
-                                        </div>
-                                    </div>
-
-                                </div>
+                                
                               
                                 <!-- /.card-header -->
                                 <div class="card-body">
                                     <table id="example1" class="table table-bordered table-striped">
                                         <thead>
+                                            <tr>
+                                                <th><input type="text" class="form-control" value="@(matk!=0? matk:null)" placeholder="Nhập Mã"></th>
+                                                <th><input type="text" class="form-control" value="@tenctk" placeholder="Nhập họ tên"></th>
+                                                <th><input type="date" class="form-control" value="@ngaysinh" placeholder="Nhập ngày sinh"></th>
+                                                <th><input type="text" class="form-control" value="@tendc" placeholder="Nhập địa chỉ"></th>
+                                                <th><input type="text" class="form-control" value="@sdt" placeholder="Nhập số điện thoại"></th>
+                                                <th><input type="text" class="form-control" value="@email" placeholder="Nhập Email"></th>
+                                                <th>
+                                                    <select class="form-control" id="ChucVuSearch">
+                                                        @if (chvu == 0)
+                                                        {
+                                                            <option value="0">Chọn chức vụ</option>
+                                                        }
+                                                        else
+                                                        {
+                                                            <option value="@chvu">@chucvu.Where(c=>c.MaCv==chvu).FirstOrDefault().Ten</option>
+                                                        }
+                                                        <option value="0">Chọn chức vụ</option>
+                                                        @foreach (var item in chucvu)
+                                                        {
+                                                            <option value="@item.MaCv">@item.Ten</option>
+                                                        }
+                                                    </select>
+                                                </th>
+                                                <th>  <i style="margin-left:5px" class="nav-icon fas fa-search" id="filterButton"></i></th>
+                                                
+                                               
+                                            </tr>
                                             <tr>
                                                 <th>Mã TK</th>
                                                 <th>Họ tên</th>
@@ -179,7 +163,7 @@ else
                                                 <tr>
                                                     <td>@item.MaTaiKhoan</td>
                                                     <td>@item.Ten</td>
-                                                    <td>@item.NgaySinh</td>
+                                                    <td>@item.NgaySinh.Value.ToShortDateString()</td>
                                                     <td>@item.DiaChi</td>
                                                     <td>@item.Sdt</td>
                                                     <td>@item.Email</td>
@@ -318,18 +302,43 @@ else
             });
         }
         $("#filterButton").click(function () {
-            // Lấy các giá trị từ các phần tử trên trang
-            const tenctk = $("input[name='tenctk']").val();
-            const matk = $("input[name='matk']").val();
-            const tendc = $("input[name='tendc']").val();
-            const sdt = $("input[name='sdt']").val();
-            const email = $("input[name='email']").val();
-            const chvu = $("#ChucVu").val();
+            // Lấy giá trị tìm kiếm từ các ô trong hàng ngang thứ ba
+            const tenctkInput = $("thead tr:nth-child(1) th:nth-child(1) input");
+            const hotenInput = $("thead tr:nth-child(1) th:nth-child(2) input");
+            const ngaysinhInput = $("thead tr:nth-child(1) th:nth-child(3) input");
+            const diachiInput = $("thead tr:nth-child(1) th:nth-child(4) input");
+            const sdtInput = $("thead tr:nth-child(1) th:nth-child(5) input");
+            const emailInput = $("thead tr:nth-child(1) th:nth-child(6) input");
+            const chucvuInput = $("#ChucVuSearch");
 
+            // Kiểm tra và xử lý giá trị
+            const matk = getValueOrEmpty(tenctkInput.val());
+            const tenctk = getValueOrEmpty(hotenInput.val());
+            const ngaysinh = getDateTimeValue(ngaysinhInput.val());
+            const tendc = getValueOrEmpty(diachiInput.val());
+            const sdt = getValueOrEmpty(sdtInput.val());
+            const email = getValueOrEmpty(emailInput.val());
+            const chvu = getValueOrEmpty(chucvuInput.val());
+
+
+            const url = `@Url.Action("QuanLyTK", "Admin")?matk=${matk}&tenctk=${tenctk}&ngaysinh=${ngaysinh}&tendc=${tendc}&sdt=${sdt}&email=${email}&chvu=${chvu}`;
             // Sử dụng `window.location.href` để chuyển hướng đến URL
-            const url = `@Url.Action("QuanLyTK", "Admin")?tenctk=${tenctk}&matk=${matk}&tendc=${tendc}&sdt=${sdt}&email=${email}&chvu=${chvu}`;
             window.location.href = url;
         });
+
+        // Hàm để xử lý giá trị là null hoặc chuỗi rỗng
+        function getValueOrEmpty(value) {
+            return value === undefined ? "" : value.trim();
+        }
+
+        function getDateTimeValue(value) {
+            const date = new Date(value.trim());
+            return isNaN(date) ? "" : date.toISOString().slice(0, 10);
+        }
+
+
+
+
     </script>
 
     <script>
@@ -354,6 +363,7 @@ else
             });
         });
     </script>
+
     <!-- Control Sidebar -->
     <aside class="control-sidebar control-sidebar-dark">
         <!-- Control sidebar content goes here -->

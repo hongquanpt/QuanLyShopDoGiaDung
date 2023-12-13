@@ -10,8 +10,8 @@
     var min_price = ViewBag.MinPrice;
     var order_price = ViewBag.SortOrder;
     var ten = ViewBag.tenSP;
-    var dsdm = ViewBag.dsdm;
-    var dsh = ViewBag.dsh;
+    var dsdm = (List<ShopBanDoGiaDung.Models.Danhmucsanpham>)ViewBag.dsdm;
+    var dsh = (List<ShopBanDoGiaDung.Models.Hangsanxuat>)ViewBag.dsh;
     var tenh = ViewBag.tenh;
     var ban = ViewBag.ban;
     var slc = ViewBag.slc;
@@ -107,98 +107,60 @@ else { }
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Quản lý sản phẩm</h3>
-                        </div>
-                        <div style=" margin-top: 30px; margin-bottom: 30px;">
-                            <div style=" margin-left: 40px;">
-                                @using (Html.BeginForm("QuanLySP", "Admin"))
-                                {
-                                    <label for="min-price" style="font-size: 20px; margin-right: 10px">Tìm kiếm theo tên sản phẩm:</label>
-                                    <div style=" align-items: center; margin-right: 10px">
-
-                                        <div class="input-group input-group-sm" style="flex: 1; margin-top: 2px; width: 50%;">
-                                            <input class="form-control form-control-navbar" type="search" placeholder="Search" value="@ten" aria-label="Search" name="tenSP" autocomplete="off" required>
-                                            <div class="input-group-append">
-                                                <button class="btn btn-navbar" type="submit">
-                                                    <i class="fas fa-search"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                }
-                                <button class="btn btn-primary" data-dismiss="modal" id="confirmThem" style="margin-top:30px" onclick="Them()">Tìm kiếm nâng cao</button>
-
-                                <form id="frmThemHang" aria-hidden="true" tabindex="-1" style="display: none;">
-                                    <div class="card-body">
-                                        <div class="slider" style="width: 23%; height: 10px; margin-top:30px;margin-bottom:20px">
-                                            <label for="min-price" style="font-size: 18px;">Chọn khoảng giá phù hợp:</label>
-                                            <div id="price-range"></div>
-                                            <div></div>
-                                            <div id="price-values">
-                                                <input id="min-price" type="text" disabled value="@min_price.ToString("N0")" style="width: 130px;">
-                                                <input id="max-price" type="text" disabled value="@(max_price != 0 ? max_price.ToString("N0") : "100,000,000")" style="width: 130px;">
-                                            </div>
-                                        </div>
-                                        <div class="phai" style=" margin-top:30px;margin-bottom:20px; margin-top:90px;  ">
-                                            <label for="select-order-price" style="font-size: 18px;">Chọn sắp xếp giá:</label>
-                                            <select id="select-order-price">
-                                                <option value="notorder">Sắp xếp tăng/giảm của giá</option>
-                                                <option value="tang">Giá tăng dần</option>
-                                                <option value="giam">Giá giảm dần</option>
-                                            </select>
-
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="Hang">Hãng:</label>
-                                                    <select class="form-control" id="Hang">
-                                                        <option value=0>Chọn hãng</option>
-                                                        @foreach (var item in dsh)
-                                                        {
-                                                            <option value="@item.MaHang">@item.TenHang</option>
-                                                        }
-                                                    </select>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="slc">Sản phẩm còn trong kho dưới:</label>
-                                                    <input type="number" value="@(slc!=0?slc:null)" class="form-control" placeholder="Nhập số lượng sản phẩm" name="slc" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="DanhMuc">Danh mục:</label>
-                                                    <select class="form-control" id="DanhMuc">
-                                                        <option value=0>Chọn danh mục</option>
-                                                        @foreach (var item in dsdm)
-                                                        {
-                                                            <option value="@item.MaDanhMuc">@item.TenDanhMuc</option>
-                                                        }
-                                                    </select>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="ban">Sản phẩm đã bán trên:</label>
-                                                    <input type="number" value="@(ban!=0? ban:null)" class="form-control" placeholder="Nhập số lượng sản phẩm" name="ban" required>
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-                                        <button type="button" class="btn btn-primary" id="filterButton">Tìm kiếm</button>
-                                        <button type="button" class="btn btn-default" data-dismiss="modal" id="cancel">Hủy bỏ</button>
-
-                                    </div>
-                                </form>
-
-
-                            </div>
-
-                        </div>
-
+                            <label class="card-title">Quản lý sản phẩm</label>
+                        </div>                 
                         <!-- /.card-header -->
                         <div class="card-body">
                             <table id="example1" class="table table-bordered table-striped">
                                 <thead>
+                                    <tr>
+                                        <th><input type="text" class="form-control" value="@ten" placeholder="Nhập tên sản phẩm"></th>
+                                        <th></th>
+                                        <th>
+                                            <select class="form-control" id="HangSearch">
+                                                @if ( tenh== 0)
+                                                {
+                                                    <option value="0">Chọn hãng</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@tenh">@dsh.Where(c=>c.MaHang==tenh).FirstOrDefault().TenHang</option>
+                                                }
+                                                <option value="0">Chọn hãng</option>
+                                                @foreach (var item in dsh)
+                                                {
+                                                    <option value="@item.MaHang">@item.TenHang</option>
+                                                }
+                                            </select>
+                                        </th>
+                                        <th>
+                                            <select class="form-control" id="DMSearch">
+                                                @if (tendm == 0)
+                                                {
+                                                    <option value="0">Chọn danh mục</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@tendm">@dsdm.Where(c=>c.MaDanhMuc==tendm).FirstOrDefault().TenDanhMuc</option>
+                                                }
+                                                <option value="0">Chọn danh mục</option>
+                                                @foreach (var item in dsdm)
+                                                {
+                                                    <option value="@item.MaDanhMuc">@item.TenDanhMuc</option>
+                                                }
+                                            </select>
+                                        </th>
+                                        <th>
+                                            <input type="number" class="form-control" value="@(min_price!=0? min_price:null)" placeholder="Giá dưới">
+                                            <input type="number" class="form-control" value="@(max_price!=0? max_price:null)" placeholder="Giá trên">
+                                        </th>
+                                        <th><input type="text" class="form-control" value="@(ban!=0? ban:null)" placeholder="Nhập số lượng"></th>
+                                        <th><input type="text" class="form-control" value="@(slc!=0? slc:null)" placeholder="Nhập số lượng"></th>
+                                        <th>Tìm kiếm</th>
+                                        <th>  <i style="margin-left:5px" class="nav-icon fas fa-search" id="filterButton"></i></th>
+                                  
+
+                                    </tr>
                                     <tr>
 
                                         <th>Tên sản phẩm</th>
@@ -208,6 +170,8 @@ else { }
                                         <th>Giá bán</th>
                                         <th>Số lượng đã bán</th>
                                         <th>Số lượng còn lại</th>
+                                        <th> Sửa sản phẩm</th>
+                                        <th> Xóa sản phẩm</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -368,63 +332,40 @@ else { }
             });
         });
     }
-    function Them() {
-        var form = document.getElementById("frmThemHang");
-        form.setAttribute("aria-hidden", "false");
-        form.setAttribute("tabindex", "0");
-        form.style.display = "block";
-
-        $('#cancel').on('click', function () {
-            form.setAttribute("aria-hidden", "true");
-            form.setAttribute("tabindex", "-1");
-            form.style.display = "none";
-        });
-    }
 
     $(document).ready(function () {
-        const minPriceInput = $("#min-price");
-        const maxPriceInput = $("#max-price");
-        const orderPriceSelect = $("#select-order-price");
-        const priceRange = $("#price-range");
 
-        // Initialize the price range slider
-        priceRange.slider({
-            range: true,
-            min: 0,
-            max: 100000000,
-            values: [@min_price, @max_price],
-            slide: function (event, ui) {
-                minPriceInput.val(ui.values[0].toLocaleString('en-US'));
-                maxPriceInput.val(ui.values[1].toLocaleString('en-US'));
-            }
-        });
-
-        // Filter button click event
         $("#filterButton").click(function () {
             // Lấy các giá trị từ các phần tử trên trang
-            const maxPriceInput = $("#max-price");
-            const minPriceInput = $("#min-price");
-            const orderPriceSelect = $("#select-order-price");
-            const Hang = $("#Hang").val(); // Lấy giá trị từ dropdown hãng
-            const DanhMuc = $("#DanhMuc").val(); // Lấy giá trị từ dropdown danh mục
+            const tenInput = $("thead tr:nth-child(1) th:nth-child(1) input");
+            const HangInput = $("thead tr:nth-child(1) th:nth-child(3) select");
+            const DanhMucInput = $("thead tr:nth-child(1) th:nth-child(4) select");
+            const minPriceInput = $("thead tr:nth-child(1) th:nth-child(5) input:nth-child(1)");
+            const maxPriceInput = $("thead tr:nth-child(1) th:nth-child(5) input:nth-child(2)");
+            const banInput = $("thead tr:nth-child(1) th:nth-child(6) input");
+            const slcInput = $("thead tr:nth-child(1) th:nth-child(7) input");
 
-            // Chuyển đổi giá trị dạng chuỗi sang số nguyên
-            const maxPrice = parseInt(maxPriceInput.val().replace(/,/g, ''));
-            const minPrice = parseInt(minPriceInput.val().replace(/,/g, ''));
-            const orderPrice = orderPriceSelect.val();
-            const ten = $("input[name='tenSP']").val();
-            const slc = $("input[name='slc']").val();
-            const ban = $("input[name='ban']").val();
+            // Lấy giá trị từ các phần tử
+            const ten = getValueOrEmpty(tenInput.val());
+            const Hang = getValueOrEmpty(HangInput.val());
+            const DanhMuc = getValueOrEmpty(DanhMucInput.val());
+            const minPrice = parseInt(minPriceInput.val().replace(/,/g, '')) || 0;
+            const maxPrice = parseInt(maxPriceInput.val().replace(/,/g, '')) || 0;
+            const ban = getValueOrEmpty(banInput.val());
+            const slc = getValueOrEmpty(slcInput.val());
 
             // Xây dựng URL và điều hướng tới nó
-            const sortOrderParam = orderPrice !== 'notorder' ? `&sortOrder=${orderPrice}` : '';
-            const tendm = DanhMuc !== 0 ? `&tendm=${DanhMuc}` : '';
-            const tenh = Hang !== 0 ? `&tenh=${Hang}` : '';
-
+            const sortOrderParam = "notorder"; // You may want to modify this based on your actual requirements
+            const url = `@Url.Action("QuanLySP", "Admin")?tenSP=${ten}&tenh=${Hang}&tendm=${DanhMuc}&minPrice=${minPrice}&maxPrice=${maxPrice}&ban=${ban}&slc=${slc}&sortOrder=${sortOrderParam}`;
             // Sử dụng `window.location.href` để chuyển hướng đến URL
-            const url = `@Url.Action("QuanLySP", "Admin")?tenSP=${ten}&tendm=${DanhMuc}&slc=${slc}&ban=${ban}&tenh=${Hang}&maxPrice=${maxPrice}&minPrice=${minPrice}${sortOrderParam}`;
             window.location.href = url;
         });
+
+        // Hàm để xử lý giá trị là null hoặc chuỗi rỗng
+        function getValueOrEmpty(value) {
+            return value === undefined ? "" : value.trim();
+        }
+
 
     });
 </script>

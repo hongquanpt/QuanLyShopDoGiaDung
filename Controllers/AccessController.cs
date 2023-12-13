@@ -184,7 +184,7 @@ namespace ShopBanDoGiaDung.Controllers
         {
            
             HttpContext.Session.Clear();
-            return RedirectToAction("Login","Access");
+            return RedirectToAction("Index","Home");
         }
 
     }

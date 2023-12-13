@@ -104,46 +104,23 @@ else
 
                             <div class="card">
                                 <div class="card-header">
-                                    <h3 class="card-title">Quản lý hãng sản xuất</h3>
+                                    <label class="card-title">Quản lý hãng sản xuất</label>
                                 </div>
-                                <div style=" margin-top: 1px; margin-bottom: 1px;">
-                                    <div style=" margin-left: 40px;">
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-md-4 mb-0">
-                                                    
-                                                        <div class="form-group">
-                                                            <label for="tendm">Tìm kiếm theo tên hãng:    </label>
-                                                        <input  type="text" value="@tenhang" class="form-control" placeholder="Nhập tên hãng " name="tenhang" required>
-                                                        </div>
-
-                                                </div>
-                                                <div class="col-md-4 mb-0">
-                                                    <div class="form-group">
-                                                        <label for="madm">Tìm kiếm theo mã hãng:    </label>
-                                                        <input  type="number" value="@(mahang!=0? mahang:null)" class="form-control" placeholder="Nhập mã hãng " name="mahang" required>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-0">
-                                                    <div class="form-group">
-                                                        <label></label>
-                                                        <button  style="width:100px; margin-top:30px" type="button" class="btn btn-primary" id="filterButton">Tìm kiếm</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                           
-                                        </div>
-                                    </div>
-
-                                </div>
+                               
                                 <!-- /.card-header -->
                                 <div class="card-body">
                                     <table id="example1" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
+                                                <th><input type="text" class="form-control" value="@(mahang!=0? mahang:null)" placeholder="Nhập Mã"></th>
+                                                <th><input type="text" class="form-control" value="@tenhang" placeholder="Nhập họ tên"></th>                                              
+                                                <th>Tìm kiếm</th>
+                                                <th>  <i style="margin-left:5px" class="nav-icon fas fa-search" id="filterButton"></i></th>
+                                            <tr>
                                                 <th>Mã hãng</th>
                                                 <th>Tên hãng</th>
+                                                <th>Sửa hãng</th>
+                                                <th>Xóa hãng</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -290,16 +267,20 @@ else
             });
         }
         $("#filterButton").click(function () {
-            // Lấy các giá trị từ các phần tử trên trang
-            const tenhang = $("input[name='tenhang']").val();
-            const mahang = $("input[name='mahang']").val();
+            const tenctkInput = $("thead tr:nth-child(1) th:nth-child(1) input");
+            const hotenInput = $("thead tr:nth-child(1) th:nth-child(2) input");
 
+            const mahang = getValueOrEmpty(tenctkInput.val());
+            const tenhang = getValueOrEmpty(hotenInput.val());
             // Tạo đường dẫn đến action QuanLyDM trong controller
-            const url = '@Url.Action("QuanLyHang", "Admin")' + `?tenhang=${tenhang}&madm=${mahang}`;
+            const url = '@Url.Action("QuanLyHang", "Admin")' + `?tenhang=${tenhang}&mahang=${mahang}`;
 
             // Chuyển hướng đến URL tạo ra
             window.location.href = url;
         });
+        function getValueOrEmpty(value) {
+            return value === undefined ? "" : value.trim();
+        }
     </script>
 
     <!-- Đoạn mã HTML cho modal xác nhận xóa -->

@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ShopBanDoGiaDung.authorize;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ShopBanDoGiaDung.Controllers
 
@@ -127,9 +128,8 @@ namespace ShopBanDoGiaDung.Controllers
 
         #endregion
         #region Quản lý tài khoản
-        public IActionResult QuanLyTK(int matk, string tenctk, string tendc, string sdt, string email, int chvu, int page = 1, int pageSize = 10)
+        public IActionResult QuanLyTK(int matk, DateTime ngaysinh, string tenctk, string tendc, string sdt, string email, int chvu, int page = 1, int pageSize = 10)
         {
-
             // Thực hiện truy vấn và phân trang
             var query = from tk in obj.Taikhoans
                         join cv in obj.ChucVus on tk.MaCv equals cv.MaCv
@@ -142,39 +142,53 @@ namespace ShopBanDoGiaDung.Controllers
                             NgaySinh = tk.NgaySinh,
                             MatKhau = tk.MatKhau,
                             TenChucVu = cv.Ten,
-                            Email= tk.Email,
-                            MaCV=cv.MaCv
+                            Email = tk.Email,
+                            MaCV = cv.MaCv
                         };
-            var chucvu= obj.ChucVus.ToList();
-            ViewBag.chucvu=chucvu;
-            if (!string.IsNullOrEmpty(tenctk))
-            {
-                query = query.Where(dm => dm.Ten.Contains(tenctk)); // hoặc OrderByDescending(dm => dm.MaDanhMuc)
-            }
-            if (!string.IsNullOrEmpty(tendc))
-            {
-                query = query.Where(dm => dm.DiaChi.Contains(tendc)); // hoặc OrderByDescending(dm => dm.MaDanhMuc)
-            }
-            if (!string.IsNullOrEmpty(sdt))
-            {
-                query = query.Where(dm => dm.Sdt.Contains(sdt)); // hoặc OrderByDescending(dm => dm.MaDanhMuc)
-            }
-            if (!string.IsNullOrEmpty(email))
-            {
-                query = query.Where(dm => dm.Email.Contains(email)); // hoặc OrderByDescending(dm => dm.MaDanhMuc)
-            }
-            if (matk != 0)
+
+            var chucvu = obj.ChucVus.ToList();
+            ViewBag.chucvu = chucvu;
+
+            if ( matk != 0)
             {
                 query = query.Where(item => item.MaTaiKhoan == matk);
             }
+
+            if (!string.IsNullOrEmpty(tenctk))
+            {
+                query = query.Where(dm => dm.Ten.Contains(tenctk));
+            }
+            if (ngaysinh != null && ngaysinh != DateTime.MinValue)
+            {
+                query = query.Where(item => item.NgaySinh == ngaysinh);
+            }
+
+            if (!string.IsNullOrEmpty(tendc))
+            {
+                query = query.Where(dm => dm.DiaChi.Contains(tendc));
+            }
+
+            if (!string.IsNullOrEmpty(sdt))
+            {
+                query = query.Where(dm => dm.Sdt.Contains(sdt));
+            }
+
+            if (!string.IsNullOrEmpty(email))
+            {
+                query = query.Where(dm => dm.Email.Contains(email));
+            }
+
             if (chvu != 0)
             {
                 query = query.Where(item => item.MaCV == chvu);
             }
+
             var model = query.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
             // Tính toán thông tin phân trang
             var totalItemCount = query.Count();
             var pagedList = new StaticPagedList<TaiKhoanChucVu>(model, page, pageSize, totalItemCount);
+
             ViewBag.PageStartItem = (page - 1) * pageSize + 1;
             ViewBag.PageEndItem = Math.Min(page * pageSize, totalItemCount);
             ViewBag.Page = page;
@@ -183,12 +197,12 @@ namespace ShopBanDoGiaDung.Controllers
             ViewBag.tendc = tendc;
             ViewBag.sdt = sdt;
             ViewBag.chvu = chvu;
-            ViewBag.matk=matk;
-            ViewBag.chvu = chvu;
+            ViewBag.matk = matk;
+            ViewBag.email=email;
 
             return View(pagedList);
-
         }
+
         public IActionResult SuaCV(int matk, int macv)
         {
             var tk = obj.Taikhoans.Find(matk);
@@ -268,21 +282,14 @@ namespace ShopBanDoGiaDung.Controllers
                 {
                     query = query.Where(item => item.MaDM == tendm);
                 }
-                if (sortOrder == "tang")
-                {
-                    query = query.OrderBy(item => item.GiaTien);
-                }
-                if (sortOrder == "giam")
-                {
-                    query = query.OrderByDescending(item => item.GiaTien);
-                }
+               
                 if (slc != 0)
                 {
                     query = query.Where(item => item.SoLuongTrongKho < slc);
                 }
                 if (ban != 0)
                 {
-                    query = query.Where(item => item.SoLuongDaBan > ban);
+                    query = query.Where(item => item.SoLuongDaBan < ban);
                 }
                 // Thực hiện phân trang
                 var totalItemCount = query.Count();
@@ -359,7 +366,7 @@ namespace ShopBanDoGiaDung.Controllers
                 }
                 if (ban != 0)
                 {
-                    query = query.Where(item => item.SoLuongDaBan > ban);
+                    query = query.Where(item => item.SoLuongDaBan < ban);
                 }
                 // Thực hiện truy vấn và phân trang
                 var totalItemCount = query.Count();
@@ -854,7 +861,7 @@ namespace ShopBanDoGiaDung.Controllers
         }
         #endregion
         #region Quản lý đơn hàng
-        public IActionResult QuanLyDH(string tennn, int madh, string dc, decimal minPrice, decimal maxPrice, int page = 1, int pageSize = 5)
+        public IActionResult QuanLyDH(string tennn, int madh, string dc,DateTime ngaymua, decimal minPrice, decimal maxPrice, int page = 1, int pageSize = 5)
         {
             // Lấy tất cả đơn hàng và thực hiện kết hợp
             var allOrders = from a in obj.Donhangs
@@ -868,7 +875,28 @@ namespace ShopBanDoGiaDung.Controllers
                                 NgayMua = a.NgayLap,
                                 TinhTrang = a.TinhTrang
                             };
+            if (madh != 0)
+            {
+                allOrders = allOrders.Where(item => item.MaDonHang == madh);
+            }
 
+            if (!string.IsNullOrEmpty(tennn))
+            {
+                allOrders = allOrders.Where(dm => dm.NguoiNhan.Contains(tennn));
+            }
+            if (!string.IsNullOrEmpty(dc))
+            {
+                allOrders = allOrders.Where(dm => dm.DiaChi.Contains(dc));
+            }
+            if (ngaymua != null && ngaymua != DateTime.MinValue)
+            {
+                allOrders = allOrders.Where(item => item.NgayMua == ngaymua);
+            }
+            if (maxPrice != 0)
+            {
+                allOrders = allOrders.Where(item => item.TongTien < maxPrice && item.TongTien > minPrice);
+            }
+           
             // Tạo danh sách các tình trạng
             var tinhTrang = allOrders.OrderByDescending(o => o.MaDonHang).ToList();
             var tinhTrang0 = allOrders.Where(o => o.TinhTrang == 0).OrderByDescending(o => o.MaDonHang).ToList();
@@ -914,6 +942,7 @@ namespace ShopBanDoGiaDung.Controllers
             ViewBag.dc = dc;
             ViewBag.MinPrice = minPrice;
             ViewBag.MaxPrice = maxPrice;
+            ViewBag.ngaymua= ngaymua;
             return View();
         }
 
@@ -1006,7 +1035,7 @@ namespace ShopBanDoGiaDung.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult TKDoanhthu(int year)
+        public IActionResult Index(int year)
         {
             var ds = obj.Donhangs.Where(s => s.NgayLap != null && s.NgayLap.Value.Year.ToString().Equals(year.ToString())).ToList();
             var list = new List<ThongKeDoanhThu>();

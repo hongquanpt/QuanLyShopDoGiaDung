@@ -102,46 +102,23 @@ else
 
                             <div class="card">
                                 <div class="card-header">
-                                    <h3 class="card-title">Quản lý thông tin danh mục</h3>
-                                </div>
-                                <div style=" margin-top: 1px; margin-bottom: 1px;">
-                                    <div style=" margin-left: 40px;">                                       
-                                            <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-md-4 mb-0">
-                                                    <div class="form-group">
-                                                            <label for="tendm">Tìm kiếm theo tên danh mục:    </label>
-                                                            <input  type="text" value="@tendm" class="form-control" placeholder="Nhập tên danh mục " name="tendm" required>
-                                                        </div>
-                                                                                                            
-                                                </div>
-                                                <div class="col-md-4 mb-0">
-                                                    <div class="form-group">
-                                                        <label for="tendm">Tìm kiếm theo tên danh mục:    </label>
-                                                        <input  type="text" value="@tendm" class="form-control" placeholder="Nhập tên danh mục " name="tendm" required>
-                                                    </div>
-                                                    
-                                                </div>
-                                                <div class="col-md-4 mb-0">
-                                                    <div class="form-group">
-                                                        <button style="margin-top:30px;width:100px" type="button" class="btn btn-primary" id="filterButton">Tìm kiếm</button>
-                                                    </div>
-                                                    
-                                                </div>
-                                            </div>
-
-                                                
-                                            </div>
-                                    </div>
-
-                                </div>
+                                    <label class="card-title">Quản lý thông tin danh mục</label>
+                                </div>                            
                                 <!-- /.card-header -->
                                 <div class="card-body">
                                     <table id="example1" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
+                                                <th><input type="text" class="form-control" value="@(madm!=0? madm:null)" placeholder="Nhập Mã"></th>
+                                                <th><input type="text" class="form-control" value="@tendm" placeholder="Nhập họ tên"></th>
+                                                <th>Tìm kiếm</th>
+                                                <th>  <i style="margin-left:5px" class="nav-icon fas fa-search" id="filterButton"></i></th>
+                                            </tr>
+                                            <tr>
                                                 <th>Mã danh mục</th>
                                                 <th>Tên danh mục</th>
+                                                <th>Sửa danh mục</th>
+                                                <th>Xóa danh mục</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -291,9 +268,11 @@ else
                 });
             }
             $("#filterButton").click(function () {
-                // Lấy các giá trị từ các phần tử trên trang
-                const tendm = $("input[name='tendm']").val();
-                const madm = $("input[name='madm']").val();
+                const tenctkInput = $("thead tr:nth-child(1) th:nth-child(1) input");
+                const hotenInput = $("thead tr:nth-child(1) th:nth-child(2) input");
+
+                const madm = getValueOrEmpty(tenctkInput.val());
+                const tendm = getValueOrEmpty(hotenInput.val());
 
                 // Tạo đường dẫn đến action QuanLyDM trong controller
                 const url = '@Url.Action("QuanLyDM", "Admin")' + `?tendm=${tendm}&madm=${madm}`;
@@ -301,7 +280,9 @@ else
                 // Chuyển hướng đến URL tạo ra
                 window.location.href = url;
             });
-
+            function getValueOrEmpty(value) {
+                return value === undefined ? "" : value.trim();
+            }
 
         </script>
 
