@@ -14,7 +14,7 @@
     var qh = data.FirstOrDefault(c => c.ActionName == "QuanLyQH");
 
 }
-@if (qh.MaA == 1)
+@if (qh == null || qh.MaA == 1)
 {
     <!DOCTYPE html>
     <html lang="en">
@@ -105,7 +105,7 @@ else
 
                             <div class="card">
                                 <div class="card-header">
-                                    <h3 class="card-title">Quản lý quyền hạn của các chức vụ</h3>
+                                    <label class="card-title">Quản lý quyền hạn của các chức vụ</label>
                                 </div>
                                 <!-- /.card-header -->
                                 <div class="card-body">
