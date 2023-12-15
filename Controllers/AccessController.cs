@@ -154,27 +154,64 @@ namespace ShopBanDoGiaDung.Controllers
                 Sdt=registerInfo.Sdt,
                 NgaySinh=registerInfo.NgaySinh,
                 MaCv=3,
-              //  Quyen = "khach"
+             
             };
             _context.Taikhoans.Add(newTk);
             await _context.SaveChangesAsync(); 
+
             List<Claim> claims = new List<Claim>()
                   {
                       new Claim(ClaimTypes.NameIdentifier,registerInfo.Email),
                       new Claim("OtherProperties","Example Role")
 
                   };
-             HttpContext.Session.SetString("email", registerInfo.Email);
-             HttpContext.Session.SetInt32("Ma", newTk.MaTaiKhoan);
+                /*HttpContext.Session.SetString("email", registerInfo.Email);
+                HttpContext.Session.SetInt32("Ma", newTk.MaTaiKhoan);
 
-             ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-             AuthenticationProperties properties = new AuthenticationProperties()
+                ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                AuthenticationProperties properties = new AuthenticationProperties()
+                   {
+                       AllowRefresh = true
+                   };
+               await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+               new ClaimsPrincipal(claimsIdentity), properties);*/
+                //lu thogn tin vao session
+                HttpContext.Session.SetString("email", registerInfo.Email);
+                HttpContext.Session.SetInt32("Ma", newTk.MaTaiKhoan);
+                //HttpContext.Session.SetString("role", user.Quyen);
+                HttpContext.Session.SetString("SDT", newTk.Sdt);
+                HttpContext.Session.SetString("DiaChi", newTk.DiaChi);
+                var data = from tk in _context.Taikhoans
+                           join cv in _context.ChucVus on tk.MaCv equals cv.MaCv
+                           join qcv in _context.CvQAs on cv.MaCv equals qcv.MaCv
+                           join q in _context.Quyens on qcv.MaQ equals q.MaQ
+                           join a in _context.ActionTs on qcv.MaA equals a.MaA
+                           where (tk.Email == registerInfo.Email)
+                           select new AccountRole
+                           {
+                               MaTaiKhoan = tk.MaTaiKhoan,
+                               MaQ = q.MaQ,
+                               MaCv = cv.MaCv,
+                               TenCV = cv.Ten,
+                               TenQ = q.Ten,
+                               ControllerName = q.ControllerName,
+                               ActionName = q.ActionName,
+                               MaA = a.MaA,
+                               TenA = a.TenA,
+                           };
+                List<AccountRole> roles = data.ToList();
+
+                HttpContext.Session.SetJson("QuyenTK", roles);
+
+                ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                AuthenticationProperties properties = new AuthenticationProperties()
                 {
-                    AllowRefresh = true
+                    AllowRefresh = true,
+                    // IsPersistent = loginInfo.KeepLoggedIn
                 };
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-            new ClaimsPrincipal(claimsIdentity), properties); 
-            if(!String.IsNullOrEmpty(registerInfo.previousPage)){
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity), properties);
+                if (!String.IsNullOrEmpty(registerInfo.previousPage)){
                 return Redirect(registerInfo.previousPage);
             }
             return RedirectToAction("Login", "Access");
