@@ -108,16 +108,10 @@ else
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
-
-
                         <div class="card">
                             <div class="card-header">
                                 <label class="card-title">Quản lý đơn hàng</label>
-                            </div>
-                            
-                               
-                          
-
+                            </div>                           
                             <ul class="nav nav-tabs" role="tablist">
                                 <li class=" nav-item active"><a class="nav-link active" data-toggle="tab" href="#Admin"><label>Tất cả đơn hàng (@ViewBag.TotalOrdersCount)</label></a></li>
                                 @* <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu0">Chưa thanh toán (@ViewBag.UnpaidOrdersCount)</a></li> *@
@@ -130,7 +124,7 @@ else
                             <div class="card-body">
                                 <div class="tab-content">
                                     <div id="Admin" class="tab-pane active">
-                                        <table id="showtable" class="table table-bordered table-hover">
+                                        <table id="showtable" class="table table-bordered table-striped">
                                             <thead>
                                                 <tr>
                                                     <th><input type="number" class="form-control" value="@(madh!=0?madh:null)" placeholder="Nhập mã đơn hàng"></th>
@@ -141,7 +135,7 @@ else
                                                         <input type="number" class="form-control" value="@(min_price!=0? min_price:null)" placeholder="Giá dưới">
                                                         <input type="number" class="form-control" value="@(max_price!=0? max_price:null)" placeholder="Giá trên">
                                                     </th>
-                                                    <th></th>
+                                                    <th>Tìm kiếm</th>
                                                     <th>  <i style="margin-left:5px" class="nav-icon fas fa-search" id="filterButton"></i></th>
                                                 </tr>
                                                 <tr>
@@ -151,7 +145,7 @@ else
                                                     <td>Ngày mua</td>
                                                     <td>Tổng tiền</td>
                                                     <td>Tình trạng</td>
-                                                    <td></td>
+                                                    <td>Chi tiết</td>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -398,6 +392,7 @@ else
                                                         <input type="number" class="form-control" value="@(max_price!=0? max_price:null)" placeholder="Giá trên">
                                                     </th>
                                                     <th></th>
+                                                    <th>Tìm kiếm</th>
                                                     <th>  <i style="margin-left:5px" class="nav-icon fas fa-search" id="filterButton"></i></th>
                                                 </tr>
                                                 <tr>
@@ -407,7 +402,8 @@ else
                                                     <td>Ngày mua</td>
                                                     <td>Tổng tiền</td>
                                                     <td>Tình trạng</td>
-                                                    <td></td>
+                                                    <td>Chi tiết</td>
+                                                    <td>Xác nhận</td>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -549,6 +545,8 @@ else
                                                         <input type="number" class="form-control" value="@(max_price!=0? max_price:null)" placeholder="Giá trên">
                                                     </th>
                                                     <th></th>
+                                                    <th></th>
+                                                    <th>Tìm kiếm</th>
                                                     <th>  <i style="margin-left:5px" class="nav-icon fas fa-search" id="filterButton"></i></th>
                                                 </tr>
                                                 <tr>
@@ -558,7 +556,9 @@ else
                                                     <td>Ngày mua</td>
                                                     <td>Tổng tiền</td>
                                                     <td>Tình trạng</td>
-                                                    <td></td>
+                                                    <td>Chi tiết</td>
+                                                    <td>Giao hàng</td>
+                                                    <td>Hủy đơn</td>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -718,7 +718,7 @@ else
                                                         <input type="number" class="form-control" value="@(min_price!=0? min_price:null)" placeholder="Giá dưới">
                                                         <input type="number" class="form-control" value="@(max_price!=0? max_price:null)" placeholder="Giá trên">
                                                     </th>
-                                                    <th></th>
+                                                    <th>Tìm kiếm</th>
                                                     <th>  <i style="margin-left:5px" class="nav-icon fas fa-search" id="filterButton"></i></th>
                                                 </tr>
                                                 <tr>
@@ -728,7 +728,7 @@ else
                                                     <td>Ngày mua</td>
                                                     <td>Tổng tiền</td>
                                                     <td>Tình trạng</td>
-                                                    <td></td>
+                                                    <td>Chi tiết</td>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -854,7 +854,7 @@ else
                                                         <input type="number" class="form-control" value="@(min_price!=0? min_price:null)" placeholder="Giá dưới">
                                                         <input type="number" class="form-control" value="@(max_price!=0? max_price:null)" placeholder="Giá trên">
                                                     </th>
-                                                    <th></th>
+                                                    <th>Tìm kiếm</th>
                                                     <th>  <i style="margin-left:5px" class="nav-icon fas fa-search" id="filterButton"></i></th>
                                                 </tr>
                                                 <tr>
@@ -864,7 +864,7 @@ else
                                                     <td>Ngày mua</td>
                                                     <td>Tổng tiền</td>
                                                     <td>Tình trạng</td>
-                                                    <td></td>
+                                                    <td>Chi tiết</td>
                                                 </tr>
                                             </thead>
                                             <tbody>

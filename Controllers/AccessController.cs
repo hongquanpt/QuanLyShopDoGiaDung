@@ -149,7 +149,11 @@ namespace ShopBanDoGiaDung.Controllers
             Taikhoan newTk = new Taikhoan(){
                 Ten= registerInfo.Ten ,
                 Email = registerInfo.Email,
-                MatKhau = registerInfo.Password,
+                MatKhau = f_password,
+                DiaChi= registerInfo.DiaChi,
+                Sdt=registerInfo.Sdt,
+                NgaySinh=registerInfo.NgaySinh,
+                MaCv=3,
               //  Quyen = "khach"
             };
             _context.Taikhoans.Add(newTk);
@@ -176,8 +180,8 @@ namespace ShopBanDoGiaDung.Controllers
             return RedirectToAction("Index", "Home");
            }catch(Exception ex) {
             ViewData["ValidateMessage"] = "Đăng ký thất bại";
-              return View();
-           }
+              return RedirectToAction("Login", "Access");
+            }
         }
 
         public ActionResult Logout()
