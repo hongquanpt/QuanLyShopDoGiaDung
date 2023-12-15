@@ -177,7 +177,7 @@ namespace ShopBanDoGiaDung.Controllers
             if(!String.IsNullOrEmpty(registerInfo.previousPage)){
                 return Redirect(registerInfo.previousPage);
             }
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login", "Access");
            }catch(Exception ex) {
             ViewData["ValidateMessage"] = "Đăng ký thất bại";
               return RedirectToAction("Login", "Access");

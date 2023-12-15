@@ -125,7 +125,37 @@ namespace ShopBanDoGiaDung.Controllers
             }
 
         }
+        public IActionResult ThemCV(string tencv)
+        {
+            if (tencv != null)
+            {
+                int macv = obj.ChucVus.Max(c => c.MaCv);
+                var cv = new ChucVu();
+                cv.Ten = tencv;
+                cv.MaCv = macv+1;
+                obj.ChucVus.Add(cv);
+                List<int> maq = obj.Quyens.Select(c => c.MaQ).ToList();
+                foreach (var q in maq)
+                {
+                    var ac = new CvQA();
+                    ac.MaCv = macv + 1;
+                    ac.MaA = 1;
+                    ac.MaQ = q;
+                    obj.CvQAs.Add(ac);
+                }
+                obj.SaveChanges();
+                return Json(new
+                {
+                    status = true
+                });
+            }
 
+            return Json(new
+            {
+                status = false
+            });
+
+        }
         #endregion
         #region Quản lý tài khoản
         public IActionResult QuanLyTK(int matk, DateTime ngaysinh, string tenctk, string tendc, string sdt, string email, int chvu, int page = 1, int pageSize = 10)
@@ -1029,11 +1059,7 @@ namespace ShopBanDoGiaDung.Controllers
         #endregion
         #region Thống kê
         #region Thống kê doanh số bán ra
-        [HttpGet]
-        public IActionResult TKDoanhThu()
-        {
-            return View();
-        }
+       
         [HttpPost]
         public IActionResult Index(int year)
         {

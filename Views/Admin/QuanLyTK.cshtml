@@ -163,7 +163,14 @@ else
                                                 <tr>
                                                     <td>@item.MaTaiKhoan</td>
                                                     <td>@item.Ten</td>
-                                                    <td>@item.NgaySinh.Value.ToShortDateString()</td>
+                                                    @if (item.NgaySinh != null)
+                                                    {
+                                                        <td>@item.NgaySinh.Value.ToShortDateString()</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>Không xác định</td>
+                                                    }
                                                     <td>@item.DiaChi</td>
                                                     <td>@item.Sdt</td>
                                                     <td>@item.Email</td>

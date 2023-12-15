@@ -212,6 +212,13 @@ else
                                     </div>
                                 </div>
                                 <!-- /.card-body -->
+                                <div class="card-footer">
+                                    <button class="btn btn-primary" data-dismiss="modal" id="confirmThem" onclick="Them()" @if (qh.MaA == 2)
+                                    {
+                                        <text>style="display: none;"</text>
+                                    }>Thêm chức vụ mới</button>
+                                    @*<a href="#" class="btn btn-secondary" style="display: none;"><i class="material-icons">&#xE24D;</i> <span>Xuất Excel</span></a>*@
+                                </div>
                             </div>
                             <!-- /.card-header -->
                             <!-- /.card-body -->
@@ -222,8 +229,74 @@ else
                 </div>
                 <!-- /.row -->
             </section>
+            <form id="frmThemHang" method="post" aria-hidden="true" tabindex="-1" role="dialog" style="display: none;" enctype="multipart/form-data">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Nhập tên chức vụ</label>
+                        <input type="text" class="form-control" id="tenhang" placeholder="Nhập tên chức vụ mới tại đây">
+                    </div>
+                    <div class="card-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" id="confirm">Thêm chức vụ</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" id="cancel">Hủy bỏ</button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
+    <script>
+        function Them() {
+            var form = document.getElementById("frmThemHang");
+            form.setAttribute("aria-hidden", "false");
+            form.setAttribute("tabindex", "0");
+            form.style.display = "block";
+            $('#confirm').on('click', function () {
+                var tenhang = $('#tenhang').val().toString();
+                if (tenhang.trim() === "") {
+                    // Kiểm tra nếu trường TenHang rỗng
+                    alert("Bạn chưa nhập tên hãng.");
+                } else {
+                    // Nếu trường TenHang không rỗng, tiến hành gửi yêu cầu AJAX
+                    $.ajax({
+                        url: '/Admin/ThemCV',
+                        data: {
+                            tencv: tenhang
+                        },
+                        type: 'POST',
+                        dataType: 'json',
+                        success: function (res) {
+                            if (res.status == true) {
+                                // Đóng modal sau khi xóa thành công
+                                form.setAttribute("aria-hidden", "true");
+                                form.setAttribute("tabindex", "-1");
+                                form.style.display = "none";
+                                window.location = '@Url.Action("QuanLyQH","Admin")';
+                            }
+                        }
+                    });
+                }
+            });
+            $('#cancel').on('click', function () {
+                form.setAttribute("aria-hidden", "true");
+                form.setAttribute("tabindex", "-1");
+                form.style.display = "none";
+            });
+        }
+        $("#filterButton").click(function () {
+            const tenctkInput = $("thead tr:nth-child(1) th:nth-child(1) input");
+            const hotenInput = $("thead tr:nth-child(1) th:nth-child(2) input");
+
+            const mahang = getValueOrEmpty(tenctkInput.val());
+            const tenhang = getValueOrEmpty(hotenInput.val());
+            // Tạo đường dẫn đến action QuanLyDM trong controller
+            const url = '@Url.Action("QuanLyHang", "Admin")' + `?tenhang=${tenhang}&mahang=${mahang}`;
+
+            // Chuyển hướng đến URL tạo ra
+            window.location.href = url;
+        });
+        function getValueOrEmpty(value) {
+            return value === undefined ? "" : value.trim();
+        }
+    </script>
     <script>
         $(document).ready(function () {
             $('select[name="Action"]').change(function () {
