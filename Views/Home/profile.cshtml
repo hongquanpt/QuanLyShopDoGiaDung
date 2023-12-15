@@ -45,7 +45,8 @@
                               Ngày sinh
                          </div>
                          <div class="col-md-9 text-secondary  text-profile">
-                              @it[0].NgaySinh.Value.ToString("dd/MM/yyyy")                 
+                              @* @it[0]?.NgaySinh.Value.ToString("dd/MM/yyyy")                  *@
+                              @((it[0].NgaySinh.HasValue ? it[0].NgaySinh.Value.ToString("yyyy-MM-dd") : string.Empty))
                          </div>
                          <div style="display: none;" class="input-profile col-md-9">
                              <input type="date" class="form-control" id="Ten" name="NgaySinh" value="@((it[0].NgaySinh.HasValue ? it[0].NgaySinh.Value.ToString("yyyy-MM-dd") : string.Empty))"
