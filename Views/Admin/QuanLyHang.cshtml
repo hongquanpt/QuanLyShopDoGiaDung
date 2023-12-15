@@ -131,8 +131,8 @@ else
                                                     <td>@item.TenHang</td>
                                                     @if (qh.MaA != 2)
                                                     {
-                                                        <td><a href="@Url.Action("SuaHang","Admin",new { id = item.MaHang})" class="btn btn-success">Edit</a></td>
-                                                        <td><a href="#" class="btn btn-success" onclick="XoaHang(@item.MaHang)">Delete</a></td>
+                                                        <td><a href="@Url.Action("SuaHang","Admin",new { id = item.MaHang})" class="btn btn-success">Chỉnh sửa</a></td>
+                                                        <td><a href="#" class="btn btn-danger" onclick="XoaHang(@item.MaHang)">Xóa</a></td>
                                                     }
                                                    
                                                 </tr>

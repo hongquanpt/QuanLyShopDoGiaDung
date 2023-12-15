@@ -191,10 +191,10 @@ else
                                                 @if (qh.MaA != 2)
                                                 {
                                                     <td>
-                                                        <a href="@Url.Action("SuaSP", "Admin", new { ma = item.MaSp })" class="btn btn-success">Edit</a>
+                                                        <a href="@Url.Action("SuaSP", "Admin", new { ma = item.MaSp })" class="btn btn-success">Chỉnh sửa</a>
                                                     </td>
                                                     <td>
-                                                        <a class="btn btn-success" title="Delete" data-toggle="modal" onclick="XoaSP(@item.MaSp)">Delete</a>
+                                                        <a class="btn btn-danger" title="Delete" data-toggle="modal" onclick="XoaSP(@item.MaSp)">Xóa</a>
                                                     </td>
                                                 }
 

@@ -130,10 +130,10 @@ else
                                                     @if (qh.MaA != 2)
                                                     {
                                                         <td>
-                                                            <a href="@Url.Action("SuaDM","Admin",new {id=item.MaDanhMuc})" class="btn btn-success">Edit</a>
+                                                            <a href="@Url.Action("SuaDM","Admin",new {id=item.MaDanhMuc})" class="btn btn-success">Chỉnh sửa</a>
                                                         </td>
                                                         <td>
-                                                            <a class="btn btn-success" onclick="XoaDanhMuc(@item.MaDanhMuc)">Delete</a>
+                                                            <a class="btn btn-danger" onclick="XoaDanhMuc(@item.MaDanhMuc)">Xóa</a>
                                                         </td>
                                                     }
                                                    
