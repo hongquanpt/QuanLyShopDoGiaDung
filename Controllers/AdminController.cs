@@ -927,13 +927,12 @@ namespace ShopBanDoGiaDung.Controllers
                 allOrders = allOrders.Where(item => item.TongTien < maxPrice && item.TongTien > minPrice);
             }
            
-            // Tạo danh sách các tình trạng
             var tinhTrang = allOrders.OrderByDescending(o => o.MaDonHang).ToList();
-            var tinhTrang0 = allOrders.Where(o => o.TinhTrang == 0).OrderByDescending(o => o.MaDonHang).ToList();
-            var tinhTrang1 = allOrders.Where(o => o.TinhTrang == 1).OrderByDescending(o => o.MaDonHang).ToList();
-            var tinhTrang2 = allOrders.Where(o => o.TinhTrang == 2).OrderByDescending(o => o.MaDonHang).ToList();
-            var tinhTrang3 = allOrders.Where(o => o.TinhTrang == 3).OrderByDescending(o => o.MaDonHang).ToList();
-            var tinhTrang4 = allOrders.Where(o => o.TinhTrang == 4).OrderByDescending(o => o.MaDonHang).ToList();
+            var tinhTrang0 = allOrders.Where(o => o.TinhTrang == 0).OrderByDescending(o => o.TongTien).ToList();
+            var tinhTrang1 = allOrders.Where(o => o.TinhTrang == 1).OrderByDescending(o => o.TongTien).ToList();
+            var tinhTrang2 = allOrders.Where(o => o.TinhTrang == 2).OrderByDescending(o => o.TongTien).ToList();
+            var tinhTrang3 = allOrders.Where(o => o.TinhTrang == 3).OrderByDescending(o => o.TongTien).ToList();
+            var tinhTrang4 = allOrders.Where(o => o.TinhTrang == 4).OrderByDescending(o => o.TongTien).ToList();
 
             // Tạo danh sách phân trang cho từng tình trạng
             var pagedList = tinhTrang.ToPagedList(page, pageSize);
