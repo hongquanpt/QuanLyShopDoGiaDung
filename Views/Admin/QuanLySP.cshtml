@@ -115,54 +115,7 @@ else
                             <div class="card-body">
                                 <table id="example1" class="table table-bordered table-striped">
                                     <thead>
-                                        <tr>
-                                            <th><input type="text" class="form-control" value="@ten" placeholder="Nhập tên sản phẩm"></th>
-                                            <th></th>
-                                            <th>
-                                                <select class="form-control" id="HangSearch">
-                                                    @if (tenh == 0)
-                                                    {
-                                                        <option value="0">Chọn hãng</option>
-                                                    }
-                                                    else
-                                                    {
-                                                        <option value="@tenh">@dsh.Where(c=>c.MaHang==tenh).FirstOrDefault().TenHang</option>
-                                                    }
-                                                    <option value="0">Chọn hãng</option>
-                                                    @foreach (var item in dsh)
-                                                    {
-                                                        <option value="@item.MaHang">@item.TenHang</option>
-                                                    }
-                                                </select>
-                                            </th>
-                                            <th>
-                                                <select class="form-control" id="DMSearch">
-                                                    @if (tendm == 0)
-                                                    {
-                                                        <option value="0">Chọn danh mục</option>
-                                                    }
-                                                    else
-                                                    {
-                                                        <option value="@tendm">@dsdm.Where(c=>c.MaDanhMuc==tendm).FirstOrDefault().TenDanhMuc</option>
-                                                    }
-                                                    <option value="0">Chọn danh mục</option>
-                                                    @foreach (var item in dsdm)
-                                                    {
-                                                        <option value="@item.MaDanhMuc">@item.TenDanhMuc</option>
-                                                    }
-                                                </select>
-                                            </th>
-                                            <th>
-                                                <input type="number" class="form-control" value="@(min_price!=0? min_price:null)" placeholder="Giá dưới">
-                                                <input type="number" class="form-control" value="@(max_price!=0? max_price:null)" placeholder="Giá trên">
-                                            </th>
-                                            <th><input type="text" class="form-control" value="@(ban!=0? ban:null)" placeholder="Nhập số lượng"></th>
-                                            <th><input type="text" class="form-control" value="@(slc!=0? slc:null)" placeholder="Nhập số lượng"></th>
-                                            <th>Tìm kiếm</th>
-                                            <th>  <i style="margin-left:5px" class="nav-icon fas fa-search" id="filterButton"></i></th>
-
-
-                                        </tr>
+                                      
                                         <tr>
 
                                             <th>Tên sản phẩm</th>
@@ -203,6 +156,26 @@ else
                                     </tbody>
 
                                 </table>
+                                <script>
+                                    $(document).ready(function () {
+                                        // Khởi tạo DataTable
+                                        var table = $('#example1').DataTable({
+                                            "responsive": true,
+                                            "lengthChange": false,
+                                            "autoWidth": false,
+                                            "paging": false,
+                                            "info": false,
+                                            "searching": true,  // Kích hoạt tìm kiếm
+                                            "ordering": true    // Kích hoạt sắp xếp
+                                        });
+
+                                        // Áp dụng tìm kiếm toàn cục
+                                        $('#globalSearch').on('keyup', function () {
+                                            table.search(this.value).draw();
+                                        });
+                                    });
+
+                                </script>
                                 <!-- Hiển thị thanh phân trang -->
                                 <div class="row">
                                     <div class="col-sm-12 col-md-5">
@@ -335,43 +308,55 @@ else
             });
         }
 
-        $(document).ready(function () {
+        // $(document).ready(function () {
 
-            $("#filterButton").click(function () {
-                // Lấy các giá trị từ các phần tử trên trang
-                const tenInput = $("thead tr:nth-child(1) th:nth-child(1) input");
-                const HangInput = $("thead tr:nth-child(1) th:nth-child(3) select");
-                const DanhMucInput = $("thead tr:nth-child(1) th:nth-child(4) select");
-                const minPriceInput = $("thead tr:nth-child(1) th:nth-child(5) input:nth-child(1)");
-                const maxPriceInput = $("thead tr:nth-child(1) th:nth-child(5) input:nth-child(2)");
-                const banInput = $("thead tr:nth-child(1) th:nth-child(6) input");
-                const slcInput = $("thead tr:nth-child(1) th:nth-child(7) input");
+        //     $("#filterButton").click(function () {
+        //         // Lấy các giá trị từ các phần tử trên trang
+        //         const tenInput = $("thead tr:nth-child(1) th:nth-child(1) input");
+        //         const HangInput = $("thead tr:nth-child(1) th:nth-child(3) select");
+        //         const DanhMucInput = $("thead tr:nth-child(1) th:nth-child(4) select");
+        //         const minPriceInput = $("thead tr:nth-child(1) th:nth-child(5) input:nth-child(1)");
+        //         const maxPriceInput = $("thead tr:nth-child(1) th:nth-child(5) input:nth-child(2)");
+        //         const banInput = $("thead tr:nth-child(1) th:nth-child(6) input");
+        //         const slcInput = $("thead tr:nth-child(1) th:nth-child(7) input");
 
-                // Lấy giá trị từ các phần tử
-                const ten = getValueOrEmpty(tenInput.val());
-                const Hang = getValueOrEmpty(HangInput.val());
-                const DanhMuc = getValueOrEmpty(DanhMucInput.val());
-                const minPrice = parseInt(minPriceInput.val().replace(/,/g, '')) || 0;
-                const maxPrice = parseInt(maxPriceInput.val().replace(/,/g, '')) || 0;
-                const ban = getValueOrEmpty(banInput.val());
-                const slc = getValueOrEmpty(slcInput.val());
+        //         // Lấy giá trị từ các phần tử
+        //         const ten = getValueOrEmpty(tenInput.val());
+        //         const Hang = getValueOrEmpty(HangInput.val());
+        //         const DanhMuc = getValueOrEmpty(DanhMucInput.val());
+        //         const minPrice = parseInt(minPriceInput.val().replace(/,/g, '')) || 0;
+        //         const maxPrice = parseInt(maxPriceInput.val().replace(/,/g, '')) || 0;
+        //         const ban = getValueOrEmpty(banInput.val());
+        //         const slc = getValueOrEmpty(slcInput.val());
 
-                // Xây dựng URL và điều hướng tới nó
-                const sortOrderParam = "notorder"; // You may want to modify this based on your actual requirements
-                const url = `@Url.Action("QuanLySP", "Admin")?tenSP=${ten}&tenh=${Hang}&tendm=${DanhMuc}&minPrice=${minPrice}&maxPrice=${maxPrice}&ban=${ban}&slc=${slc}&sortOrder=${sortOrderParam}`;
-                // Sử dụng `window.location.href` để chuyển hướng đến URL
-                window.location.href = url;
-            });
+        //         // Xây dựng URL và điều hướng tới nó
+        //         const sortOrderParam = "notorder"; // You may want to modify this based on your actual requirements
+        //         const url = `@Url.Action("QuanLySP", "Admin")?tenSP=${ten}&tenh=${Hang}&tendm=${DanhMuc}&minPrice=${minPrice}&maxPrice=${maxPrice}&ban=${ban}&slc=${slc}&sortOrder=${sortOrderParam}`;
+        //         // Sử dụng `window.location.href` để chuyển hướng đến URL
+        //         window.location.href = url;
+        //     });
 
-            // Hàm để xử lý giá trị là null hoặc chuỗi rỗng
-            function getValueOrEmpty(value) {
-                return value === undefined ? "" : value.trim();
-            }
+        //     // Hàm để xử lý giá trị là null hoặc chuỗi rỗng
+        //     function getValueOrEmpty(value) {
+        //         return value === undefined ? "" : value.trim();
+        //     }
 
 
-        });
+        // });
     </script>
+    <!-- jQuery -->
+    <script src="~/Admin/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="~/Admin/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- DataTables & Plugins -->
+    <link rel="stylesheet" href="~/Admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/Admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+    <script src="~/Admin/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/Admin/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/Admin/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/Admin/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
 
+    <script src="~/Admin/dist/js/adminlte.min.js"></script>
 
 }
 
